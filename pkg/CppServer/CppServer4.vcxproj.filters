@@ -1,0 +1,233 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="소스 파일\asio">
+      <UniqueIdentifier>{f09c743e-63f2-4b5e-a180-0e349b98e374}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\http">
+      <UniqueIdentifier>{300aab25-ce36-4366-a1d6-ecaee79caccd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\fmt">
+      <UniqueIdentifier>{c89626ea-712d-4fab-825d-cf0aad27f282}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\asio">
+      <UniqueIdentifier>{00383056-69de-4b69-9f8a-d5ffb4dfbf80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\http">
+      <UniqueIdentifier>{ed1360b6-107f-47e0-b14c-4f67df226d74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\ws">
+      <UniqueIdentifier>{ecb27e09-8401-4927-96cc-c3415c099350}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\asio\asio.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\asio\memory.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\asio\service.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\asio\ssl_client.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\asio\ssl_context.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\asio\ssl_server.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\asio\ssl_session.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\asio\tcp_client.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\asio\tcp_resolver.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\asio\tcp_server.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\asio\tcp_session.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\asio\timer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\asio\udp_client.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\asio\udp_resolver.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\asio\udp_server.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\http\http.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\http\https_client.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\http\https_server.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\http\https_session.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\http\http_client.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\http\http_request.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\http\http_response.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\http\http_server.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\http\http_session.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\kwadjust.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\version.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\ws\ws.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\ws\wss_client.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\ws\wss_server.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\ws\wss_session.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\ws\ws_client.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\ws\ws_server.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\server\ws\ws_session.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CppServer4.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fmt\src\format.cc">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fmt\src\os.cc">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\asio\service.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\asio\ssl_client.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\asio\ssl_context.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\asio\ssl_server.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\asio\ssl_session.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\asio\tcp_client.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\asio\tcp_resolver.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\asio\tcp_server.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\asio\tcp_session.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\asio\timer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\asio\udp_client.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\asio\udp_resolver.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\asio\udp_server.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\http\https_client.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\http\https_server.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\http\https_session.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\http\http_client.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\http\http_request.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\http\http_response.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\http\http_server.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\server\http\http_session.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".\include\server\asio\asio.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\server\asio\memory.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\server\http\http_request.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\server\http\http_response.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+  </ItemGroup>
+</Project>

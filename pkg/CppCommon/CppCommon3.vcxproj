@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DebugStatic|Win32">
+      <Configuration>DebugStatic</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="DebugStatic|x64">
+      <Configuration>DebugStatic</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseStatic|Win32">
+      <Configuration>ReleaseStatic</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseStatic|x64">
+      <Configuration>ReleaseStatic</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{F03C977F-EADF-4A03-8759-6203BDE50F32}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>CppCommon3</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(APPDATA)\Outbin\$(SolutionName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(TEMP)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>CppCommon</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(APPDATA)\Outbin\$(SolutionName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(TEMP)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>CppCommon</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>\Outbin\$(SolutionName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>\Output\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>CppCommon</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>\Outbin\$(SolutionName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>\Output\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>CppCommon</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>\Outbin\$(SolutionName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>\Output\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>CppCommon</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>\Outbin\$(SolutionName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>\Output\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>CppCommon</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(APPDATA)\Outbin\$(SolutionName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(TEMP)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>CppCommon</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(APPDATA)\Outbin\$(SolutionName)\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(TEMP)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>CppCommon</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>
+      </SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>.\include;..\fmt\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>
+      </SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>.\include;..\fmt\include</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>
+      </SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>.\include;..\fmt\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>
+      </SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>.\include;..\fmt\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>
+      </SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>.\include;..\fmt\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>
+      </SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>.\include;..\fmt\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>
+      </SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>.\include;..\fmt\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>
+      </SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>.\include;..\fmt\include</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include=".\include\algorithms\token_bucket.h" />
+    <ClInclude Include=".\include\cache\filecache.h" />
+    <ClInclude Include=".\include\cache\memcache.h" />
+    <ClInclude Include=".\include\common\flags.h" />
+    <ClInclude Include=".\include\common\function.h" />
+    <ClInclude Include=".\include\common\reader.h" />
+    <ClInclude Include=".\include\common\uint128.h" />
+    <ClInclude Include=".\include\common\uint256.h" />
+    <ClInclude Include=".\include\common\version.h" />
+    <ClInclude Include=".\include\common\writer.h" />
+    <ClInclude Include=".\include\containers\bintree.h" />
+    <ClInclude Include=".\include\containers\bintree_aa.h" />
+    <ClInclude Include=".\include\containers\bintree_avl.h" />
+    <ClInclude Include=".\include\containers\bintree_rb.h" />
+    <ClInclude Include=".\include\containers\bintree_splay.h" />
+    <ClInclude Include=".\include\containers\flatmap.h" />
+    <ClInclude Include=".\include\containers\hashmap.h" />
+    <ClInclude Include=".\include\containers\list.h" />
+    <ClInclude Include=".\include\containers\queue.h" />
+    <ClInclude Include=".\include\containers\stack.h" />
+    <ClInclude Include=".\include\errors\exceptions.h" />
+    <ClInclude Include=".\include\errors\exceptions_handler.h" />
+    <ClInclude Include=".\include\errors\fatal.h" />
+    <ClInclude Include=".\include\errors\system_error.h" />
+    <ClInclude Include=".\include\filesystem\directory.h" />
+    <ClInclude Include=".\include\filesystem\directory_iterator.h" />
+    <ClInclude Include=".\include\filesystem\exceptions.h" />
+    <ClInclude Include=".\include\filesystem\file.h" />
+    <ClInclude Include=".\include\filesystem\filesystem.h" />
+    <ClInclude Include=".\include\filesystem\path.h" />
+    <ClInclude Include=".\include\filesystem\symlink.h" />
+    <ClInclude Include=".\include\math\math.h" />
+    <ClInclude Include=".\include\memory\allocator.h" />
+    <ClInclude Include=".\include\memory\allocator_arena.h" />
+    <ClInclude Include=".\include\memory\allocator_heap.h" />
+    <ClInclude Include=".\include\memory\allocator_null.h" />
+    <ClInclude Include=".\include\memory\allocator_pool.h" />
+    <ClInclude Include=".\include\memory\allocator_stack.h" />
+    <ClInclude Include=".\include\memory\memory.h" />
+    <ClInclude Include=".\include\memory\memory_leaks.h" />
+    <ClInclude Include=".\include\memory\memory_leaks_debug.h" />
+    <ClInclude Include=".\include\string\encoding.h" />
+    <ClInclude Include=".\include\string\format.h" />
+    <ClInclude Include=".\include\string\string_utils.h" />
+    <ClInclude Include=".\include\system\console.h" />
+    <ClInclude Include=".\include\system\cpu.h" />
+    <ClInclude Include=".\include\system\dll.h" />
+    <ClInclude Include=".\include\system\environment.h" />
+    <ClInclude Include=".\include\system\exceptions.h" />
+    <ClInclude Include=".\include\system\pipe.h" />
+    <ClInclude Include=".\include\system\process.h" />
+    <ClInclude Include=".\include\system\shared_memory.h" />
+    <ClInclude Include=".\include\system\shared_type.h" />
+    <ClInclude Include=".\include\system\source_location.h" />
+    <ClInclude Include=".\include\system\stack_trace.h" />
+    <ClInclude Include=".\include\system\stack_trace_manager.h" />
+    <ClInclude Include=".\include\system\stream.h" />
+    <ClInclude Include=".\include\system\uuid.h" />
+    <ClInclude Include=".\include\threads\barrier.h" />
+    <ClInclude Include=".\include\threads\condition_variable.h" />
+    <ClInclude Include=".\include\threads\critical_section.h" />
+    <ClInclude Include=".\include\threads\event_auto_reset.h" />
+    <ClInclude Include=".\include\threads\event_manual_reset.h" />
+    <ClInclude Include=".\include\threads\file_lock.h" />
+    <ClInclude Include=".\include\threads\latch.h" />
+    <ClInclude Include=".\include\threads\locker.h" />
+    <ClInclude Include=".\include\threads\mpmc_ring_queue.h" />
+    <ClInclude Include=".\include\threads\mpsc_linked_batcher.h" />
+    <ClInclude Include=".\include\threads\mpsc_linked_queue.h" />
+    <ClInclude Include=".\include\threads\mpsc_ring_buffer.h" />
+    <ClInclude Include=".\include\threads\mpsc_ring_queue.h" />
+    <ClInclude Include=".\include\threads\mutex.h" />
+    <ClInclude Include=".\include\threads\named_condition_variable.h" />
+    <ClInclude Include=".\include\threads\named_critical_section.h" />
+    <ClInclude Include=".\include\threads\named_event_auto_reset.h" />
+    <ClInclude Include=".\include\threads\named_event_manual_reset.h" />
+    <ClInclude Include=".\include\threads\named_mutex.h" />
+    <ClInclude Include=".\include\threads\named_rw_lock.h" />
+    <ClInclude Include=".\include\threads\named_semaphore.h" />
+    <ClInclude Include=".\include\threads\rw_lock.h" />
+    <ClInclude Include=".\include\threads\semaphore.h" />
+    <ClInclude Include=".\include\threads\seq_lock.h" />
+    <ClInclude Include=".\include\threads\spin_barrier.h" />
+    <ClInclude Include=".\include\threads\spin_lock.h" />
+    <ClInclude Include=".\include\threads\spsc_ring_buffer.h" />
+    <ClInclude Include=".\include\threads\spsc_ring_queue.h" />
+    <ClInclude Include=".\include\threads\thread.h" />
+    <ClInclude Include=".\include\threads\wait_batcher.h" />
+    <ClInclude Include=".\include\threads\wait_queue.h" />
+    <ClInclude Include=".\include\threads\wait_ring.h" />
+    <ClInclude Include=".\include\time\time.h" />
+    <ClInclude Include=".\include\time\timespan.h" />
+    <ClInclude Include=".\include\time\timestamp.h" />
+    <ClInclude Include=".\include\time\timezone.h" />
+    <ClInclude Include=".\include\utility\countof.h" />
+    <ClInclude Include=".\include\utility\endian.h" />
+    <ClInclude Include=".\include\utility\iostream.h" />
+    <ClInclude Include=".\include\utility\resource.h" />
+    <ClInclude Include=".\include\utility\singleton.h" />
+    <ClInclude Include=".\include\utility\static_constructor.h" />
+    <ClInclude Include="framework.h" />
+    <ClInclude Include="pch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include=".\source\algorithms\token_bucket.cpp" />
+    <ClCompile Include=".\source\cache\filecache.cpp" />
+    <ClCompile Include=".\source\common\reader.cpp" />
+    <ClCompile Include=".\source\common\uint128.cpp" />
+    <ClCompile Include=".\source\common\uint256.cpp" />
+    <ClCompile Include=".\source\common\writer.cpp" />
+    <ClCompile Include=".\source\errors\exceptions2.cpp" />
+    <ClCompile Include=".\source\errors\exceptions_handler.cpp" />
+    <ClCompile Include=".\source\errors\fatal.cpp" />
+    <ClCompile Include=".\source\errors\system_error.cpp" />
+    <ClCompile Include=".\source\filesystem\directory.cpp" />
+    <ClCompile Include=".\source\filesystem\directory_iterator.cpp" />
+    <ClCompile Include=".\source\filesystem\exceptions.cpp" />
+    <ClCompile Include=".\source\filesystem\file.cpp" />
+    <ClCompile Include=".\source\filesystem\path.cpp" />
+    <ClCompile Include=".\source\filesystem\symlink.cpp" />
+    <ClCompile Include=".\source\math\math.cpp" />
+    <ClCompile Include=".\source\memory\memory.cpp" />
+    <ClCompile Include=".\source\string\encoding.cpp" />
+    <ClCompile Include=".\source\string\string_utils.cpp" />
+    <ClCompile Include=".\source\system\console.cpp" />
+    <ClCompile Include=".\source\system\cpu.cpp" />
+    <ClCompile Include=".\source\system\dll.cpp" />
+    <ClCompile Include=".\source\system\environment.cpp" />
+    <ClCompile Include=".\source\system\pipe.cpp" />
+    <ClCompile Include=".\source\system\process.cpp" />
+    <ClCompile Include=".\source\system\shared_memory.cpp" />
+    <ClCompile Include=".\source\system\stack_trace.cpp" />
+    <ClCompile Include=".\source\system\stack_trace_manager.cpp" />
+    <ClCompile Include=".\source\system\stream.cpp" />
+    <ClCompile Include=".\source\system\uuid.cpp" />
+    <ClCompile Include=".\source\threads\barrier.cpp" />
+    <ClCompile Include=".\source\threads\condition_variable.cpp" />
+    <ClCompile Include=".\source\threads\critical_section.cpp" />
+    <ClCompile Include=".\source\threads\event_auto_reset.cpp" />
+    <ClCompile Include=".\source\threads\event_manual_reset.cpp" />
+    <ClCompile Include=".\source\threads\file_lock.cpp" />
+    <ClCompile Include=".\source\threads\latch.cpp" />
+    <ClCompile Include=".\source\threads\mutex.cpp" />
+    <ClCompile Include=".\source\threads\named_condition_variable.cpp" />
+    <ClCompile Include=".\source\threads\named_critical_section.cpp" />
+    <ClCompile Include=".\source\threads\named_event_auto_reset.cpp" />
+    <ClCompile Include=".\source\threads\named_event_manual_reset.cpp" />
+    <ClCompile Include=".\source\threads\named_mutex.cpp" />
+    <ClCompile Include=".\source\threads\named_rw_lock.cpp" />
+    <ClCompile Include=".\source\threads\named_semaphore.cpp" />
+    <ClCompile Include=".\source\threads\rw_lock.cpp" />
+    <ClCompile Include=".\source\threads\semaphore.cpp" />
+    <ClCompile Include=".\source\threads\thread.cpp" />
+    <ClCompile Include=".\source\time\time.cpp" />
+    <ClCompile Include=".\source\time\timestamp.cpp" />
+    <ClCompile Include=".\source\time\timezone.cpp" />
+    <ClCompile Include="CppCommon3.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='DebugStatic|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".\include\algorithms\token_bucket.inl" />
+    <None Include=".\include\cache\filecache.inl" />
+    <None Include=".\include\cache\memcache.inl" />
+    <None Include=".\include\common\flags.inl" />
+    <None Include=".\include\common\function.inl" />
+    <None Include=".\include\common\uint128.inl" />
+    <None Include=".\include\common\uint256.inl" />
+    <None Include=".\include\containers\bintree.inl" />
+    <None Include=".\include\containers\bintree_aa.inl" />
+    <None Include=".\include\containers\bintree_avl.inl" />
+    <None Include=".\include\containers\bintree_rb.inl" />
+    <None Include=".\include\containers\bintree_splay.inl" />
+    <None Include=".\include\containers\flatmap.inl" />
+    <None Include=".\include\containers\hashmap.inl" />
+    <None Include=".\include\containers\list.inl" />
+    <None Include=".\include\containers\queue.inl" />
+    <None Include=".\include\containers\stack.inl" />
+    <None Include=".\include\filesystem\directory.inl" />
+    <None Include=".\include\filesystem\directory_iterator.inl" />
+    <None Include=".\include\filesystem\file.inl" />
+    <None Include=".\include\filesystem\path.inl" />
+    <None Include=".\include\filesystem\symlink.inl" />
+    <None Include=".\include\math\math.inl" />
+    <None Include=".\include\memory\allocator.inl" />
+    <None Include=".\include\memory\allocator_arena.inl" />
+    <None Include=".\include\memory\allocator_heap.inl" />
+    <None Include=".\include\memory\allocator_null.inl" />
+    <None Include=".\include\memory\allocator_pool.inl" />
+    <None Include=".\include\memory\allocator_stack.inl" />
+    <None Include=".\include\memory\memory.inl" />
+    <None Include=".\include\string\format.inl" />
+    <None Include=".\include\string\string_utils.inl" />
+    <None Include=".\include\system\console.inl" />
+    <None Include=".\include\system\dll.inl" />
+    <None Include=".\include\system\pipe.inl" />
+    <None Include=".\include\system\process.inl" />
+    <None Include=".\include\system\shared_type.inl" />
+    <None Include=".\include\system\source_location.inl" />
+    <None Include=".\include\system\stream.inl" />
+    <None Include=".\include\system\uuid.inl" />
+    <None Include=".\include\threads\condition_variable.inl" />
+    <None Include=".\include\threads\latch.inl" />
+    <None Include=".\include\threads\mpmc_ring_queue.inl" />
+    <None Include=".\include\threads\mpsc_linked_batcher.inl" />
+    <None Include=".\include\threads\mpsc_linked_queue.inl" />
+    <None Include=".\include\threads\mpsc_ring_buffer.inl" />
+    <None Include=".\include\threads\mpsc_ring_queue.inl" />
+    <None Include=".\include\threads\named_condition_variable.inl" />
+    <None Include=".\include\threads\seq_lock.inl" />
+    <None Include=".\include\threads\spin_barrier.inl" />
+    <None Include=".\include\threads\spin_lock.inl" />
+    <None Include=".\include\threads\spsc_ring_buffer.inl" />
+    <None Include=".\include\threads\spsc_ring_queue.inl" />
+    <None Include=".\include\threads\thread.inl" />
+    <None Include=".\include\threads\wait_batcher.inl" />
+    <None Include=".\include\threads\wait_queue.inl" />
+    <None Include=".\include\threads\wait_ring.inl" />
+    <None Include=".\include\time\time.inl" />
+    <None Include=".\include\time\timespan.inl" />
+    <None Include=".\include\time\timestamp.inl" />
+    <None Include=".\include\time\timezone.inl" />
+    <None Include=".\include\utility\endian.inl" />
+    <None Include=".\include\utility\static_constructor.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include=".\source\CppCommon2\ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

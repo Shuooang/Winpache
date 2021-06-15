@@ -1,0 +1,31 @@
+데이터 + Document
+C:\Dropbox\Proj\KHttpData : 공통 데이터
+	document
+	cert
+
+원본 기술지원
+C:\Dropbox\Proj\KHttp        : 모든 소스 프로젝트
+	boost source
+	OpenSSL source
+	CppCommon source
+	CppServer source + fmt source
+	KwLib64 source
+	Server source
+	Site DLL source
+
+Github open + 기술지원
+C:\Dropbox\Proj\KHttpLt     : 라이브러리(Open Source) 헤더와 서버프로젝트와 사이트 프로젝트
+	boost header
+	OpenSSL header
+	CppCommon : header + lib
+	CppServer + fmt : header + lib
+	KwLib64 header + lib
+	Server source
+	Site DLL source
+
+무료
+C:\Dropbox\Proj\KHttpMdl  : 서버실행파일과 사이트 프로젝트 포함
+	서버 실행 파일과
+	KwLib64 header source + lib file
+	Site DLL source
+

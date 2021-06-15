@@ -1,0 +1,20 @@
+- Warning -
+0. Copy the entire solution directory including subdirectories to work on the project.
+
+1. To debug this project, first, 'Debugging/Command' in the Project Property window should be 
+    '..\..\..\bin\$(PlatformTarget)\$(Configuration)\WinpachePro.exe'.
+
+2. If you get a build error, first make sure the build platform is x64, not 'Any CPU'.
+
+3. Check that the output file MFCLibrary1.dll is saved in 'Winpache Site Source\bin'.
+
+4. When deploying, if you want to overwrite this DLL file while the server is running, 
+    you can overwrite it after running [Free Site Library] from the Winpache menu.
+
+
+- Summary-
+0. Copy solution.
+1. 'Debugging/Command' is WinpachePro.exe
+2. Platform x64
+3. Checking '$(OutDir)'
+4. To overwrite DLL, [Free Site Library].

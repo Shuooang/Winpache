@@ -1,0 +1,692 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="소스 파일\all">
+      <UniqueIdentifier>{07ec52f4-b69e-4dc0-ac53-5609eb7ad4ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\all">
+      <UniqueIdentifier>{a1d58299-95fc-4123-ad8a-be03125008ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\all\erros">
+      <UniqueIdentifier>{da7c22f3-5db9-41a8-adec-898563512604}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\algorithms\token_bucket.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\cache\filecache.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\cache\memcache.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\common\flags.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\common\function.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\common\reader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\common\uint128.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\common\uint256.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\common\version.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\common\writer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\containers\bintree.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\containers\bintree_aa.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\containers\bintree_avl.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\containers\bintree_rb.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\containers\bintree_splay.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\containers\flatmap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\containers\hashmap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\containers\list.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\containers\queue.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\containers\stack.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\errors\exceptions.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\errors\exceptions_handler.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\errors\fatal.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\errors\system_error.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\filesystem\directory.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\filesystem\directory_iterator.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\filesystem\exceptions.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\filesystem\file.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\filesystem\filesystem.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\filesystem\path.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\filesystem\symlink.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\math\math.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\memory\allocator.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\memory\allocator_arena.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\memory\allocator_heap.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\memory\allocator_null.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\memory\allocator_pool.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\memory\allocator_stack.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\memory\memory.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\memory\memory_leaks.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\memory\memory_leaks_debug.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\string\encoding.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\string\format.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\string\string_utils.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\system\console.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\system\cpu.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\system\dll.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\system\environment.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\system\exceptions.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\system\pipe.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\system\process.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\system\shared_memory.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\system\shared_type.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\system\source_location.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\system\stack_trace.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\system\stack_trace_manager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\system\stream.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\system\uuid.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\barrier.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\condition_variable.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\critical_section.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\event_auto_reset.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\event_manual_reset.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\file_lock.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\latch.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\locker.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\mpmc_ring_queue.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\mpsc_linked_batcher.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\mpsc_linked_queue.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\mpsc_ring_buffer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\mpsc_ring_queue.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\mutex.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\named_condition_variable.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\named_critical_section.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\named_event_auto_reset.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\named_event_manual_reset.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\named_mutex.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\named_rw_lock.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\named_semaphore.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\rw_lock.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\semaphore.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\seq_lock.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\spin_barrier.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\spin_lock.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\spsc_ring_buffer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\spsc_ring_queue.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\thread.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\wait_batcher.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\wait_queue.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\threads\wait_ring.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\time\time.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\time\timespan.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\time\timestamp.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\time\timezone.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\utility\countof.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\utility\endian.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\utility\iostream.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\utility\resource.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\utility\singleton.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include=".\include\utility\static_constructor.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CppCommon3.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\algorithms\token_bucket.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\cache\filecache.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\common\reader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\common\uint128.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\common\uint256.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\common\writer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\errors\exceptions2.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\errors\exceptions_handler.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\errors\fatal.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\errors\system_error.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\filesystem\directory.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\filesystem\directory_iterator.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\filesystem\exceptions.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\filesystem\file.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\filesystem\path.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\filesystem\symlink.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\math\math.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\memory\memory.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\string\encoding.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\string\string_utils.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\system\console.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\system\cpu.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\system\dll.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\system\environment.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\system\pipe.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\system\process.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\system\shared_memory.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\system\stack_trace.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\system\stack_trace_manager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\system\stream.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\system\uuid.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\barrier.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\condition_variable.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\critical_section.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\event_auto_reset.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\event_manual_reset.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\file_lock.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\latch.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\mutex.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\named_condition_variable.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\named_critical_section.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\named_event_auto_reset.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\named_event_manual_reset.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\named_mutex.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\named_rw_lock.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\named_semaphore.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\rw_lock.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\semaphore.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\threads\thread.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\time\time.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\time\timestamp.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include=".\source\time\timezone.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".\include\algorithms\token_bucket.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\cache\filecache.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\cache\memcache.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\common\flags.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\common\function.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\common\uint128.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\common\uint256.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\containers\bintree.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\containers\bintree_aa.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\containers\bintree_avl.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\containers\bintree_rb.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\containers\bintree_splay.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\containers\flatmap.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\containers\hashmap.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\containers\list.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\containers\queue.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\containers\stack.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\filesystem\directory.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\filesystem\directory_iterator.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\filesystem\file.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\filesystem\path.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\filesystem\symlink.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\math\math.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\memory\allocator.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\memory\allocator_arena.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\memory\allocator_heap.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\memory\allocator_null.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\memory\allocator_pool.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\memory\allocator_stack.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\memory\memory.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\string\format.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\string\string_utils.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\system\console.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\system\dll.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\system\pipe.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\system\process.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\system\shared_type.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\system\source_location.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\system\stream.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\system\uuid.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\threads\condition_variable.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\threads\latch.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\threads\mpmc_ring_queue.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\threads\mpsc_linked_batcher.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\threads\mpsc_linked_queue.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\threads\mpsc_ring_buffer.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\threads\mpsc_ring_queue.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\threads\named_condition_variable.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\threads\seq_lock.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\threads\spin_barrier.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\threads\spin_lock.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\threads\spsc_ring_buffer.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\threads\spsc_ring_queue.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\threads\thread.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\threads\wait_batcher.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\threads\wait_queue.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\threads\wait_ring.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\time\time.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\time\timespan.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\time\timestamp.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\time\timezone.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\utility\endian.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+    <None Include=".\include\utility\static_constructor.inl">
+      <Filter>헤더 파일</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include=".\source\CppCommon2\ReadMe.txt" />
+  </ItemGroup>
+</Project>

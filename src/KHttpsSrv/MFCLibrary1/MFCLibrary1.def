@@ -1,0 +1,9 @@
+; MFCLibrary1.def : Declares the module parameters for the DLL.
+
+LIBRARY
+
+EXPORTS
+    ;ExportedFunction2   DATA
+    ;ExportedFunction3   DATA
+    ; SampleExSelectUUID   DATA ; __declspec( dllexport) 을 함수 앞에 붙이면 여기 안해 줘도 된다.
+    ; Explicit exports can go here
