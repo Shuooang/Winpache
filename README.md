@@ -16,7 +16,7 @@ It also contains the template source to add the API to, and there is a tutorial 
 https://www.dropbox.com/sh/sz1g0dcznm9mdvr/AABMk2vefdUZv955EwReA-y5a?dl=0
 
 
-# Start for simple a web server
+# Start for simple a Web Server
 1. Run WinpacheSetup.msi
 2. Run the "Start Winpache Project" app that is 'StartWinpache.exe'
 3. Click the [Start Winpache Pro Server] button, then Winpache Pro app will run.
@@ -28,7 +28,7 @@ https://www.dropbox.com/sh/sz1g0dcznm9mdvr/AABMk2vefdUZv955EwReA-y5a?dl=0
 2. If you stop and start the configured server, the main DB is applied and basic logs are managed.
 3. This basic main DB is separate from the site DB.
 
-# Start for a web application server (WAS)
+# Start for a Web Application Server (WAS)
 1. In 'Winpache Pro', set the web document location and etc configuration.
 2. In the database menu group, run the HeidiSQL and create database and tables.
 3. Then, if you click the [Connect to site DB] menu next to the [Restart] menu, the web server is connected to the site server in the site DB.
