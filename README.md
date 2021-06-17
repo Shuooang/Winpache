@@ -29,9 +29,9 @@ https://www.dropbox.com/sh/sz1g0dcznm9mdvr/AABMk2vefdUZv955EwReA-y5a?dl=0
 3. This basic main DB is separate from the site DB.
 
 # Start for a web server with API functions
-1. == same as above
-2. == same as above
-3. == same as above
-4. == same as above
+1. == same as simple web server
+2. == same as simple web server
+3. == same as simple web server
+4. == same as simple web server
 5. In the database menu group, go through the numbered menus one by one in order.
 6. Start the server, then a simple web server will run.
