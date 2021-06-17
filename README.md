@@ -11,9 +11,9 @@ It also contains the template source to add the API to, and there is a tutorial 
  DLL project for site API.
 
 # Setup
-[Winpache.msi and setup.exe](https://www.dropbox.com/sh/sz1g0dcznm9mdvr/AABMk2vefdUZv955EwReA-y5a?dl=0)
+[Download ReleaseWinpache.zip packed Winpache.msi and setup.exe](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
 
-https://www.dropbox.com/sh/sz1g0dcznm9mdvr/AABMk2vefdUZv955EwReA-y5a?dl=0
+https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=0
 
 
 # Start for simple a Web Server
