@@ -1,3 +1,8 @@
+# Winpache source
+Only those who study the inside of 'Winpache' need the above source, and the developer who will build the server only needs to download the following Winpache setup files. 
+
+It also contains the template source to add the API to, and there is a tutorial in the menu.
+
 # Winpache
  HTTP Project VC++.
  
