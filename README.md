@@ -11,7 +11,7 @@ It also contains the template source to add the API to, and there is a tutorial 
  DLL project for site API.
 
 # Setup
-[Download ReleaseWinpache.zip packed Winpache.msi and setup.exe](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
+[Download ReleaseWinpache.zip](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
 
 https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=0
 
