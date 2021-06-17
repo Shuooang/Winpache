@@ -79,7 +79,7 @@
     <OutDir>$(APPDATA)\Winpache\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(TEMP)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>Wincatcher</TargetName>
-    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -126,8 +126,8 @@
       <Path>$(OutDir)$(MSBuildProjectName).log</Path>
     </BuildLog>
     <PostBuildEvent>
-      <Command>copy $(OutDirFullPath)$(TargetName).* $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Command>
-      <Message>copy $(OutDirFullPath)$(TargetName).* $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Message>
+      <Command>copy $(OutDirFullPath)$(TargetName)$(TargetExt) $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Command>
+      <Message>copy $(OutDirFullPath)$(TargetName)$(TargetExt) $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -216,8 +216,8 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>copy $(OutDirFullPath)$(TargetName).* $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Command>
-      <Message>copy $(OutDirFullPath)$(TargetName).* $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Message>
+      <Command>copy $(OutDirFullPath)$(TargetName)$(TargetExt) $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Command>
+      <Message>copy $(OutDirFullPath)$(TargetName)$(TargetExt) $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

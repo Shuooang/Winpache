@@ -127,13 +127,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(APPDATA)\Outbin\$(SolutionName)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(TEMP)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir>$(APPDATA)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>CppServer</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugStatic|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(APPDATA)\Outbin\$(SolutionName)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(TEMP)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir>$(APPDATA)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>CppServer</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -163,13 +163,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(APPDATA)\Outbin\$(SolutionName)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(TEMP)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir>$(APPDATA)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>CppServer</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseStatic|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(APPDATA)\Outbin\$(SolutionName)\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(TEMP)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir>$(APPDATA)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>CppServer</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">

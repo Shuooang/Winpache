@@ -67,7 +67,9 @@ BOOL CStartWinpacheApp::InitInstance()
 	// Change the registry key under which our settings are stored
 	// TODO: You should modify this string to be something appropriate
 	// such as the name of your company or organization
-	SetRegistryKey(_T("Local AppWizard-Generated Applications"));
+	SetRegistryKey(_T("Keepspeed"));
+	free((void*)m_pszProfileName);
+	m_pszProfileName = _tcsdup(L"StartWinpache");
 
 	CStartWinpacheDlg dlg;
 	m_pMainWnd = &dlg;

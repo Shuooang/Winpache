@@ -95,11 +95,17 @@ PAS CApiBase::CheckDB(PWS sDSN, shared_ptr<KDatabase> dbLog)
 /// DB open은 기정 사실화 하고, 다시 체크 하는 거다.
 PAS CApiBase::CheckDB()
 {
+	AUTOLOCK(_mxDbLog);//'Packets out of order' 이걸 해도 이 오류가 계속 나네
 	PAS rs = NULL;
 	if (_db.IsOpen())
 		_db.TimeCheckReopen();
-	else
-		_db.Reopen();
+	else if (_db.IsReopenable())     /// DB connect 없이 CheckDB() 들어 오면 IsReopenable로 연결되었는지 체크 하고
+		_db.Reopen();                /// 다시 연결 한다.
+	else                             /// 그리 하여 DB연결 안된 경우도 response 하도록 CDBException을 방지 한다.
+	{
+		rs = "Site DB is not connected."; /// 문자열 오류 리턴 하여, 메시지로 내보낸다.
+		return rs;
+	}
 	
 	ASSERT(_db._dbLog);
 	if (_db._dbLog->IsOpen())
@@ -110,7 +116,7 @@ PAS CApiBase::CheckDB()
 			_db._dbLog->Reopen();
 		else
 		{
-			rs = "_dbLog not opened";
+			rs = "DB for log is not connected."; /// 문자열 오류 리턴 하여, 메시지로 내보낸다.
 			TRACE("%s\n", rs);
 		}
 	}
@@ -678,7 +684,7 @@ int CApiBase::FileOpen(string url, KBinary& fbuf)
 	try
 	{
 		CStringW lcw(local);
-		CFile f(lcw, CFile::modeRead);
+		CFile f(lcw, CFile::modeRead | CFile::shareDenyNone);/// 동시에 보내면 파일 공유위반 exception이 나서 shareDenyNone 해본다.
 		KAtEnd d_f([&]() { f.Close(); });
 		
 		auto len = f.GetLength();

@@ -159,7 +159,10 @@ void CSrvView::OnInitialUpdate()
 		});
 
 	SrvDoc* doc = GetDocument();
-
+	doc->_svr->_api->AddCabackOutput([&](PAS msg, int err) -> void
+		{
+			Trace(msg);
+		});
 
 	int nCol = 0;
 	auto arLC = GetArListConf(&nCol);

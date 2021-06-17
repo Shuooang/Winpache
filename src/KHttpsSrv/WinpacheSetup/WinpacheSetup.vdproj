@@ -147,12 +147,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_3B84638BAE2E4AD8A7D4759990BCB2DF"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_3EEE7F46AD61408587F99759FC6C0067"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -255,12 +249,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_5AEB86C087EE49C6B4D384C62DB53339"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_5BF92AD6342E4C4FA4B96D4B4E1A0CB1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -298,12 +286,6 @@
         "Entry"
         {
         "MsmKey" = "8:_69324C24C985479AAB4F105B27DE20FD"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_6A7BAC1F0BE443C9BDC89B54D212791F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -435,6 +417,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_890B2CA20A13410493C69CC78F63EF89"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_8AD4E78FDEBE411DB55C752B3100C46C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -454,12 +442,6 @@
         "Entry"
         {
         "MsmKey" = "8:_924F6C300B7745D8B7DD6AE39D94DB49"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9279FAB3CD8E4551B1025FE34D341E0E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -609,18 +591,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_C8A7A171737C44E7A2EC671EB8E425E6"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_C8C709BCB5264DB293B6E2226F7060AA"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_CBEE4551EC014191B46BED295EC2881C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -741,7 +711,7 @@
         "InstallerBootstrapper" = "3:2"
             "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
             {
-            "Enabled" = "11:FALSE"
+            "Enabled" = "11:TRUE"
             "PromptEnabled" = "11:TRUE"
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
@@ -773,18 +743,13 @@
         "InstallerBootstrapper" = "3:2"
             "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
             {
-            "Enabled" = "11:FALSE"
+            "Enabled" = "11:TRUE"
             "PromptEnabled" = "11:TRUE"
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:https://www.dropbox.com/sh/sz1g0dcznm9mdvr/AABMk2vefdUZv955EwReA-y5a?dl=0"
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6"
-                    {
-                    "Name" = "8:Microsoft .NET Framework 4.6 (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.6"
-                    }
                     "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Visual.C++.14.0.x64"
                     {
                     "Name" = "8:Visual C++ \"14\" Runtime Libraries (x64)"
@@ -1261,26 +1226,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3B84638BAE2E4AD8A7D4759990BCB2DF"
-            {
-            "SourcePath" = "8:..\\..\\..\\bin\\x64\\Release\\KwLib64.pdb"
-            "TargetName" = "8:KwLib64.pdb"
-            "Tag" = "8:"
-            "Folder" = "8:_EA55028DB26E49E2A27CE36F104CA69D"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:TRUE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3EEE7F46AD61408587F99759FC6C0067"
             {
             "SourcePath" = "8:..\\MFCLibrary1\\MFCLibrary1.vcxproj.user"
@@ -1621,26 +1566,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5AEB86C087EE49C6B4D384C62DB53339"
-            {
-            "SourcePath" = "8:..\\..\\..\\bin\\x64\\Debug\\MFCLibrary1.lib"
-            "TargetName" = "8:MFCLibrary1.lib"
-            "Tag" = "8:"
-            "Folder" = "8:_CFCDAC76D829408CB6031FF3DAD84AA3"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5BF92AD6342E4C4FA4B96D4B4E1A0CB1"
             {
             "SourcePath" = "8:..\\..\\..\\Lib\\KwLib64\\ktypedef.h"
@@ -1767,26 +1692,6 @@
             "TargetName" = "8:GdiTool.h"
             "Tag" = "8:"
             "Folder" = "8:_64CE156ABE94423CA9CA116C2CA78014"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6A7BAC1F0BE443C9BDC89B54D212791F"
-            {
-            "SourcePath" = "8:C:\\Users\\dwkang\\AppData\\Roaming\\Winpache\\bin\\x64\\Release\\StartWinpache.exe"
-            "TargetName" = "8:StartWinpache.exe"
-            "Tag" = "8:"
-            "Folder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2221,6 +2126,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_890B2CA20A13410493C69CC78F63EF89"
+            {
+            "SourcePath" = "8:..\\..\\..\\bin\\x64\\Release\\StartWinpache.exe"
+            "TargetName" = "8:StartWinpache.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8AD4E78FDEBE411DB55C752B3100C46C"
             {
             "SourcePath" = "8:..\\..\\..\\Lib\\KwLib64\\KVal.h"
@@ -2294,26 +2219,6 @@
             "Hidden" = "11:FALSE"
             "System" = "11:FALSE"
             "Permanent" = "11:TRUE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9279FAB3CD8E4551B1025FE34D341E0E"
-            {
-            "SourcePath" = "8:..\\..\\..\\bin\\x64\\Debug\\MFCLibrary1.exp"
-            "TargetName" = "8:MFCLibrary1.exp"
-            "Tag" = "8:"
-            "Folder" = "8:_CFCDAC76D829408CB6031FF3DAD84AA3"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
@@ -2794,26 +2699,6 @@
             "Hidden" = "11:FALSE"
             "System" = "11:FALSE"
             "Permanent" = "11:TRUE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C8C709BCB5264DB293B6E2226F7060AA"
-            {
-            "SourcePath" = "8:..\\..\\..\\bin\\x64\\Debug\\KwLib64.pdb"
-            "TargetName" = "8:KwLib64.pdb"
-            "Tag" = "8:"
-            "Folder" = "8:_CFCDAC76D829408CB6031FF3DAD84AA3"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
@@ -3471,7 +3356,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Winpache"
         "ProductCode" = "8:{C6BBA0AA-AB29-4BE9-9850-D841EDF62870}"
-        "PackageCode" = "8:{AED9E693-6649-4F33-8EB9-383B244119CE}"
+        "PackageCode" = "8:{AA8611B7-D002-45B1-8030-0877BBF46CF5}"
         "UpgradeCode" = "8:{12F6DA17-2387-42A9-90C4-63FC13241552}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
@@ -3591,6 +3476,20 @@
         }
         "Shortcut"
         {
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_07C84209C89548E89D64868044C9EACA"
+            {
+            "Name" = "8:Start Winpache Project"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:131"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_890B2CA20A13410493C69CC78F63EF89"
+            "Folder" = "8:_2D2221412F144DE1B35F7FF05383ED81"
+            "WorkingFolder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
+            "Icon" = "8:_890B2CA20A13410493C69CC78F63EF89"
+            "Feature" = "8:"
+            }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_32837E0EC9FF428EAD779179380771D5"
             {
             "Name" = "8:Setup MSVC Shared Redist DLL(x64)"
@@ -3603,20 +3502,6 @@
             "Folder" = "8:_19C5C960E2464874A4C7507560711E33"
             "WorkingFolder" = "8:_1A7E183B8E8A48C4A777B9D6AC4173FE"
             "Icon" = "8:_35037514C232451E87590CF79249B415"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_4C9BCA32E45348DD9A26901267136B14"
-            {
-            "Name" = "8:Start Winpache Project"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_6A7BAC1F0BE443C9BDC89B54D212791F"
-            "Folder" = "8:_2D2221412F144DE1B35F7FF05383ED81"
-            "WorkingFolder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
-            "Icon" = "8:"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_61EB3980D31043428B41D5AFDDF574E4"
@@ -3647,20 +3532,6 @@
             "Icon" = "8:"
             "Feature" = "8:"
             }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_70E4E3B9382341538C1BF05031077B43"
-            {
-            "Name" = "8:Start Winpache Project"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_6A7BAC1F0BE443C9BDC89B54D212791F"
-            "Folder" = "8:_19C5C960E2464874A4C7507560711E33"
-            "WorkingFolder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
-            "Icon" = "8:"
-            "Feature" = "8:"
-            }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_C6CCA28ADAF2423BA6842DD0918DF41E"
             {
             "Name" = "8:Most Popular Programming Languages (1965-2021)"
@@ -3673,6 +3544,20 @@
             "Folder" = "8:_19C5C960E2464874A4C7507560711E33"
             "WorkingFolder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
             "Icon" = "8:"
+            "Feature" = "8:"
+            }
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_D3F1A1D7C8C34B3C9019FB6677B5F6B6"
+            {
+            "Name" = "8:Start Winpache Project"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:131"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_890B2CA20A13410493C69CC78F63EF89"
+            "Folder" = "8:_19C5C960E2464874A4C7507560711E33"
+            "WorkingFolder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
+            "Icon" = "8:_890B2CA20A13410493C69CC78F63EF89"
             "Feature" = "8:"
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_D524CC765D074F518F4F00AA6AF0E7FC"
@@ -4088,34 +3973,6 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_C8A7A171737C44E7A2EC671EB8E425E6"
-            {
-            "SourcePath" = "8:C:\\Users\\dwkang\\AppData\\Roaming\\Winpache\\bin\\x64\\Release\\StartWinpache.exe"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:Release|x64"
-            "OutputGroupCanonicalName" = "8:Built"
-            "OutputProjectGuid" = "8:{C99DBC64-28CE-4F6C-B918-9FCA0184F389}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
         }
     }
 }

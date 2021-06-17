@@ -77,7 +77,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(APPDATA)\Winpache\bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(TEMP)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir>$(APPDATA)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -85,8 +85,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(APPDATA)\Winpache\bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(TEMP)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+    <IntDir>$(APPDATA)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -117,6 +117,12 @@
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>copy $(OutDirFullPath)$(TargetName)$(TargetExt) $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>copy $(OutDirFullPath)$(TargetName)$(TargetExt) $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -162,6 +168,12 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>copy $(OutDirFullPath)$(TargetName)$(TargetExt) $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>copy $(OutDirFullPath)$(TargetName)$(TargetExt) $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Message>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

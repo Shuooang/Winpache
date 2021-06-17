@@ -107,7 +107,12 @@ BOOL CMFCExHttpsSrvApp::InitInstance()
 	// Change the registry key under which our settings are stored
 	// TODO: You should modify this string to be something appropriate
 	// such as the name of your company or organization
-	SetRegistryKey(_T("WinpachePro"));//?zzz// Local AppWizard - Generated Applications"));
+	SetRegistryKey(_T("Keepspeed"));/// 이건 SOFTWARE 바로 밑에 생기는 것이다. WinpachePro_k"));//?zzz// Local AppWizard - Generated Applications"));
+	/// 이렇게 주면 안된다. free 하고 _tcsdup해서 할당 해야 내부적으로 free할때 안죽는다.
+	///m_pszProfileName = L"WinpachePro";
+	free((void*)m_pszProfileName);
+	m_pszProfileName = _tcsdup(L"WinpachePro");// m_pszAppName);는 어디서 초기화 되는지 몰라서 긱접.
+
 	LoadStdProfileSettings(10);  // Load standard INI file options (including MRU)
 
 	CMainPool::Pool(8);//?zzz

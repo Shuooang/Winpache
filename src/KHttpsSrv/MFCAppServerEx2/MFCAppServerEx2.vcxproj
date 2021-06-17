@@ -78,9 +78,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(APPDATA)\Winpache\bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(TEMP)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir>$(APPDATA)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>Winpache</TargetName>
-    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -95,7 +95,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(APPDATA)\Winpache\bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(TEMP)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir>$(APPDATA)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <TargetName>Winpache</TargetName>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
@@ -126,8 +126,8 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>copy $(OutDirFullPath)$(TargetName).* $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Command>
-      <Message>copy $(OutDirFullPath)$(TargetName).* $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Message>
+      <Command>copy $(OutDirFullPath)$(TargetName)$(TargetExt) $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Command>
+      <Message>copy $(OutDirFullPath)$(TargetName)$(TargetExt) $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -217,8 +217,8 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PostBuildEvent>
-      <Command>copy $(OutDirFullPath)$(TargetName).* $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Command>
-      <Message>copy $(OutDirFullPath)$(TargetName).* $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Message>
+      <Command>copy $(OutDirFullPath)$(TargetName)$(TargetExt) $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Command>
+      <Message>copy $(OutDirFullPath)$(TargetName)$(TargetExt) $(ProjectDir)..\..\..\bin\$(PlatformTarget)\$(Configuration)</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

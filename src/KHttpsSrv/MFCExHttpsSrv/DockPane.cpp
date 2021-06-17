@@ -85,7 +85,7 @@ KDockPane::~KDockPane()
 	SettingDock(type##Pane::GetThisClass(), title, 0, style)
 
 #define SettingDOCK(type, title, style) \
-	SettingDock(type##Pane::GetThisClass(), title, IDD_##type, CBRS_##style, IDI_##type##_HC)
+	SettingDock(type##Pane::GetThisClass(), title, IDD_##type, style, IDI_##type##_HC)
 ///  SettingDock(DockEx1Pane::GetThisClass(), L"샘플독1", IDD_DockEx1, CBRS_LEFT),
 
 void KDockPane::InitDocks(CFrameWnd* mframe)
@@ -101,9 +101,10 @@ void KDockPane::InitDocks(CFrameWnd* mframe)
 		//SettingDOCK(DockEx2, L"DockEx2", LEFT),
 
 		/// 앞으로 만들 독
-		SettingDOCK(DockTestApi, L"Test API", RIGHT),
-		SettingDOCK(DockOdbc, L"Connect to DB", RIGHT),
-
+		SettingDOCK(DockTestApi, L"Test API", CBRS_RIGHT),
+		SettingDOCK(DockOdbc, L"Connect to DB", CBRS_FLOATING), // | CBRS_RIGHT),
+		/// CDockablePane::DockToFrameWindow 에서 CBRS_ALIGN_ANY 중 하나 적어도 선택 해야 하는데 
+		/// 안하고 안되나?
 	};
 	//auto rc = DockEx1Pane::GetThisClass();
 
@@ -131,8 +132,29 @@ BOOL KDockPane::CreateDockingWin(SettingDock& sk)
 			IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
 		pane->SetIcon(hIcon, FALSE);
 
+		if(sk._dwStyle & CBRS_ALIGN_ANY)
+		{
+			_mframe->DockPane(pane);
+		}
+		else if (sk._dwStyle & CBRS_FLOATING)//dialog처럼 쓰려고
+		{
+			CSize szDd(300, 300);//dock dlg의 크기
+			if (sk._nID == IDD_DockOdbc)
+				szDd = CSize(250, 250);
+			CRect rcw;
+			auto mf = AfxGetMainWnd();
+			mf->GetWindowRect(&rcw);
+			CPoint pfl((rcw.right - rcw.left - szDd.cx) / 2, (rcw.bottom - rcw.top - szDd.cy) / 2);
+			pane->FloatPane(CRect(pfl, szDd), DM_UNKNOWN, false);
+			auto fp = GetDockPane(sk._nID);
+			//[DockClientBase::ShowHide(mf, *pane, TRUE);
+			BOOL bShow = FALSE;
+			pane->ShowPane(bShow, TRUE, TRUE);///CBRS_FLOATING인 창은 어차피 dlg용도로 사용 하므로 처음엔 hide시킨다.
+			_mframe->RecalcLayout(FALSE);
+			//]
+		}
+
 		pane->EnableDocking(CBRS_ALIGN_ANY);
-		_mframe->DockPane(pane);
 		m_docks[sk._nID] = pane;
 	}
 	return b;
@@ -300,9 +322,9 @@ LRESULT DockClientBase::WindowProc(UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 
-void DockClientBase::ShowHide(CMDIFrameWndEx* frm, CBasePane& win, BOOL bShow)
+void DockClientBase::ShowHide(CMDIFrameWndEx* frm, CBasePane& pane, BOOL bShow)
 {
-	win.ShowPane(bShow, TRUE, TRUE);
+	pane.ShowPane(bShow, TRUE, TRUE);
 	frm->RecalcLayout(FALSE);
 }
 

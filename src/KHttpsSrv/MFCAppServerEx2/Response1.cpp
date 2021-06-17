@@ -269,7 +269,12 @@ int CResponse1::ResponseForPost(KSessionInfo& sinfo, shared_ptr<KBinData> body, 
 		JObj jpa = jbj.Oref("params");
 		JObj jsr;
 
-		_api->CheckDB();
+		CStringA rs = _api->CheckDB();
+		if(rs.GetLength() > 0)/// 연결 안되어 있으면 창쪽으로 메시지 내보애기 위해 _fncOutput 으로 내보낸다.
+		{
+			if (_api->_fncOutput)/// 이렇게 함으로써 DB연결 안되어 있어도 DB랑 관계 없는 static response를 허락 한다.
+				(*_api->_fncOutput)(rs, 0);
+		}
 	
 		CFuncItem* funcItm = nullptr;
 		if(_api->m_mapRFncs.Lookup(fncA, funcItm))//jproc);

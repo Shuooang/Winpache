@@ -176,7 +176,7 @@ void HTTPCacheServer::onError(int error, const string& category, const string& m
 /// CMyHttps의 것과 동일
 void HTTPCacheServer::onStarted()
 {
-	std_cout << "HTTPSCacheServer::onStarted " << std_endl;
+	std_cout << "HTTPCacheServer::onStarted " << std_endl;
 	if(_fncOnStarted.get())
 		(*_fncOnStarted.get())();
 }
@@ -185,7 +185,7 @@ void HTTPCacheServer::onStarted()
 /// CMyHttps의 것과 동일
 void HTTPCacheServer::onStopped()
 {
-	std_cout << "HTTPSCacheServer::onStopped " << std_endl;
+	std_cout << "HTTPCacheServer::onStopped " << std_endl;
 	if(_fncOnStopped.get())
 		(*_fncOnStopped.get())();//?destroy 4
 }
@@ -194,7 +194,7 @@ void HTTPCacheServer::onStopped()
 /// CMyHttps의 것과 동일
 void HTTPCacheServer::onConnected(shared_ptr<TCPSession>& session)
 {
-	std_cout << "HTTPSCacheServer::onConnected " << std_endl;
+	std_cout << "HTTPCacheServer::onConnected " << std_endl;
 	if(_fncOnConnected.get())
 		(*_fncOnConnected.get())(*(HTTPCacheSession*)session.get());
 }

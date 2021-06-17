@@ -83,6 +83,14 @@ public:
 		return CheckDB(sDSN, dbLog);
 	}
 
+	/// <summary>
+	/// 내부에서 에러 메시지 내 보낼때, output창 등으로 내보낼때 이 람다를 부른다.
+	/// </summary>
+	shared_ptr<function<void(PAS, int)>> _fncOutput;
+	template<typename TFNC> void AddCabackOutput(TFNC fnc)
+	{
+		_fncOutput = std::make_shared<function<void(PAS, int)>>(fnc);
+	}
 	virtual PAS CheckDB();
 
 	virtual int DoDbLog(PWS sql, DWORD elapesed);
