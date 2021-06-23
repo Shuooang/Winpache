@@ -64,8 +64,11 @@ void KDatabase::Reopen()
 	CString sDSN = GetConnect();
 	if (sDSN.GetLength() == 0)
 		throw "DSN is null.";// 아직 한번도 연결 시도 하지 않은 개발 오류 : 처리되지 않는 오류.
-	CString sDSN1 = sDSN.Mid(5);
-	ASSERT(sDSN.Left(5) == L"ODBC;");
+	CString sDSN1;
+	if(sDSN.GetLength() > 5 && sDSN.Left(5) == L"ODBC;")
+		sDSN1 = sDSN.Mid(5);
+	else
+		sDSN1 = sDSN;
 	OpenEx(sDSN1);
 	//CRecordset::Open DB Error:데이터 원본 이름이 없고 기본 드라이버를 지정하지 않았습니다.
 }
@@ -1341,6 +1344,112 @@ int KDatabase::RegGetODBCMySQL(LPCWSTR sDSN, KWStrMap& kmap)// LPCTSTR sServer, 
 
 	return 0;
 }
+
+
+
+void KDatabase::CreateTablesInFolder(PWS folder)
+{
+	KDatabase& db = *this;
+	CString path1 = folder;
+	if(path1.Right(1) != '\\')
+		path1 += '\\';
+	WIN32_FIND_DATA wfd;
+	HANDLE h = FindFirstFile(path1 + L"*.sql", &wfd);
+	if(h == INVALID_HANDLE_VALUE)
+		throw_str("SQL file not found int folder.");
+
+	//CString allErr;
+	KStdMap<wstring, wstring> artrg;//trigger는 table 다만든 후 한다.
+	KStdMap<wstring, wstring> arvu;//trigger는 table 다만든 후 한다.
+	for(;;)
+	{
+		CString fname = wfd.cFileName;
+		if(!(wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+		{
+			CString fnamew = path1 + fname;
+			CStringA sql;//utf8
+			if(!KwReadSmallTextFileA(fnamew, sql))
+			{
+				CStringA s; s.Format("%s file not found.", fname);
+				throw_str(s);
+			}
+			CStringW sqlw;
+			KwUTF8ToWchar(sql, sqlw);
+			if(sqlw.Find(L"CREATE TRIGGER") >= 0)
+				artrg.SetAt((PWS)fname, (PWS)sqlw);
+			else if(sqlw.Find(L"CREATE ") >= 0 && sqlw.Find(L" VIEW ") >= 0)
+				arvu.SetAt((PWS)fname, (PWS)sqlw);
+			else
+			{
+				KArray<wstring> ar;
+				SplitSQL(sqlw, ar);
+				for(int i = 0; i < ar.GetCount(); i++)
+				{
+					try
+					{
+						db.ExecuteSQL(ar[i].c_str());
+					}
+					catch(CDBException* e)
+					{
+						(*_fncExceptionCTF)(fname, ar[i].c_str(), e);
+// 						CString smsg; smsg.Format(L"Error! %s: %s, %s.", fname, e->m_strError, e->m_strStateNativeOrigin);
+// 						allErr += smsg + L"\r\n";
+					}
+				}
+			}
+		}
+		if(FindNextFile(h, &wfd) == FALSE)
+			break;
+	}
+	FindClose(h);
+
+	for(auto& [fn, wsql] : artrg)
+	{
+		KArray<wstring> ar;
+		CStringW sqlw(wsql.c_str());
+		SplitSQL(sqlw, ar);
+		for(int i = 0; i < ar.GetCount(); i++)
+		{
+			try
+			{
+				db.ExecuteSQL(ar[i].c_str());
+			}
+			catch(CDBException* e)
+			{
+				/// CREATE TRIGGER 에서 위 아래 DELIMITER 문 오류 나서, 빼고 하니, 결국 지원 안하네.
+				//+m_strError	L"This command is not supported in the prepared statement protocol yet\n"
+				//+ m_strStateNativeOrigin	L"State:S1000,Native:1295,Origin:[ma-3.1.12][10.5.10-MariaDB]\n"
+				(*_fncExceptionCTF)(fn.c_str(), ar[i].c_str(), e);
+			}
+		}
+	}
+	for(auto& [fn, wsqlv] : arvu)
+	{
+		KArray<wstring> ar;
+		CStringW sqlw(wsqlv.c_str());
+		SplitSQL(sqlw, ar);
+		for(int i = 0; i < ar.GetCount(); i++)
+		{
+			try
+			{
+				db.ExecuteSQL(ar[i].c_str());
+			}
+			catch(CDBException* e)
+			{
+				(*_fncExceptionCTF)(fn.c_str(), ar[i].c_str(), e);
+			}
+		}
+	}
+// 	if(allErr.GetLength())
+// 		throw_str(allErr);
+}
+
+/// <summary>
+/// create table.. 이 있는 sql 파일이 있어야 하며, 
+/// database는 지정되어있지 않았으므로 use `database`를 해줘야 한다.
+/// </summary>
+/// <param name="db">CDatabase dereved class</param>
+/// <param name="fname">file name</param>
 void KDatabase::CreateTable(KDatabase& db, PAS fname)
 {
 	CStringA sql;//utf8
@@ -1352,5 +1461,116 @@ void KDatabase::CreateTable(KDatabase& db, PAS fname)
 	}
 	CStringW sqlw;
 	KwUTF8ToWchar(sql, sqlw);
-	db.ExecuteSQL(sqlw);
+	KArray<wstring> ar;
+	SplitSQL(sqlw, ar);
+	for(int i = 0; i < ar.GetCount(); i++)
+		db.ExecuteSQL(ar[i].c_str());
+}
+
+/// 
+/// 이런문장은 OK =>    --테이블 데이터 winpache.tuser:~1, 093 rows(대략적) 내보내기
+/// 이런문장은 Error => /*!40000 ALTER TABLE `tuser` DISABLE KEYS */;
+///   Error문장은 제거 한다.
+void KDatabase::SplitSQL(CStringW& sqlw, KArray<wstring>& ar)
+{
+	int irn = 0;
+	CString sql;
+	int nDelimiter = 0;
+	CString delimiter(L";");
+	for(; sqlw.GetLength() >= irn;)
+	{
+		auto i0 = sqlw.Find(L"\r\n", irn);
+		CString ln;
+		if(i0 >= 0)
+		{
+			ln = sqlw.Mid(irn, i0 - irn + 2);
+			irn = i0 + 2;
+		}
+		else//마지막 개행이 없는 경우
+		{
+			ln = sqlw.Mid(irn);
+			if(ln.GetLength() == 0)
+				break;
+			irn += ln.GetLength();
+		}
+
+		CString ln1 = ln;
+		ln.Trim();
+		bool bSkip = ln.GetLength() == 0; 
+		bSkip |= ln.GetLength() >= 6 && tchbegin((PWS)ln, L"/*!") && tchend((PWS)ln, L"*/;");
+		bSkip |= tchbegin((PWS)ln, L"-- ");
+
+#define _DELIMITER_IS_SQL
+
+		if(!bSkip)
+		{
+#ifdef _DELIMITER_IS_SQL
+			if(tchbegin((PWS)ln, L"DELIMITER"))
+			{
+				sql += ln1;
+				delimiter = ln.Mid(10);
+				delimiter.Trim();
+				///ar.Add((PWS)sql); DELIMITER 문은 실행 하지도 포함하지도 말아 보자.// https://forums.mysql.com/read.php?37,245058,247011#msg-247011
+				sql.Empty();
+				nDelimiter ^= 1; //스위치
+			}
+			else
+			{
+				//if(ln.Right(1) == L";")
+				if(tchend((PWS)ln, (PWS)delimiter))
+				{
+					if(nDelimiter)// DELIMITER inside 에서는
+					{
+						CString ln2 = KwReplaceStr(ln1, (PWS)delimiter, L"");// END // 에서 '//'를 빼고 더한다.
+						//ln1.TrimRight(delimiter);///안되네 이 함수
+						sql += ln2;
+					}
+					else
+						sql += ln1;
+	
+					ar.Add((PWS)sql);
+					sql.Empty();
+				}
+				else
+					sql += ln1;
+			}
+#else
+			if(tchbegin((PWS)ln, L"DELIMITER"))
+			{
+				sql += ln1;
+				delimiter = ln.Mid(10);
+				delimiter.Trim();
+				if(nDelimiter == 0) // "DELIMITER //" begin
+				{
+					nDelimiter++;
+				}
+				else // "DELIMITER ;" end
+				{
+					nDelimiter = 0;
+					ar.Add((PWS)sql);
+					sql.Empty();
+				}
+			}
+			else
+			{
+				sql += ln1;
+				if(nDelimiter)
+				{
+					// DELIMITER inside
+				}
+				else 
+				{
+					// DELIMITER outside
+					if(tchend((PWS)ln, (PWS)delimiter))
+					{
+						ar.Add((PWS)sql);
+						sql.Empty();
+					}
+				}
+			}
+#endif // _DELIMITER_IS_SQL
+
+		}
+	}
+	TRACE("SplitSQL %d sqls.\n", ar.GetCount());
 }

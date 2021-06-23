@@ -29,6 +29,7 @@ typedef HRESULT hres;
 #pragma message("defined(SlnKHttpsSrv) HTTPS server")
 #define _Use_SSL_Http
 #define _Use_GUID
+#define _Use_OpenSsl
 #endif
 
 #if defined(SlnCppServer)
@@ -87,6 +88,9 @@ typedef HRESULT hres;
 #pragma message( "#define _Use_Version")
 #endif
 
+#ifdef _Use_OpenSsl
+#pragma message( "#define _Use_OpenSsl")
+#endif
 
 #ifdef _Use_SSL_Http
 #pragma message( "#define _Use_SSL_Http")

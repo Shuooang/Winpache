@@ -62,6 +62,60 @@ public:
 
 };
 
+/*
+class KMultiException : public CException
+{
+	DECLARE_DYNAMIC(KException)
+
+	// Attributes
+public:
+	BOOL IsAutoDelete()
+	{
+#ifdef _DEBUG
+		return m_bReadyForDelete;
+#else
+		return TRUE;
+#endif
+	}
+	KException()//PAS sExcept, DWORD error, int rcde, PWS sErr, PWS sState, PAS func = NULL, int line = 0)
+		//: _sExcept(sExcept), _error(error)
+		//, m_nRetCode(rcde), m_strError(sErr), m_strStateNativeOrigin(sState)
+		//, _func(func), _line(line)
+	{
+		//Init(sExcept, error, rcde, sErr, sState, func, line);
+	}
+// 	KException(PAS sExcept, DWORD error, int rcde, PAS sErrA, PWS sState, PAS func = NULL, int line = 0)
+// 	{
+// 		Init(sExcept, error, rcde, CString(sErrA), sState, func, line);
+// 	}
+	void Add(PAS sExcept, DWORD error, int rcde, PWS sErr, PWS sState, PAS func = NULL, int line = 0)
+	{
+		_sExcept = (sExcept);
+		_error = (error); ////GetLastError() trow_response(err, "sErr") 시스템에서 얻은 값
+		m_nRetCode = (rcde); // client에서 이값에 따라 무슨 짓을 구분 하기 위함
+		m_strError = (sErr);
+		m_strStateNativeOrigin = (sState);
+		_func = (func);
+		_line = (line);
+	}
+
+	/// HTTP Request 일때 사용
+	KArray<int> _arStatus;// OK HTTP status 400(Bad Request)
+
+	KArray<int> m_arRetCode;//return -1; 이 앱애서 의미있는 구분 - 이면 오류. + 이면 상황
+
+	KArray<DWORD> _arError;//GetLastError()시스템에서 얻은 값
+
+	CString m_strError;//e->GetErrorMessage
+	CString m_strStateNativeOrigin;//ODBC에러는 추가 오류 문자열이 있다.
+
+	CStringA _sExcept;//CException GetRuntimeClass();의 CRuntimeClass::m_lpszClassName
+	CStringA _func;
+	int _line;
+	// Implementation (use AfxThrowDBException to create)
+public:
+
+};*/
 
 /// throw_??? 시리지가 발생 하면 output창에 출력이 되고 
 ///		TRACE 윗 라인을 더블클릭 하면 소스로 바로 가기 위함 이다.

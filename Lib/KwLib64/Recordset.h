@@ -193,7 +193,19 @@ public:
 
 	static int RegGetODBCMySQL(LPCWSTR sDSNA, KWStrMap& kmap);
 
+
+	shared_ptr<function<void(CString, CString, CDBException*)>> _fncExceptionCTF;
+
+	template<typename FNC>
+	void CreateTablesInFolderLD(PWS folder, FNC fnc)
+	{//default parameter가 있어도 안주면 못찾네. template라 그런가?
+		_fncExceptionCTF = make_shared<function<void(CString, CString, CDBException*)>>(fnc);
+		CreateTablesInFolder(folder);
+	}
+	void CreateTablesInFolder(PWS folder);
+
 	static void CreateTable(KDatabase& _db, PAS fname);
+	static void SplitSQL(CStringW& sqlw, KArray<wstring>& ar);
 
 	// use CString GetConnect();
 	CString GetConnectedDsn()

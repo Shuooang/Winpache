@@ -493,26 +493,14 @@ int KwGetFormattedGUID(GUID& guid, CString& rString, bool bHipn)//=true
 	guid = GUID_NULL;
 	HRESULT hr = UuidCreate(&guid);
 	if(HRESULT_CODE(hr) != RPC_S_OK)
-	{
-		//		throw "Unable to get a GUID.";
 		return 1;
-	}
 	if(guid == GUID_NULL)
-	{
-		//		throw "Unable to create new GUID.";
 		return 2;
-	}
-	// Warnings
 	if(HRESULT_CODE(hr) == RPC_S_UUID_NO_ADDRESS)
-	{
-		//		throw "Cannot get the hardware address for this computer.";
 		return 3;
-	}
 	if(HRESULT_CODE(hr) == RPC_S_UUID_LOCAL_ONLY)
-	{
-		//		throw "Warning: Unable to determine your network address.\r\n  The UUID generated is unique on this computer only.\r\n  It should not be used on another computer.";
 		return 4;
-	}
+	//		throw "Warning: Unable to determine your network address.\r\n  The UUID generated is unique on this computer only.\r\n  It should not be used on another computer.";
 
 	//9EEFC1C5-C8E5-4d92-960B-7ACE4B953268
 	PWS strFormat = bHipn ?

@@ -252,13 +252,15 @@ namespace Kw
 		//(*this)[name] = sjv;
 	}
 
-	void JObj::DeleteKey(PWS name)
+	bool JObj::DeleteKey(PWS name)
 	{
 		//JObj::const_iterator it = this->find(name);
 		if(Has(name))//it == this->end())
 		{
 			this->erase(name);
+			return true;
 		}
+		return false;
 	}
 
 
@@ -928,6 +930,7 @@ namespace Kw
 		return sjo->S(k3);
 	}
 
+	/// 복사 되는게 아니고, 내부 객체가 그대로 가르킨것이 포인터로 리턴된다.
 	ShJObj JObj::Obj(PWS k)
 	{
 		/// PWS exception
@@ -953,7 +956,7 @@ namespace Kw
 		if(Lookup(k, sjv))
 		{
 			if(sjv->IsObject())
-				return sjv->AsObject();
+				return sjv->AsObject();// shared_ptr 내부가 그대로 노출 된다.
 			else
 				throw_str("IsObject() returns false.");
 		}
@@ -1454,7 +1457,7 @@ namespace Kw
 					// We want a string now...
 					JSonKey name;
 					CHECK_FREE(!Json::ExtractString(&(++(*data)), name));
-#ifdef _DEBUG
+#ifdef _DEBUGx
 					if(wcscmp((const wchar_t*)name.c_str(), L"Script") == 0)
 					{
 						auto key = name.c_str();

@@ -503,18 +503,18 @@ public:
 
 /// wstring <-> string 상호변환
 template<typename TS1, typename TS2>
-void Ucode(TS1 str1, TS2& str2)
+void Ucode(const TS1 str1, TS2& str2)
 {//str1 -> str1
 	str2.assign(str1.begin(), str1.end());
 }
 
-inline wstring ToWStr(string str)
+inline wstring ToWStr(const string str)
 {
 	wstring ws;
 	Ucode(str, ws);
 	return ws;
 }
-inline string ToAStr(wstring ws)
+inline string ToAStr(const wstring ws)
 {
 	string as;
 	Ucode(ws, as);

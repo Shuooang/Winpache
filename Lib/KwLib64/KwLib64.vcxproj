@@ -87,13 +87,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(APPDATA)\Winpache\bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(TEMP)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
-    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+    <IntDir>$(APPDATA)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(APPDATA)\Winpache\bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(TEMP)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir>$(APPDATA)\IntDir\$(SolutionName)\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

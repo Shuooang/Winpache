@@ -39,7 +39,7 @@ using CppServer::HTTP::HTTPResponse;
 
 // KwLib64/KTemple.h KwCreateFuncValue 가 동일하게 있지만 외부 코드라 KTemple.h를 include하지 않기 위해 넣는다.
 template<typename TFNC, typename TRAMBD>
-void TCreateFuncValue(shared_ptr<TFNC>& rtval, TRAMBD lambda)
+void TCreateFuncValue(shared_ptr<TFNC>& rtval, TRAMBD lambda, int bOvWr = 0)
 {
 /* ex
 // 다음과 같은 변수가 선언 되었다고 전제
@@ -49,15 +49,15 @@ shared_ptr<function<TRAMBD>> _fncGET;
 shared_ptr<function<int(HTTPCacheSession*, HTTPRequest&, HTTPResponse&)>> _fncGET;
 
 // 할당
-template<typename TFNC> void AddCallbackOnGET(TFNC fnc)
+template<typename TFNC> void AddCallbackOnGET(TFNC fnc, int bOvWR = 0)
 {
-	TCreateFuncValue(_fncGET, fnc);
+	TCreateFuncValue(_fncGET, fnc, bOvWR);
 	//_fncGET = shared_ptr<function<int(HTTPSCacheSession*, HTTPRequest&, HTTPResponse&)>>(new function<int(HTTPSCacheSession*, HTTPRequest&, HTTPResponse&)>(fnc));
 }*/
 	//rtval = shared_ptr<TFNC>(new TFNC(lambda)); 아래와 동일
-	rtval = std::make_shared<TFNC>(lambda);
+	if(bOvWr || !rtval)
+		rtval = std::make_shared<TFNC>(lambda);
 }
-
 class KSessionInfo
 {
 public:
@@ -241,18 +241,18 @@ public:
 	int start_server();
 	void shutdown_server();
 	
-	template<typename TFNC> void AddCallbackOnGET(TFNC fnc)
+	template<typename TFNC> void AddCallbackOnGET(TFNC fnc, int bOvWR = 0)
 	{
-		TCreateFuncValue(_server->_fncGET, fnc);
+		TCreateFuncValue(_server->_fncGET, fnc, bOvWR);
 		//_server->_fncGET  = shared_ptr<function<int(HTTPSCacheSession*, HTTPRequest&, HTTPResponse&)>>(new function<int(HTTPSCacheSession*,HTTPRequest&, HTTPResponse&)>(fnc));
 	}
-	template<typename TFNC> void AddCallbackOnPOST(TFNC fnc)
+	template<typename TFNC> void AddCallbackOnPOST(TFNC fnc, int bOvWR = 0)
 	{
-		TCreateFuncValue(_server->_fncPOST, fnc);
+		TCreateFuncValue(_server->_fncPOST, fnc, bOvWR);
 		//_server->_fncPOST  = TCreateFuncValue(fnc);
 		//_server->_fncPOST  = shared_ptr<function<int(HTTPSCacheSession*, HTTPRequest&, HTTPResponse&)>>(new function<int(HTTPSCacheSession*, HTTPRequest&, HTTPResponse&)>(fnc));
 	}
-	template<typename TFNC> void AddCallbackOnStarted(TFNC fnc)
+	template<typename TFNC> void AddCallbackOnStarted(TFNC fnc, int bOvWR = 0)
 	{
 		//function<int()> f1 = function<int()>(fnc);
 		//function<int()>* pf1 = new function<int()>(fnc);
@@ -265,49 +265,49 @@ public:
 		///_server->_fncOnStarted = Clone_FncNone(fnc);/// shared_ptr로 싼후에 struct대 struct로 변수 덮어쓰면 construct가 불려진다.
 		//_server->_fncOnStarted = shared_ptr<function<void()>>(pfnc);
 		/// 이건 위에꺼랑 같다.
-		TCreateFuncValue(_server->_fncOnStarted, fnc);
+		TCreateFuncValue(_server->_fncOnStarted, fnc, bOvWR);
 		//	_server->_fncOnStarted = shared_ptr<function<void()>>(new function<void()>(fnc));
 		/// >> 가로가 두개 붙어도 괜찮다.
 	}
-	template<typename TFNC> void AddCallbackOnStopped(TFNC fnc)
+	template<typename TFNC> void AddCallbackOnStopped(TFNC fnc, int bOvWR = 0)
 	{
-		TCreateFuncValue(_server->_fncOnStopped, fnc);
+		TCreateFuncValue(_server->_fncOnStopped, fnc, bOvWR);
 		//_server->_fncOnStopped = shared_ptr<function<void()>>(new function<void()>(fnc));///lambda본문에서는 '->void'를 생략가능
 		//_server->_fncOnStopped = shared_ptr<function<()>>(new function<()>(fnc)); '<void()>'에서 void를 생략 하면 오류
 	}
-	template<typename TFNC> void AddCallbackOnError(TFNC fnc)
+	template<typename TFNC> void AddCallbackOnError(TFNC fnc, int bOvWR = 0)
 	{
-		TCreateFuncValue(_server->_fncOnError, fnc);
+		TCreateFuncValue(_server->_fncOnError, fnc, bOvWR);
 		//_server->_fncOnError = shared_ptr<function<int(int, const string&, const string&)>>(new function<int(int, const string&, const string&)>(fnc));
 	}
-	template<typename TFNC> void AddCallbackOnConnected(TFNC fnc)
+	template<typename TFNC> void AddCallbackOnConnected(TFNC fnc, int bOvWR = 0)
 	{
-		TCreateFuncValue(_server->_fncOnConnected, fnc);
+		TCreateFuncValue(_server->_fncOnConnected, fnc, bOvWR);
 		//_server->_fncOnConnected = shared_ptr<function<int(HTTPSCacheSession&)>>(new function<int(HTTPSCacheSession&)>(fnc));
 	}
-	template<typename TFNC> void AddCallbackOnHandshaked(TFNC fnc)
+	template<typename TFNC> void AddCallbackOnHandshaked(TFNC fnc, int bOvWR = 0)
 	{
-		TCreateFuncValue(_server->_fncOnHandshaked, fnc);
+		TCreateFuncValue(_server->_fncOnHandshaked, fnc, bOvWR);
 		//_server->_fncOnHandshaked = shared_ptr<function<int(HTTPSCacheSession&)>>(new function<int(HTTPSCacheSession&)>(fnc));
 	}
-	template<typename TFNC> void AddCallbackOnDisconnected(TFNC fnc)
+	template<typename TFNC> void AddCallbackOnDisconnected(TFNC fnc, int bOvWR = 0)
 	{
-		TCreateFuncValue(_server->_fncOnDisconnected, fnc);
+		TCreateFuncValue(_server->_fncOnDisconnected, fnc, bOvWR);
 		//_server->_fncOnDisconnected = shared_ptr<function<int(HTTPSCacheSession&)>>(new function<int(HTTPSCacheSession&)>(fnc));
 	}
-	template<typename TFNC> void AddCallbackOnReceived(TFNC fnc)
+	template<typename TFNC> void AddCallbackOnReceived(TFNC fnc, int bOvWR = 0)
 	{
-		TCreateFuncValue(_server->_fncOnReceived, fnc);
+		TCreateFuncValue(_server->_fncOnReceived, fnc, bOvWR);
 		//_server->_fncOnReceived = shared_ptr<function<int(HTTPSCacheSession*,const void*,size_t)>>(new function<int(HTTPSCacheSession*, const void*,size_t)>(fnc));
 	}
-	template<typename TFNC> void AddCallbackOnSent(TFNC fnc)
+	template<typename TFNC> void AddCallbackOnSent(TFNC fnc, int bOvWR = 0)
 	{
-		TCreateFuncValue(_server->_fncOnSent, fnc);
+		TCreateFuncValue(_server->_fncOnSent, fnc, bOvWR);
 		//_server->_fncOnSent = shared_ptr<function<int(HTTPSCacheSession*,size_t, size_t)>>(new function<int(HTTPSCacheSession*,size_t, size_t)>(fnc));
 	}
-	template<typename TFNC> void AddCallbackOnSentKw(TFNC fnc)
+	template<typename TFNC> void AddCallbackOnSentKw(TFNC fnc, int bOvWR = 0)
 	{
-		TCreateFuncValue(_server->_fncOnSentKw, fnc);
+		TCreateFuncValue(_server->_fncOnSentKw, fnc, bOvWR);
 		//_server->_fncOnSentKw = shared_ptr<function<int(HTTPSCacheSession*, uint8_t*, size_t)>>(new function<int(HTTPSCacheSession*, uint8_t*, size_t)>(fnc));
 	}
 

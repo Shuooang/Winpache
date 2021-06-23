@@ -86,6 +86,15 @@ namespace Kw
 				throw_str("JObj::JObj(ShJObj sjo,) sjo is empty.");
 			Clone(*sjo, bClone);
 		}
+		void operator=(const JObj& jbj)
+		{
+			Clone(jbj, true);
+		}
+		void operator=(const ShJObj sjo)
+		{
+			Clone(*sjo, true);
+		}
+
 		void ErrTest();
 		//void DeleteAll();clear
 		CStringW _txt;
@@ -109,7 +118,12 @@ namespace Kw
 			CStringW kw(name);
 			SetArray(kw, sja, bClone);
 		}
-		void DeleteKey(PWS name);
+		bool DeleteKey(PWS name);
+		bool DeleteKey(PAS name)
+		{
+			CStringW kw(name);
+			return DeleteKey(kw);
+		}
 
 
 		//void Import(const JObj& src);
@@ -206,6 +220,7 @@ namespace Kw
 		const ShJArr Array(PWS k);
 		const ShJArr Array(PAS k)		{CStringW sw(k);return Array((PWS)sw);}
 
+		/// 복사 되는게 아니고, 내부 객체가 그대로 가르킨것이 포인터로 리턴된다.
 		ShJObj Obj(PWS k);
 		ShJObj O(PAS k)					{CStringW sw(k);return Obj((PWS)sw);}
 		ShJObj O(string k)				{CStringW sw(k.c_str());return Obj((PWS)sw);}
@@ -241,6 +256,7 @@ namespace Kw
 		JUnit Unit(PWS k)				{return JUnit(this, k);}
 		JUnit Unit(PAS k)				{CStringW kw(k);return JUnit(this, kw);}
 
+
 		/// 1차키의 값이 배열, 그 배열의 2차 인덱스가 JObj 크리고 2차키로 값을 담아 온다.
 		/// 즉 table을 가져 와서 idx번째 row 중 k 키값을 가져 온다.
 		bool GetArrayItem(PAS karr, int idx, PAS k, CStringW& rval);
@@ -270,7 +286,8 @@ namespace Kw
 		{
 			if(this == nullptr)
 				throw_str("Has(k) k is null");
-			return this->Has(wstring(k));
+			wstring wk(k);
+			return this->Has(wk);
 		}
 		bool Has(PAS k)
 		{
