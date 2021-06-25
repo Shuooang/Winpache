@@ -4,11 +4,9 @@ Only those who study the inside of 'Winpache' need the above source, and the dev
 It also contains the template source to add the API to, and there is a tutorial in the menu.
 
 # Winpache
- HTTP Project VC++.
- 
- SSL avaiable.
- 
- DLL project for site API.
+* HTTP Project VC++.
+* SSL avaiable.
+* DLL project for site API.
 
 # Download
 [Download ReleaseWinpache.zip](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
