@@ -26,7 +26,7 @@
 * 2. Install the `ODBC` for `MariaDB`.
 * 3. Init ODBC for `Main DB`.
 * 4. Create main `database`.
-* 5. Create main Talbles and Sample Tables.
+* 5. Create main talbles and sample tables.
 * Once the `main DB` is set, requests, queries and errors that occur in the `Winpache` server are recorded in the DB.
 * The `Main DB` is locally installed as `MariaDB` and accessed by `ODBC` settings, so you can change the `Main DB` by editing the settings.
 * The `Site DB` can be the same as the `Main DB`, and can be separated according to `ODBC` settings.
