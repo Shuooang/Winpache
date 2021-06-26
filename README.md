@@ -8,7 +8,7 @@
 * DLL project for site API.
 
 # Download
-[Download ReleaseWinpache.zip](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
+[MSI Download : ReleaseWinpache.zip](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
 
 # Start for simple a `Web Server`(WS)
 1. Run `WinpacheSetup.msi`
