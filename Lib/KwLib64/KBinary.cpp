@@ -12,44 +12,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 // iVer = -1 이면 값을 쓰지 않는다.
-void KBinary::Set(LPCTSTR ps, int iVer)
-{
-	Set(ps);
-	SetVer(iVer);
-}
-void KBinary::Set(LPCTSTR ps)
-{
-	ASSERT(m_bOwner);
-	ASSERT(m_len >= 0);
-	//	ASSERT(len < 100000000); //100메가 짜리가 있나? 있다면 그때 보지
-	size_t l0 = ps == NULL ? 0 : lstrlen(ps);
 
-	UINT_PTR len = (DWORD)((l0 == 0) ? 0 : (l0 + 1)*sizeof(TCHAR));
-
-
-	// 길이가 같거나, 
-	if(len == m_len || (m_len > len && (m_len <= 100 || (m_len -len) <= 20)))
-	{
-	}
-	else
-	{
-		if(m_len > 0)
-			Free();
-		ASSERT(len >= 0);
-		m_p = Alloc(len);//new CHAR[m_len];//		memcpy(m_p, ps, m_len);
-	}
-
-	// mobile에서 발견 
-	if(len > 0)
-	{
-		tchcpy((LPTSTR)m_p, ps);//(TCHAR)'\0' 까지 복사
-	}
-	else if(m_len > 0)
-		*((LPTSTR)m_p) = (TCHAR)0;
-
-	m_len = len;
-
-}
 // KBinary 를 껍질로만 사용 하고 버린다. 당연히 ps는 외부에서 free해야...
 void KBinary::Wrap(const KBinary& bin)
 {

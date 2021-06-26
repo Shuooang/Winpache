@@ -4,18 +4,15 @@
 class KBinary
 {
 public:
-	bool m_bOwner;
 
 	~KBinary();
-	KBinary(LPCTSTR ps)//, size_t len = -1, int iVer = 0) 
-		: m_bOwner(true)
-		, m_p(NULL)
-		, m_len(0)
-		, m_capa(0)
-		, m_multipleSize(8)
-		//		, m_ver(0) //?see CVersionForRefresh
+	KBinary(LPCWSTR ps)//, size_t len = -1, int iVer = 0) 
 	{
-		Set(ps);//len, 
+		Set((LPWSTR)ps);//len, 
+	}
+	KBinary(CStringA& sa)//, size_t len = -1, int iVer = 0) 
+	{
+		Set((char*)(PAS)sa);//len, 
 	}
 
 	// 그대로 복사 하더라도 함수 파라 미터로 넘어 가더라도 부른쪽이 소유권을 가지고 있어야 한다.
@@ -28,22 +25,18 @@ public:
 	// 그냥 할당만 할떄
 	KBinary(UINT_PTR len = 0, int iVer = 0)
 		: m_bOwner(true)
-		, m_p(NULL)
 		, m_len(len)
-		, m_capa(0)
-		, m_multipleSize(8)
-		//		, m_ver(iVer)
 	{
 		m_p = Alloc(len);
 	}
 
-	char* m_p;//문자열아니다. 내부 내용이 WCHAR일수도 CHAR일수도 있다.
-
+	bool m_bOwner{true};
+	char* m_p{NULL};//문자열아니다. 내부 내용이 WCHAR일수도 CHAR일수도 있다.
 	// byte수 문자열길이가 아니다.(UNICODE인경우 달라져)
 	//DWORD 
-	UINT_PTR m_len;
-	UINT_PTR m_capa;
-	UINT m_multipleSize;
+	UINT_PTR m_len{0};
+	UINT_PTR m_capa{0};
+	UINT m_multipleSize{8};
 
 	UINT_PTR Size() { return m_len; }
 	UINT_PTR Capa() { return m_capa; }
@@ -52,6 +45,51 @@ private:
 	CHAR* NewAlloc(UINT_PTR len);
 
 public:	
+// 	void Set(LPCWSTR ps);
+// 	void Set(LPCWSTR ps, int iVer);
+	template<typename TPSTR>
+	void Set(TPSTR ps, int iVer)
+	{
+		Set(ps);
+		SetVer(iVer);
+	}
+
+	template<typename Tchar>
+	void Set(Tchar* ps)
+	{
+		ASSERT(m_bOwner);
+		ASSERT(m_len >= 0);
+		//	ASSERT(len < 100000000); //100메가 짜리가 있나? 있다면 그때 보지
+		size_t l0 = ps == NULL ? 0 : tchlen(ps);
+
+		UINT_PTR len = (DWORD)((l0 == 0) ? 0 : (l0 + 1) * sizeof(Tchar));
+
+
+		// 길이가 같거나, 
+		if(len == m_len || (m_len > len && (m_len <= 100 || (m_len - len) <= 20)))
+		{
+		}
+		else
+		{
+			if(m_len > 0)
+				Free();
+			ASSERT(len >= 0);
+			m_p = Alloc(len);//new CHAR[m_len];//		memcpy(m_p, ps, m_len);
+		}
+
+		if(len > 0)
+			tchcpy((Tchar*)m_p, ps);//(TCHAR)'\0' 까지 복사
+		else if(m_len > 0)
+			*((Tchar*)m_p) = (Tchar)0;
+
+		m_len = len;
+	}
+	
+	
+	
+	
+	
+	
 	operator LPCTSTR() const { return (LPCTSTR)m_p; }
 
 	void Free();
@@ -100,8 +138,6 @@ public:
 	  CHAR* Alloc(UINT_PTR len, bool bZeroFill = false, int valset = 0);
 
 	  // iVer = -1 이든 아니든 무조건 값 넣는다.
-	  void Set(LPCWSTR ps);
-	  void Set(LPCWSTR ps, int iVer);
 	  void SetPtr(LPCSTR ps, INT_PTR len, int iVer = -1);
 
 	  void Wrap(const KBinary& bin);

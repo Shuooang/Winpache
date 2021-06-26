@@ -280,6 +280,7 @@ CString KwGetFormattedGuid(bool bHipn = true, PWS title = nullptr, int left = 0)
 
 //void KwCutByToken(LPCTSTR src, LPCTSTR seps, CStringArray& strArray, bool bTrim = false);
 void KwCutByToken(PWS psSrc, PWS seps, CStringArray& ars, bool bTrim = false);
+void KwCutByToken(PWS psSrc, PWS seps, std::vector<std::wstring>& ar, bool bTrim = false);
 
 int KwCutByToken(std::string& src, std::string dl, std::vector<std::string>& ar, __int64 offset = 0);
 inline int KwCutByToken(PAS psrc, std::string dl, std::vector<std::string>& ar, __int64 offset = 0) {
@@ -393,6 +394,8 @@ BOOL KwCopyTextClipboad(CWnd* pWnd, LPCWSTR text);
 
 LPCSTR KwReadSmallTextFileA(PS fileName, CStringA& str);
 DWORD KwGetFullPathName(PWS lpszFileIn, CStringW& path, PWS* pFilePart = NULL);
+
+DWORD EncodeBinary(KBinary& bin, LPCSTR key0, bool bEncode, KBinary* pbinr);
 
 #ifdef _DEBUG
 // 이 class는 멤버를 std::map 형태로 바꾸면서, 코딩중 어떤 필드가 있는지 바로 참조 하기 위함

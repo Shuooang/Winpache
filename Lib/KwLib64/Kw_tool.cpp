@@ -194,6 +194,31 @@ void KwCutByToken(PWS psSrc, PWS seps, CStringArray& ars, bool bTrim)
 		tok = wcstok_s(NULL, seps, &next_token1);
 	}
 }
+void KwCutByToken(PWS psSrc, PWS seps, std::vector<std::wstring>& ars, bool bTrim )
+{
+	if(lstrlen(psSrc) == 0)
+		return;
+	WCHAR* pSrc = new WCHAR[wcslen(psSrc) + 1];
+	shared_ptr<WCHAR> _d(pSrc);
+	WCHAR* next_token1 = NULL;
+
+	ASSERT(pSrc);
+	tchcpy(pSrc, psSrc);
+	WCHAR* tok = wcstok_s(pSrc, seps, &next_token1);
+	for(int i = 0; tok != NULL; i++)
+	{
+		if(bTrim)
+		{
+			CString stok(tok);
+			stok.Trim();
+			ars.push_back((PWS)stok);// SetAtGrow(i, stok);
+		}
+		else
+			ars.push_back((PWS)tok);// SetAtGrow(i, stok);
+			//ars.push_back();//ars.SetAtGrow(i, tok);
+		tok = wcstok_s(NULL, seps, &next_token1);
+	}
+}
 
 
 int IsDateHan(WCHAR cd)
@@ -1559,4 +1584,33 @@ DWORD KwGetFullPathName(PWS lpszFileIn, CStringW& path, PWS* pFilePart)
 	if (pFilePart)
 		*pFilePart = lpszFilePart;
 	return dwRet;
+}
+
+
+DWORD EncodeBinary(KBinary& bin, LPCSTR key0, bool bEncode, KBinary* pbinr)
+{
+	BYTE* key = (BYTE*)key0;
+	DWORD j;
+	BYTE cf, cl;
+	int lk = lstrlenA(key0);
+
+	KBinary src;
+	KBinary* psrc;
+
+	psrc = &bin;//소스
+	pbinr->Alloc(psrc->m_len);
+	// pbinr 이 타겟
+	for(j = 0; j < psrc->m_len; j++)
+	{
+		// key 앞에서 뒤쪽으로, 뒤쪽에서 앞으로 한글자씩 두자를 골라
+		//       j % 4
+		cf = key[j % lk];            // 0123 0123 0123
+		cl = key[lk - (j % lk) - 1]; // 3210 3210 3210
+
+		if(bEncode)
+			pbinr->m_p[j] = (~(((BYTE)psrc->m_p[j]) ^ cf)) ^ cl;
+		else
+			pbinr->m_p[j] = (~(((BYTE)psrc->m_p[j]) ^ cl)) ^ cf;
+	}
+	return pbinr->m_len;;
 }
