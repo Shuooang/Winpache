@@ -22,8 +22,10 @@
 
 # To setup the `Main DB` for `Winpache`
 * Select the `Database` category in the `ribbon menu`, and complete the `Main DB` setting of `Winpache` by executing up to step 5 in sequence.
-** 1. Install the MariaDB.
-** 2. Install the ODBC for MariaDB.
+* 1. Install the `MariaDB`.
+* 2. Install the `ODBC` for `MariaDB`.
+* 3. Init ODBC for `Main DB`.
+* 4. Create main `database`.
 2. Once the `main DB` is set, requests, queries and errors that occur in the `Winpache` server are recorded in the DB.
 3. The `Main DB` is locally installed as `MariaDB` and accessed by `ODBC` settings, so you can change the `Main DB` by editing the settings.
 4. The `Site DB` can be the same as the `Main DB`, and can be separated according to `ODBC` settings.
