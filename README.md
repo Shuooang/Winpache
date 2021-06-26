@@ -24,7 +24,7 @@
 3. This basic main DB is separate from the site DB.
 
 # Start for a Web Application Server (WAS)
-1. In 'Winpache Pro', set the web document location and etc configuration.
+1. In 'Winpache', set the web document location and etc configuration.
 2. In the database menu group, run the HeidiSQL and create database and tables.
 3. Then, if you click the [Connect to site DB] menu next to the [Restart] menu, the web server is connected to the site server in the site DB.
 4. Next, go to the 'Project' menu group, go through the numbered menus one by one in order and test the samples and add new API functions.
