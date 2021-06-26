@@ -1,5 +1,5 @@
 ## `Winpache`
-<img align="left" src="rsc/ToStartWeb10sec.gif" width="280">
+<img align="left" src="rsc/ToStartWeb10sec.gif" width="600">
 
 
 ### `Winpache` project
