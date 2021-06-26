@@ -1,4 +1,6 @@
 # `Winpache` WAS Development
+
+<img align="center" src="rsc/Logo-Winpache HTTP.png" width="640">
 <img align="center" src="rsc/server_client_get_post_api.gif" width="1024">
 
 
