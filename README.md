@@ -1,8 +1,8 @@
-## `Winpache`
-<img align="left" src="rsc/ToStartWeb10sec.gif" width="600">
+# `Winpache` WAS Development
+<img align="center" src="rsc/ToStartWeb10sec.gif" width="800">
 
 
-### `Winpache` project
+# `Winpache` project
 * HTTP Project VC++.
 * HTTPS SSL capable.
 * DLL project for site API.
