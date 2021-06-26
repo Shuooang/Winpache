@@ -10,13 +10,14 @@
 * DLL project for site API.
 
 # Download
-[MSI Download : ReleaseWinpache.zip](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
+* [MSI Download : ReleaseWinpache.zip](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
+* Extract the zip file.
 
 # Start for simple a `Web Server`(WS)
 1. Run `WinpacheSetup.msi`
 2. Run the "Start Winpache Project" app that is `StartWinpache.exe`
 3. Click the `Start Winpache Server` button, then `Winpache` app will run.
-4. In `Winpache`, set the web document location and etc configuration.
+4. In `Winpache`, set the location of homepage files and etc configuration.
 5. Start the server, then a simple web server will run.
 
 # To setup the `Main DB` for `Winpache`
