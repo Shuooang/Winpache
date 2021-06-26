@@ -11,14 +11,14 @@
 [Download ReleaseWinpache.zip](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
 
 
-# Start for simple a Web Server
+# Start for simple a `Web Server`(WS)
 1. Run `WinpacheSetup.msi`
 2. Run the "Start Winpache Project" app that is `StartWinpache.exe`
 3. Click the `Start Winpache Server` button, then `Winpache` app will run.
 4. In `Winpache`, set the web document location and etc configuration.
 5. Start the server, then a simple web server will run.
 
-# To setup the main database for Winpache
+# To setup the main database for `Winpache`
 1. In the database menu group, go through the numbered menus one by one in order.
 2. If you stop and start the configured server, the main DB is applied and basic logs are managed.
 3. This basic `Main DB` is separate from the `Site DB`.
