@@ -5,8 +5,8 @@
 
 
 # `Winpache` project
-* Any Windows-based web server.
-* A simple fixed document website is possible.
+* Any Windows-based web server. (Windows 10, Windows Server, etc)
+* A Simple fixed document website is possible.
 * A DLL project for the site-specific API.
 * HTTPS SSL capable.
 * HTTP Project Visual C++ MFC.
