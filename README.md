@@ -5,9 +5,10 @@
 
 
 # `Winpache` project
-* HTTP Project VC++.
+* A simple fixed document website is possible.
 * HTTPS SSL capable.
-* DLL project for site API.
+* A DLL project for the site-specific API.
+* HTTP Project Visual C++ MFC.
 
 # Download
 * [MSI Download : ReleaseWinpache.zip](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
