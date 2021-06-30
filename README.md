@@ -1,26 +1,37 @@
 # `Winpache` WAS Development
+
+<img align="center" src="rsc/Logo-Winpache HTTP.png" width="640">
 <img align="center" src="rsc/server_client_get_post_api.gif" width="1024">
 
 
 # `Winpache` project
-* HTTP Project VC++.
+* Any Windows-based web server. (Windows 10, Windows Server, etc)
+* A Simple fixed document website is possible.
+* A DLL project for the site-specific API.
 * HTTPS SSL capable.
-* DLL project for site API.
+* HTTP Project Visual C++ MFC.
 
 # Download
-[MSI Download : ReleaseWinpache.zip](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
+* [MSI Download : ReleaseWinpache.zip](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
+* Extract the zip file.
 
 # Start for simple a `Web Server`(WS)
 1. Run `WinpacheSetup.msi`
 2. Run the "Start Winpache Project" app that is `StartWinpache.exe`
 3. Click the `Start Winpache Server` button, then `Winpache` app will run.
-4. In `Winpache`, set the web document location and etc configuration.
+4. In `Winpache`, set the location of homepage files and etc configuration.
 5. Start the server, then a simple web server will run.
 
 # To setup the `Main DB` for `Winpache`
-1. In the database menu group, go through the numbered menus one by one in order.
-2. If you stop and start the configured server, the main DB is applied and basic logs are managed.
-3. This basic `Main DB` is separate from the `Site DB`.
+* Select the `Database` category in the `ribbon menu`, and complete the `Main DB` setting of `Winpache` by executing up to step 5 in sequence.
+* 1. Install the `MariaDB`.
+* 2. Install the `ODBC` for `MariaDB`.
+* 3. Init ODBC for `Main DB`.
+* 4. Create main `database`.
+* 5. Create main talbles and sample tables.
+* Once the `main DB` is set, requests, queries and errors that occur in the `Winpache` server are recorded in the DB.
+* The `Main DB` is locally installed as `MariaDB` and accessed by `ODBC` settings, so you can change the `Main DB` by editing the settings.
+* The `Site DB` can be the same as the `Main DB`, and can be separated according to `ODBC` settings.
 
 # Start for a `Web Application Server`(WAS)
 1. In `Winpache`, set the web document location and etc configuration.
