@@ -41,7 +41,15 @@
 5. Stop and start the server, then a `Web Application Server` will run.
 
 ```c++
-/// API function example.
+/// A simplest API function example
+int DEXPORT WhatIsThis(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+	jrs("SayHello") = L"Hello World!. Call the function ExGetApiDesc for test.";
+	return 0;
+}
+
+/// API function example using DB.
 int DEXPORT SelectUser(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
