@@ -40,6 +40,10 @@
 4. Next, go to the `Project` menu group, go through the numbered menus one by one in order and test the samples and add new `API` functions.
 5. Stop and start the server, then a `Web Application Server` will run.
 
+Request
+```JSON
+{"func":"WhatIsThis", "params": {}}
+```
 ```c++
 /// A simplest API function example
 int DEXPORT WhatIsThis(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
@@ -49,7 +53,7 @@ int DEXPORT WhatIsThis(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 	return 0;
 }
 ```
-
+Response
 ```json
 {
   "response":{
