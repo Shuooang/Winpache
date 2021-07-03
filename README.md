@@ -41,7 +41,7 @@
 5. Stop and start the server, then a `Web Application Server` will run.
 
 ```c++
-/// A API function example.
+/// API function example.
 int DEXPORT SelectUser(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
