@@ -48,7 +48,18 @@ int DEXPORT WhatIsThis(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 	jrs("SayHello") = L"Hello World!. Call the function ExGetApiDesc for test.";
 	return 0;
 }
+```
 
+```json
+{
+  "response":{
+    "SayHello":"Hello World!. Call the function ExGetApiDesc for test."
+  },
+  "return":0
+}
+```
+
+```c++
 /// API function example using DB.
 int DEXPORT SelectUser(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 {
