@@ -41,29 +41,29 @@
 5. Stop and start the server, then a `Web Application Server` will run.
 
 ```c++
-int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
+int DEXPORT SelectUser(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	KRecordset rs(&_db);
 
-	if(!jpa.Has("limit"))// http 400번 오류와 -1 리턴값과 문자열을 동시에 보낸다.
+	if(!jpa.Has("limit"))// http error 400, -1 return value, and string are sent at the same time.
 		throw_BadRequest(-1, "Field 'limit' is missing.");
 
-	/// Quat 객체를 사용 하여 필드체크와 문자열인 경우 '...' 자동으로 따옴표도 붙는다.
+	//Field check using Quat object and quotation marks are automatically added like 'value' in case of string.
 	Quat qs;
-	qs.FieldNum(jpa, "limit", TRUE, FALSE);//TRUE:필수, FALSE:''없이
-	// 필수를 TRUE로 했는데, 값이 없으면 자동으로 throw 되어 response 된다.
+	qs.FieldNum(jpa, "limit", TRUE, FALSE); //TRUE:required, FALSE: without single quotes
+	// Required is set to TRUE, but if there is no value, it is automatically thrown and a response is made.
 
 	CString swh;
 	if(jpa.Has("where"))
 		swh.Format(L"where %s ", jpa.S("where"));
-	qs.InsideSQL("where", swh);// 빈값이라도 일단 넣어줘야 한다.
-	//HeidiSQL과 호환을 위해 \n\ 앞에 '--'를 넣는다.
+	qs.InsideSQL("where", swh);// Even if it is an empty value, it must be entered first.
+	//Put '--' in front of \n\ for compatibility with HeidiSQL.
 	qs.SetSQL(L"SELECT -- \n\
 * from tuser @where limit @limit");
 
-	BOOL bOpen = rs.OpenSelectFetch(qs);//이때 아직 연결 전이면 ODBC선택 창이 발 뜬다.
-
+	BOOL bOpen = rs.OpenSelectFetch(qs);
+	// At this time, if it is not yet connected, the ODBC selection window appears immediately.
 	rs.MakeRecsetToJson(jrs, L"tuser");
 	jrs("Return") = L"OK";
 	return 0;
