@@ -1,7 +1,6 @@
 # `Winpache` WAS Development
 
 <img align="center" src="rsc/Logo-Winpache HTTP2.png" width="640">
-<img align="center" src="rsc/server_client_get_post_api.gif" width="1024">
 
 
 # `Winpache` project
@@ -10,6 +9,7 @@
 * A DLL project for the site-specific API.
 * HTTPS SSL capable.
 * HTTP Project Visual C++ MFC.
+<img align="center" src="rsc/server_client_get_post_api.gif" width="1024">
 
 # Download
 * [MSI Download : ReleaseWinpache.zip](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
