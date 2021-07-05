@@ -139,8 +139,8 @@ int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 ```JSON
 {  "func":"ExRemoveBizClass", 
    "params":{
-      "fBizID":'1341234324', 
-      "fBIzClsCD":'ABCDEFG'
+      "fBizID":"1341234324", 
+      "fBIzClsCD":"ABCDEFG"
    }
 }
 ```
