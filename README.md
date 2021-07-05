@@ -39,7 +39,7 @@ Visual C++ MFC development.
 4. Next, go to the `Project` menu group, go through the numbered menus one by one in order and test the samples and add new `API` functions.
 5. Stop and start the server, then a `Web Application Server` will run.
 
-Request
+###Request
 ```JSON
 {"func":"WhatIsThis", "params": {}}
 ```
@@ -61,7 +61,9 @@ Response
   "return":0
 }
 ```
-Request
+
+
+###Request
 ```JSON
 {  "func":"SelectUser", 
    "params": 
