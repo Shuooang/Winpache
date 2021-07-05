@@ -1,10 +1,6 @@
 # A high-performance Web Application Server.
-Visual C++ MFC development.
-
-## `Winpache` WAS Development
-
 <img align="center" src="rsc/Logo-Winpache HTTP2.png" width="640">
-
+Visual C++ MFC development.
 
 ## `Winpache` project
 * Any Windows-based web server. (Windows 10, Windows Server, etc)
