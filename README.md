@@ -67,7 +67,7 @@ Response
 
 ### Request SelectUser
 ```JSON
-{  "func":"SelectUser", 
+{  "func":"ExSelectUserQS", 
    "params":{
       "limit":10, 
       "where":"fstat='on'"
@@ -76,8 +76,36 @@ Response
 ```
 
 ```c++
+/// API function example using DB with No comment.
+int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
+{
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+	KRecordset rs(&_db);
+
+	if(!jpa.Has("limit"))
+		throw_BadRequest(-1, "Field 'limit' is missing.");
+
+	Quat qs;
+	qs.FieldNum(jpa, "limit", TRUE, FALSE); //TRUE:required, FALSE: without single quotes
+
+	CString swh;
+	if(jpa.Has("where"))
+		swh.Format(L"where %s ", jpa.S("where"));
+	qs.InsideSQL("where", swh);
+	qs.SetSQL(L"SELECT -- \n\
+* from tuser @where limit @limit");
+
+	BOOL bOpen = rs.OpenSelectFetch(qs);
+	rs.MakeRecsetToJson(jrs, L"tuser");
+	jrs("Return") = L"OK";
+	return 0;
+}
+
+```
+
+```c++
 /// API function example using DB.
-int DEXPORT SelectUser(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
+int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	KRecordset rs(&_db);
@@ -106,7 +134,6 @@ int DEXPORT SelectUser(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 }
 
 ```
-
 # `Winpache` source
 * Only those who study the inside of 'Winpache' need the above source, and the developer who will build the server only needs to download the following Winpache setup files. 
 * It also contains the template DLL project to add the API to, and there is a tutorial in the menu.
