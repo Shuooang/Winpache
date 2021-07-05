@@ -76,7 +76,7 @@ Response
 ```
 
 ```c++
-/// API function example using DB with No comment.
+/// API function DB example `without` comment.
 int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
@@ -104,7 +104,7 @@ int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 ```
 
 ```c++
-/// API function example using DB.
+/// API function DB example with comment.
 int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
@@ -134,7 +134,7 @@ int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 }
 
 ```
-# `Winpache` source
+# Using `Winpache` source code
 * Only those who study the inside of 'Winpache' need the above source, and the developer who will build the server only needs to download the following Winpache setup files. 
 * It also contains the template DLL project to add the API to, and there is a tutorial in the menu.
 
