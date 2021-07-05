@@ -42,7 +42,9 @@ Visual C++ MFC development.
 ## Example API
 ### Request WhatIsThis
 ```JSON
-{"func":"WhatIsThis", "params": {}}
+{  "func":"WhatIsThis", 
+   "params": { }
+}
 ```
 ```c++
 /// A simplest API function example
@@ -55,11 +57,10 @@ int DEXPORT WhatIsThis(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 ```
 Response
 ```json
-{
-  "response":{
-    "SayHello":"Hello World!. Call the function ExGetApiDesc for test."
-  },
-  "return":0
+{  "response":{
+     "SayHello":"Hello World!. Call the function ExGetApiDesc for test."
+   },
+   "return":0
 }
 ```
 
@@ -67,8 +68,8 @@ Response
 ### Request SelectUser
 ```JSON
 {  "func":"SelectUser", 
-   "params": 
-   {  "limit":10, 
+   "params":{
+      "limit":10, 
       "where":"fstat='on'"
    }
 }
