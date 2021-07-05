@@ -86,7 +86,7 @@ int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 		throw_BadRequest(-1, "Field 'limit' is missing.");
 
 	Quat qs;
-	qs.FieldNum(jpa, "limit", TRUE, FALSE); //TRUE:required, FALSE: without single quotes
+	qs.FieldNum(jpa, "limit", TRUE, FALSE);
 
 	CString swh;
 	if(jpa.Has("where"))
@@ -134,6 +134,34 @@ int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 }
 
 ```
+
+### Request `ExRemoveBizClass`
+```JSON
+{  "func":"ExRemoveBizClass", 
+   "params":{
+      "fBizID":'1341234324', 
+      "fBIzClsCD":'ABCDEFG'
+   }
+}
+```
+
+```c++
+/// API function DB example that delete record.
+int DEXPORT ExRemoveBizClass(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
+{
+	Quat qs;
+	qs.Field(jpa, "fBizID", TRUE);//TRUE:requied
+	qs.Field(jpa, "fBIzClsCD", TRUE);//TRUE:requied
+
+	qs.SetSQL(L"DELETE FROM tbizclass WHERE fBizID = @fBizID and fBIzClsCD = @fBIzClsCD;");
+
+	_db.ExecuteSQL(qs);
+	jrs("Return") = L"OK";
+	return 0;
+}
+```
+
+
 # Using `Winpache` source code
 * Only those who study the inside of 'Winpache' need the above source, and the developer who will build the server only needs to download the following Winpache setup files. 
 * It also contains the template DLL project to add the API to, and there is a tutorial in the menu.
