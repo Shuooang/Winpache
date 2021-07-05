@@ -1,3 +1,5 @@
+A high-performance web application server.
+
 # `Winpache` WAS Development
 
 <img align="center" src="rsc/Logo-Winpache HTTP2.png" width="640">
