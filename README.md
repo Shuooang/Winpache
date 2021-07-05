@@ -146,15 +146,15 @@ int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 ```
 
 ```c++
-/// API function DB example that delete record.
+/// API function DB example which deletes a record.
+/// You don't have to care about DB exceptions. 
+/// The server catches it by default and returns an error message.
 int DEXPORT ExRemoveBizClass(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 {
 	Quat qs;
 	qs.Field(jpa, "fBizID", TRUE);//TRUE:requied
 	qs.Field(jpa, "fBIzClsCD", TRUE);//TRUE:requied
-
 	qs.SetSQL(L"DELETE FROM tbizclass WHERE fBizID = @fBizID and fBIzClsCD = @fBIzClsCD;");
-
 	_db.ExecuteSQL(qs);
 	jrs("Return") = L"OK";
 	return 0;
