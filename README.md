@@ -61,6 +61,15 @@ Response
   "return":0
 }
 ```
+Request
+```JSON
+{  "func":"SelectUser", 
+   "params": 
+   {  "limit":10, 
+      "where":"fstat='on'"
+   }
+}
+```
 
 ```c++
 /// API function example using DB.
