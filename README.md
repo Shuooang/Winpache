@@ -40,7 +40,7 @@ Visual C++ MFC development.
 5. Stop and start the server, then a `Web Application Server` will run.
 
 ## Example API
-### Request WhatIsThis
+### Request `WhatIsThis`
 ```JSON
 {  "func":"WhatIsThis", 
    "params": { }
@@ -65,7 +65,7 @@ Response
 ```
 
 
-### Request SelectUser
+### Request `ExSelectUserQS`
 ```JSON
 {  "func":"ExSelectUserQS", 
    "params":{
