@@ -81,7 +81,7 @@ Response
    }
 }
 ```
-
+API function
 ```c++
 /// API function DB example `without` comment.
 int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
@@ -109,6 +109,7 @@ int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 
 ```
 
+API function
 ```c++
 /// API function DB example with comment.
 int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
@@ -191,6 +192,7 @@ Response
 }
 ```
 
+API function
 ```c++
 /// API function DB example which deletes a record.
 /// You don't have to care about DB exceptions. 
