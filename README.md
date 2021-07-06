@@ -2,7 +2,7 @@
 <img align="center" src="rsc/Logo-Winpache HTTP2.png" width="640">
 Visual C++ MFC development.
 # Start `Winpache`
-<img align="center" src="rsc/20210706_100443.png" width="700">
+<img align="center" src="rsc/20210706_100443.png" width="640">
 ## `Winpache` project
 * Any Windows-based web server. (Windows 10, Windows Server, etc)
 * A Simple fixed document website is possible.
