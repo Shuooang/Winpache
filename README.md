@@ -69,7 +69,8 @@ Response
 ```JSON
 {  "func":"ExSelectUserQS", 
    "params":{
-      "limit":10, 
+      "database":"winpache", 
+      "limit":2, 
       "where":"fstat='on'"
    }
 }
