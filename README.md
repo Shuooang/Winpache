@@ -43,7 +43,7 @@ Visual C++ MFC development.
 5. Stop and start the server, then a `Web Application Server` will run.
 
 ## Start `Wincatcher` Client
-<img align="center" src="rsc/Wincatcher.png" width="640">
+<img align="center" src="rsc/Wincatcher.png" width="550">
 
 ## Example API
 ### Request `WhatIsThis`
