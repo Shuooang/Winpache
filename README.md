@@ -2,7 +2,15 @@
 <img align="center" src="rsc/Logo-Winpache HTTP2.png" width="640">
 Visual C++ MFC development.
 
-## `Winpache` project
+## Download
+* [MSI Download : ReleaseWinpache.zip](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
+* Extract the zip file.
+* Run `WinpacheSetup.msi`
+
+# Start `Winpache
+<img align="center" src="rsc/20210706_100443.png" width="640">
+
+## Start `Winpache` Server
 * Any Windows-based web server. (Windows 10, Windows Server, etc)
 * A Simple fixed document website is possible.
 * A DLL project for the site-specific API.
@@ -10,18 +18,13 @@ Visual C++ MFC development.
 * HTTP Project Visual C++ MFC.
 <img align="center" src="rsc/server_client_get_post_api.gif" width="1024">
 
-## Download
-* [MSI Download : ReleaseWinpache.zip](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
-* Extract the zip file.
+### Start for simple a `Web Server`(WS)
+1. Run the "Start Winpache Project" app that is `StartWinpache.exe`
+2. Click the `Start Winpache Server` button, then `Winpache` app will run.
+3. In `Winpache`, set the location of homepage files and etc configuration.
+4. Start the server, then a simple web server will run.
 
-# Start for simple a `Web Server`(WS)
-1. Run `WinpacheSetup.msi`
-2. Run the "Start Winpache Project" app that is `StartWinpache.exe`
-3. Click the `Start Winpache Server` button, then `Winpache` app will run.
-4. In `Winpache`, set the location of homepage files and etc configuration.
-5. Start the server, then a simple web server will run.
-
-# To setup the `Main DB` for `Winpache`
+## To setup the `Main DB` for `Winpache`
 * Select the `Database` category in the `ribbon menu`, and complete the `Main DB` setting of `Winpache` by executing up to step 5 in sequence.
 * 1. Install the `MariaDB`.
 * 2. Install the `ODBC` for `MariaDB`.
@@ -32,7 +35,7 @@ Visual C++ MFC development.
 * The `Main DB` is locally installed as `MariaDB` and accessed by `ODBC` settings, so you can change the `Main DB` by editing the settings.
 * The `Site DB` can be the same as the `Main DB`, and can be separated according to `ODBC` settings.
 
-# Start for a `Web Application Server`(WAS)
+## Start for a `Web Application Server`(WAS)
 1. In `Winpache`, set the web document location and etc configuration.
 2. In the `database` menu group, run the `HeidiSQL` and create database and tables.
 3. Then, if you click the `Connect to site DB` menu next to the `Restart` menu, the web server is connected to the site server in the site DB.
