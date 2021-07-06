@@ -133,7 +133,46 @@ int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 }
 
 ```
-
+```JSON
+{
+  "response":{
+    "Return":"OK",
+    "tuser":[
+      {
+        "fappver":"3.1",
+        "fcode":"947070",
+        "femail":"891eb37fb4f0@gmail.com",
+        "fexpire":"2050-01-01 00:00:00",
+        "fmodel":"선별진료소",
+        "fnote":null,
+        "fproj":"odiso",
+        "fpush":"",
+        "frecover":null,
+        "fstat":"on",
+        "ftel":"01043102784",
+        "ftmcreat":"2020-04-18 03:35:35",
+        "fuuid":"00000000"
+      },
+      {
+        "fappver":"3.1",
+        "fcode":"947071",
+        "femail":"4bbb41d83420@gmail.com",
+        "fexpire":"2050-01-01 00:00:00",
+        "fmodel":"드라이브스루",
+        "fnote":null,
+        "fproj":"odiso",
+        "fpush":"",
+        "frecover":null,
+        "fstat":"on",
+        "ftel":"01070224772",
+        "ftmcreat":"2020-04-18 12:42:16",
+        "fuuid":"00000001"
+      }
+    ]
+  },
+  "return":0
+}
+```
 ### Request `ExRemoveBizClass`
 ```JSON
 {  "func":"ExRemoveBizClass", 
