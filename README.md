@@ -52,6 +52,7 @@ Visual C++ MFC development.
    "params": { }
 }
 ```
+API function
 ```c++
 /// A simplest API function example
 int DEXPORT WhatIsThis(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
@@ -108,8 +109,6 @@ int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 }
 
 ```
-
-API function
 ```c++
 /// API function DB example with comment.
 int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
