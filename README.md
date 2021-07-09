@@ -15,6 +15,7 @@ Visual C++ MFC development.
 * A Simple fixed document website is possible.
 * A DLL project for the site-specific API.
 * HTTPS SSL capable.
+* Using data connection pools for multiple threads.
 * HTTP Project Visual C++ MFC.
 <img align="center" src="rsc/server_client_get_post_api.gif" width="1024">
 
