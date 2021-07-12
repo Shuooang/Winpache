@@ -150,14 +150,15 @@ void DockOdbc::OnBnClickedConnectDB()
 		}
 		CString dsn; dsn.Format(L"DSN=%s;UID=%s;PWD=%s", _DSN, _UID, _PWD);//이거는 모든 필수 항목이 다 들어가 있고.
 		auto frm = (CMainFrame*)AfxGetMainWnd();
-		auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_doc;
-		if (appd._dbMain->IsOpen())
+		auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+		auto& jobj = *appd._json;
+		if(appd._dbMain->IsOpen())
 			appd._dbMain->Close();
 		appd._dbMain->OpenEx(dsn, CDatabase::noOdbcDialog);
-		appd._DSN = _DSN;
-		appd._UID = _UID;
+		jobj("_DSN") = _DSN;
+		jobj("_UID") = _UID;
 		if(_PWD.GetLength())
-			appd._PWD = L"**********";
+			jobj("_PWD") = L"**********";
 
 		appd._dbMain->ExecuteSQL(L"use `winpache`");
 		appd.SaveData();

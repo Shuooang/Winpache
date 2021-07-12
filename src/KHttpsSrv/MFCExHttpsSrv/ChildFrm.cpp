@@ -78,7 +78,14 @@ void CChildFrame::OnClose()
 	{
 		auto cvu = dynamic_cast<CmnView*>(vu);
 		if(cvu)
+		{
+			auto pDoc = cvu->GetDocument();
+			auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+// 			CmnDoc* doc = dynamic_cast<CmnDoc*>(pDoc);
+// 			appd.UnregisterServerStart(doc->_GUID);
+
 			cvu->Shutdown("CChildFrame::OnClose()");//?Shutdown //CMainFrame::OnClose() 에서도 불러야 한다.
+		}
 	}
 	CMDIChildWndEx::OnClose();
 }

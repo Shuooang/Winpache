@@ -22,27 +22,21 @@
     <Filter Include="Server">
       <UniqueIdentifier>{77abb651-2f5a-4578-8690-6681bf952591}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Wnd">
+      <UniqueIdentifier>{7df39a9d-c6a5-4880-b34d-f858ce928278}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pch Dependencies">
+      <UniqueIdentifier>{0409dcec-afd8-4e2d-bdf6-7e2c41c3254a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MFCExHttpsSrv.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="framework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MainFrm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ChildFrm.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SrvDoc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SrvView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Resource.h">
@@ -57,56 +51,86 @@
     <ClInclude Include="ViewTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OutputWnd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="PropertiesWnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\MFCAppServerEx2\CmnDoc.h">
+    <ClInclude Include="OpenSSL.h">
       <Filter>Cmn</Filter>
-    </ClInclude>
-    <ClInclude Include="..\MFCAppServerEx2\CmnView.h">
-      <Filter>Cmn</Filter>
-    </ClInclude>
-    <ClInclude Include="..\MFCAppServerEx2\ApiBase.h">
-      <Filter>Response</Filter>
-    </ClInclude>
-    <ClInclude Include="..\MFCAppServerEx2\ApiSite1.h">
-      <Filter>Response</Filter>
-    </ClInclude>
-    <ClInclude Include="..\MFCAppServerEx2\Response1.h">
-      <Filter>Response</Filter>
-    </ClInclude>
-    <ClInclude Include="..\MFCAppServerEx2\Cache.h">
-      <Filter>Server</Filter>
-    </ClInclude>
-    <ClInclude Include="..\MFCAppServerEx2\HttpsSvr.h">
-      <Filter>Server</Filter>
-    </ClInclude>
-    <ClInclude Include="..\MFCAppServerEx2\HttpSvr.h">
-      <Filter>Server</Filter>
-    </ClInclude>
-    <ClInclude Include="..\MFCAppServerEx2\DlgSizeAdjust.h">
-      <Filter>Cmn</Filter>
-    </ClInclude>
-    <ClInclude Include="..\MFCAppServerEx2\DlgSslSetting.h">
-      <Filter>Cmn</Filter>
-    </ClInclude>
-    <ClInclude Include="DockPane.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DlgOdbcSetting.h">
-      <Filter>Header Files</Filter>
+      <Filter>Wnd</Filter>
     </ClInclude>
     <ClInclude Include="DockOdbc.h">
-      <Filter>Header Files</Filter>
+      <Filter>Wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="DockPane.h">
+      <Filter>Wnd</Filter>
     </ClInclude>
     <ClInclude Include="DockTestApi.h">
-      <Filter>Header Files</Filter>
+      <Filter>Wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MFCExHttpsSrv.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OutputWnd.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SrvDoc.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SrvView.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CmnDoc.h">
+      <Filter>Cmn</Filter>
+    </ClInclude>
+    <ClInclude Include="CmnView.h">
+      <Filter>Cmn</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgSizeAdjust.h">
+      <Filter>Cmn</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgSslSetting.h">
+      <Filter>Cmn</Filter>
+    </ClInclude>
+    <ClInclude Include="ApiBase.h">
+      <Filter>Response</Filter>
+    </ClInclude>
+    <ClInclude Include="ApiSite1.h">
+      <Filter>Response</Filter>
+    </ClInclude>
+    <ClInclude Include="Response1.h">
+      <Filter>Response</Filter>
+    </ClInclude>
+    <ClInclude Include="Cache.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpsSvr.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpSvr.h">
+      <Filter>Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Lib\KwLib64\DlgTool.h">
+      <Filter>Pch Dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Lib\KwLib64\Recordset.h">
+      <Filter>Pch Dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Lib\KwLib64\KJson.h">
+      <Filter>Pch Dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Lib\KwLib64\Kw_tool.h">
+      <Filter>Pch Dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Lib\KwLib64\stdecl.h">
+      <Filter>Pch Dependencies</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -116,83 +140,86 @@
     <ClCompile Include="MainFrm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ChildFrm.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SrvDoc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SrvView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FileView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ClassView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ViewTree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="OutputWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PropertiesWnd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\MFCAppServerEx2\CmnDoc.cpp">
+    <ClCompile Include="OpenSSL.cpp">
       <Filter>Cmn</Filter>
-    </ClCompile>
-    <ClCompile Include="..\MFCAppServerEx2\CmnView.cpp">
-      <Filter>Cmn</Filter>
-    </ClCompile>
-    <ClCompile Include="..\MFCAppServerEx2\ApiBase.cpp">
-      <Filter>Response</Filter>
-    </ClCompile>
-    <ClCompile Include="..\MFCAppServerEx2\ApiSite1.cpp">
-      <Filter>Response</Filter>
-    </ClCompile>
-    <ClCompile Include="..\MFCAppServerEx2\ApiSite1Order.cpp">
-      <Filter>Response</Filter>
-    </ClCompile>
-    <ClCompile Include="..\MFCAppServerEx2\Apisite1Search.cpp">
-      <Filter>Response</Filter>
-    </ClCompile>
-    <ClCompile Include="..\MFCAppServerEx2\ApiSite1SMP.cpp">
-      <Filter>Response</Filter>
-    </ClCompile>
-    <ClCompile Include="..\MFCAppServerEx2\Response1.cpp">
-      <Filter>Response</Filter>
-    </ClCompile>
-    <ClCompile Include="..\MFCAppServerEx2\Cache.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
-    <ClCompile Include="..\MFCAppServerEx2\HttpsSvr.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
-    <ClCompile Include="..\MFCAppServerEx2\HttpSvr.cpp">
-      <Filter>Server</Filter>
-    </ClCompile>
-    <ClCompile Include="..\MFCAppServerEx2\DlgSslSetting.cpp">
-      <Filter>Cmn</Filter>
-    </ClCompile>
-    <ClCompile Include="..\MFCAppServerEx2\DlgSizeAdjust.cpp">
-      <Filter>Cmn</Filter>
-    </ClCompile>
-    <ClCompile Include="DockPane.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DockTestApi.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DlgOdbcSetting.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Wnd</Filter>
     </ClCompile>
     <ClCompile Include="DockOdbc.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="DockPane.cpp">
+      <Filter>Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="DockTestApi.cpp">
+      <Filter>Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="ChildFrm.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ClassView.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileView.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PropertiesWnd.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewTree.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CmnDoc.cpp">
+      <Filter>Cmn</Filter>
+    </ClCompile>
+    <ClCompile Include="CmnView.cpp">
+      <Filter>Cmn</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgSizeAdjust.cpp">
+      <Filter>Cmn</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgSslSetting.cpp">
+      <Filter>Cmn</Filter>
+    </ClCompile>
+    <ClCompile Include="ApiBase.cpp">
+      <Filter>Response</Filter>
+    </ClCompile>
+    <ClCompile Include="ApiSite1.cpp">
+      <Filter>Response</Filter>
+    </ClCompile>
+    <ClCompile Include="ApiSite1Order.cpp">
+      <Filter>Response</Filter>
+    </ClCompile>
+    <ClCompile Include="Apisite1Search.cpp">
+      <Filter>Response</Filter>
+    </ClCompile>
+    <ClCompile Include="ApiSite1SMP.cpp">
+      <Filter>Response</Filter>
+    </ClCompile>
+    <ClCompile Include="Response1.cpp">
+      <Filter>Response</Filter>
+    </ClCompile>
+    <ClCompile Include="Cache.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpsSvr.cpp">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="HttpSvr.cpp">
+      <Filter>Server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

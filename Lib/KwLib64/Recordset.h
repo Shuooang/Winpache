@@ -61,6 +61,7 @@ public:
 	KDatabase()
 		: _tLastAcess(0)
 		, _secReopenInterval(60000)
+		, _mxDbAcess(FALSE, L"_mxDbAcess")
 	{
 	}
 	virtual ~KDatabase()
@@ -94,7 +95,7 @@ public:
 	/// </summary>
 	void Reopen();
 	bool IsReopenable();
-	void TimeCheckReopen();
+	string TimeCheckReopen();
 
 
 	/// 로그용 DB
@@ -118,7 +119,8 @@ public:
 	template<typename TFNC> void InitDbLog(TFNC fnc)
 	{
 		//_fncDbLog = shared_ptr<function<int(PWS, DWORD)>>(new function<int(PWS, DWORD)>(fnc));
-		_fncDbLog = std::make_shared<function<int(PWS, DWORD)>>(fnc);
+		if(!_fncDbLog)
+			_fncDbLog = std::make_shared<function<int(PWS, DWORD)>>(fnc);
 	}
 
 	CKCriticalSection _csTransaction;//트랜잭션 있는 함수 연거푸 불려 질때 트랜잭션이 중첩 된다.
@@ -178,16 +180,19 @@ public:
 			SQLSMALLINT cType;		// array of c type
 			SQLSMALLINT sqlType;
 	};
-	
+	enum {
+		eNone = 0, 
+		eNoLog = 1 << 3 };
+
 	void ExecuteSQL(LPCWSTR lpszSQL,
 					PTR pData,			// Data Point ARRAY 
 					SQLLEN cbRv,			// 실제 전달된 length ARRAY
 					SQLSMALLINT cType = SQL_C_BINARY,		// array of c type
-					SQLSMALLINT sqlType = SQL_LONGVARBINARY);
-	void ExecuteSQL(LPCWSTR lpszSQL, KDataPacket dts[], int numVar);
+					SQLSMALLINT sqlType = SQL_LONGVARBINARY, int iOp = 0);
+	void ExecuteSQL(LPCWSTR lpszSQL, KDataPacket dts[], int numVar, int iOp = 0);
 	void ExecuteSQL(LPCWSTR lpszSQL, int numVar = 0, // '?'의 갯수 :  BIND해야할 PARAM 갯수
-					PTR* pData = NULL, SQLLEN* cbRv = NULL, SQLSMALLINT* cType = NULL, SQLSMALLINT* sqlType = NULL);
-	void ExecuteSQL(Quat& qs);
+					PTR* pData = NULL, SQLLEN* cbRv = NULL, SQLSMALLINT* cType = NULL, SQLSMALLINT* sqlType = NULL, int iOp = 0);
+	void ExecuteSQL(Quat& qs, int iOp = 0);
 
 	static int RegODBCMySQL(LPCWSTR sDSN, KWStrMap& kmap);
 
@@ -212,7 +217,38 @@ public:
 	{
 		return m_strConnect;
 	}
+	static CKCriticalSection s_csDbConnect;
+	static SHP<KDatabase> getDbConnected(wstring dsn, int sec = 60);
 
+};
+/// OpenEx한 tick과 KDatabase를 같이 가지고 있는 객체
+class KDatabaseOdbc
+{
+public:
+	KDatabaseOdbc()
+	{
+	}
+	KDatabaseOdbc(wstring dsn)
+	{
+		if(dsn.length() > 0)
+		{
+			CreateDb(dsn);
+			_dsn = dsn;
+		}
+	}
+	~KDatabaseOdbc()
+	{
+		//DeleteMeSafe(_pdb);
+	}
+	SHP<KDatabase> _sdb;
+	wstring _dsn;
+	ULONGLONG _tick{0};
+	void CreateDb(wstring dsn)
+	{
+		ASSERT(!_sdb);
+		_sdb = make_shared<KDatabase>();
+		_sdb->OpenEx(dsn.c_str());
+	}
 };
 
 /// db log를 쌓으려면 threadId : RemoteFunction : query 이렇게 3차원 dic이 필요
@@ -766,15 +802,9 @@ public:
 };*/
 
 
-
-
-
-
-
-
-inline void KDatabase::ExecuteSQL(Quat& qs)
+inline void KDatabase::ExecuteSQL(Quat& qs, int iOp)
 {
-	ExecuteSQL(qs.GetSQL());
+	ExecuteSQL(qs.GetSQL(), iOp);
 }
 
 
@@ -783,15 +813,7 @@ inline BOOL KRecordset::OpenSelectFetch(Quat& qs)
 	return OpenSelectFetch(qs.GetSQL());
 }
 
-inline BOOL KRecordset::OpenSelectFetch(PWS sql)
-{
-	auto pdb = (KDatabase*)m_pDatabase;
-	AUTOLOCK(pdb->_mxDbAcess);
-	BOOL b = OpenSelect(sql);
-	if(b)
-		Fetch();
-	return b;
-}
+
 
 inline BOOL KRecordset::OpenSelect(Tss& ss)
 {

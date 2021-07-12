@@ -24,6 +24,8 @@
 #include "DockTestApi.h"
 #include "DlgOdbcSetting.h"
 #include "DockOdbc.h"
+#include "mysql.h"
+#include "KwLib64/Lock.h"
 
 #pragma comment(lib, "shell32.lib")
 
@@ -51,8 +53,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndExInvokable)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_CLASSVIEW, &CMainFrame::OnUpdateViewClassView)
 	ON_COMMAND(ID_VIEW_OUTPUTWND, &CMainFrame::OnViewOutputWindow)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_OUTPUTWND, &CMainFrame::OnUpdateViewOutputWindow)
-// 	ON_COMMAND(ID_VIEW_PROPERTIESWND, &CMainFrame::OnViewPropertiesWindow)
-// 	ON_UPDATE_COMMAND_UI(ID_VIEW_PROPERTIESWND, &CMainFrame::OnUpdateViewPropertiesWindow)
 	ON_COMMAND(ID_Start, &CMainFrame::OnRibbonStart)
 	ON_UPDATE_COMMAND_UI(ID_Start, &CMainFrame::OnUpdateStart)
 	ON_COMMAND(ID_Stop, &CMainFrame::OnRibbonStop)
@@ -108,6 +108,24 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CMDIFrameWndExInvokable::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
+	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& jobj = *appd._json;
+	BOOL bFirst = jobj.I("LoadCount") == 0;
+
+
+
+
+
+	int idOw = COutputWnd::s_me->_id;
+	AddCallbackExtraTrace([&, this, idOw](string txt) -> void //?ExTrace 1 실제 루틴을 정의 한다.람다
+		{
+			KwBeginInvoke(this, ([&, txt]()-> void {
+				//wstring wstr = ToWStr(txt); 이게 한글은 제대로 변환이 안된다.
+				ExtraTrace(txt, idOw);
+				}));
+		});
+
+
 	BOOL bNameValid;
 
 	CMDITabInfo mdiTabParams;
@@ -162,7 +180,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndClassView.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndFileView);
 	CDockablePane* pTabbedBar = nullptr;
-	m_wndClassView.AttachToTabWnd(&m_wndFileView, DM_SHOW, TRUE, &pTabbedBar);
+	m_wndClassView.AttachToTabWnd(&m_wndFileView, DM_SHOW, !bFirst, &pTabbedBar);
 	m_wndOutput.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndOutput);
 	m_wndProperties.EnableDocking(CBRS_ALIGN_ANY);
@@ -178,82 +196,286 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// improves the usability of the taskbar because the document name is visible with the thumbnail.
 	ModifyStyle(0, FWS_PREFIXTITLE);
 
-	KwBeginInvoke(this, ([&]()-> void { //?beginInvoke 4
-		ConnectMainDB();
+
+
+	if(bFirst)
+	{
+		DockClientBase::ShowHide(this, m_wndProperties, FALSE);
+		DockClientBase::ShowHide(this, m_wndClassView, FALSE);
+		DockClientBase::ShowHide(this, m_wndFileView, FALSE);
+	}
+	ConnectMainDB();
+
+	///?warning 여기서 KwBeginInvoke하면 View::OnInitialUpdate 보다 늦게 실해 된다.
+	KwBeginInvoke(this, ([&]()-> void {
+			CheckRecoverServers();//?server recover 3 펜딩서버체크
 		}));
+	
+	/// 지금 떠있는 서버를 찾아서, 마지막 체크 시간을 update 한다.
+	SetLambdaTimer("Pending Server Check", 5000, [&](int ntm, PAS tmk)//?server recover time 
+		{
+			TimerCheckServers();//CMainFrame::OnCreate::<lambda_4b040ea4cfd81847d7d539b3ca5fbc01>::operator ()
+			//KTrace(L"%d. %s (%s)\n", ntm, __FUNCTIONW__, L"Lambda timer test");
+		});
 
 	return 0;
 }
+void CMainFrame::ExtraTrace(string txt, int idOw)
+{
+	auto ivc = dynamic_cast<KCheckWnd*>(AfxGetApp());//BG에서 불러 지면 오류 난다.
+//bool bVu = !ivc ? false : ivc->ViewFind(idVu);
+	bool bOutput = !ivc ? false : ivc->ViewFind(idOw);
+	if(bOutput)// && bVu)//?destroy 7 : 여기서 NULL이 나와야 하는데, 0xddddddddddd
+	{
+		COutputWnd::s_me->TraceQueue(txt);//?ExTrace 7
+		COutputWnd::s_me->TraceFlush();//?ExTrace 7 //?destroy 8
+	}
+}
 
+
+/// 시간을 갱신 해줘야, 최근까지 런하고 있었다는걸 안다.
+/// 나중에 복구할때 최근까지 돌고 있었던 서버만 복구한다.
+/// 지금 떠있는 서버를 찾아서, 마지막 체크 시간을 updaate 한다.
+void CMainFrame::TimerCheckServers()
+{
+	// TODO: 1. 여기 채우고
+	// 	  2. CheckRecoverServers 에서 시간 죽은지 10분 이내 꺼만 살려서 새로 보낸다.
+	auto app = (CMFCExHttpsSrvApp*)AfxGetApp();
+	auto& appd = (app)->_docApp;
+	AUTOLOCK(appd._csRecover);
+	auto& jobj = *appd._json;
+
+	auto srsv = jobj.O("RunningServers");
+	if(!srsv || srsv->size() == 0)
+		return;
+
+	for(auto& [kguid, sjval] : *srsv)
+	{
+		auto sjsvr = sjval->AsObject();
+		(*sjsvr)("_tLastRunning") = KwGetCurrentTimeFullString();//?server recover time 
+	}
+	appd.SaveData();
+}
+void CMainFrame::CheckRecoverServers()
+{
+
+	auto app = (CMFCExHttpsSrvApp*)AfxGetApp();
+	auto& appd = (app)->_docApp;
+	AUTOLOCK(appd._csRecover);
+
+	auto& jobj = *appd._json;
+	auto srsv = jobj.O("RunningServers");
+	if(!srsv)
+		return;
+	CTime now = KwGetCurrentTime();
+	CTimeSpan sp10(0, 0, 10, 0);
+	CTime now10 = now - sp10;
+
+	KList<wstring> svrToStop;
+	for(auto& [kguid, sjval] : *srsv)
+	{
+		auto sjsvr = sjval->AsObject();
+		auto full = sjsvr->S("_fullPath");
+		auto guid = sjsvr->S("_GUID");
+		auto stLast = sjsvr->S("_tLastRunning");
+		if(tchlen(stLast) > 10)//시간문자열 최소길이
+		{
+			CTime tLast = KwCStringToCTime(stLast);
+			if(now10 > tLast)//?server recover time  10분전에 죽은 것만 recover한다.
+			{
+				svrToStop.push_back(guid);//펜딩서버에서 삭제 예약. 저 아래에서 제거.
+				continue;
+			}
+		}
+		//문서를 열고 끝냈다.
+		//  	CWinApp::OpenDocumentFile(const wchar_t * lpszFileName) Line 86	C++
+		if(tchlen(full) > 0)
+			app->OpenDocumentFile(full);//?server recover 3.1 펜딩서버가 있으면 오픈: 비정상 종료한 서버
+		else
+		{
+			appd.PushRecoveringServer(guid);//?server recover 3.2
+			app->NewFile();///_GUID를 푸시해 두었다가, SrvDoc::OnNewDocument() 에서 pop하여 GUID를 적용한다.
+		}
+// 			app->Create CreateNewDocument();
+		// open server file
+		// conect to site DB
+		// start server
+		//_tLastRunning; //마지막 서버 런닝 체크 타임이니, 5분안지난 걱위ㅣ 경우에만 복구 한다.
+		// 타이머도 돌려서, 러닝 중인 서버 _tLastRunning 를 갱신 한다.
+	}
+	if(svrToStop.size() > 0)
+	{
+		for(auto svr : svrToStop)//?server recover time // 마지막 러닝타임 체크가 10분이 지난 거는 다시 시작 안하고, 제거
+			srsv->DeleteKey(svr.c_str());
+		appd.SaveData();
+	}
+}
 void CMainFrame::ConnectMainDB()
 {
-	try
+	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& jobj = *appd._json;
+
+	int cntLoad = jobj.I("LoadCount") + 1;
+	jobj("LoadCount") = cntLoad;
+	auto pappd = &appd;//app전체에서 유일 하니, 포인터 그냥 복사 해도 된다.
+	KAtEnd _sv([&, pappd]() {
+		pappd->SaveData();
+		});
+	KWStrMap kmap1;
+	CString DSN2, UID2, PWD2, database2;
+	bool bRetry = false;
+	bool bOkODBC = false;
+	while(1)
 	{
-		auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_doc;
-		
-		KWStrMap kmap1;
-		int rv = KDatabase::RegGetODBCMySQL(appd._DSN, kmap1);
-		auto Driver0 = kmap1.Get(L"ODBC Data Sources");
-		auto Driver1 = kmap1.Get(L"Driver");
-	 	auto UID1 = kmap1.Get(L"UID");
-	 	auto PWD1 = kmap1.Get(L"PWD");
-		auto& t = appd._statDB;
-		if(t == "none" || t == "installDB")
+		try
 		{
-			TRACE(L"ODBC is not configured yet.\n");
-		}
-		else if (kmap1.size() > 0 && Driver0.length() > 0 && Driver0 == Driver1 
-			&& UID1.length() > 0 && PWD1.length() > 0)// && uid1 == uid0)
-		{
-			CString dsn;
-			dsn.Format(L"DSN=%s", appd._DSN);//PWD가 있는거 ODBC에 확인 했으니, DSN만으로 로그인 시도
-			BOOL bOK = appd._dbMain->OpenEx(dsn, CDatabase::noOdbcDialog);
-			if(bOK)
+			int rv = 0;
+			if(kmap1.size() == 0) // loop 이므로 처음엔 무조건 들어 간다.
 			{
-				try
+				/// first loop while
+				rv = KDatabase::RegGetODBCMySQL(jobj.S("_DSN"), kmap1);
+
+				auto Driver0 = kmap1.Get(L"ODBC Data Sources");
+				auto Driver1 = kmap1.Get(L"Driver");
+				if(Driver0.length() == 0 || Driver1.length() == 0 || Driver0 != Driver1)
 				{
-					appd._dbMain->ExecuteSQL(L"use `winpache`");
-					appd._statDB = L"login";
-					appd.SaveData();
+					CString smsg(L"Main DB is not initialized yet.\r\nYou must proceed to step 5 in the Database menu section.");
+					CaptionMessage(smsg);
+					CMFCRibbonCategory* pmrc = m_wndRibbonBar.GetCategory(2);
+					if(pmrc)
+					{
+						m_wndRibbonBar.ShowCategory(2, TRUE);
+						m_wndRibbonBar.SetActiveCategory(pmrc, TRUE);
+					}
+					break;
 				}
-				catch (CDBException* e)
+				else
+					bOkODBC = Driver0.length() > 0 && Driver0 == Driver1;
+		
+				/// cfg에서 읽은것을 하데, 없으면 registry ODBC에서 읽어 온다.
+				if(DSN2.GetLength() == 0)
 				{
-					CString smsg; smsg.Format(L"Error! Database `winpache` is not created yet.\n%s, %s.", e->m_strError, e->m_strStateNativeOrigin);
-					TRACE(L"%s\n", smsg);
+					DSN2 = jobj.S("_DSN");
+					if(!jobj.LenS("_UID", UID2))
+						UID2 = kmap1.Get(L"UID").c_str();
+					if(!jobj.LenS("_PWD", PWD2))
+						PWD2 = kmap1.Get(L"PWD").c_str();
+					if(!jobj.LenS("_database", database2))
+						database2 = kmap1.Get(L"database").c_str();
 				}
 			}
-		}else
-		{
-			// 만약 statDB가 ODBC 인데, 값이 비어 있으면 도킹창 ODBC로 간다.
-			DockClientBase::ShowHide(this, *Pane(IDD_DockOdbc), TRUE);
+			
+			if(bOkODBC)				//&& UID1.length() > 0)// && PWD1.length() > 0)// && uid1 == uid0)
+			{
+				/// UID2, PWD2는 아래 DlgOdbcSetting 에서 다시 받을수 있다. while loop 두번쨰
+				CString dsn;
+				dsn.Format(L"DSN=%s;UID=%s;PWD=%s;database=%s", DSN2, UID2, PWD2, database2);//PWD가 있는거 ODBC에 확인 했으니, DSN만으로 로그인 시도
+				
+				/// ////////////////////////////////////////////////////////////////////////////////
+				BOOL bOK = appd._dbMain->OpenEx(dsn, CDatabase::noOdbcDialog);
+				/// ////////////////////////////////////////////////////////////////////////////////
+				// 연결이 설정 되 면 0이 아닌 값으로 설정 됩니다. 그렇지 않으면 사용자가 추가 연결 정보를 요구 하는 
+				// 대화 상자가 표시 되 면 취소를 선택 하는 경우 0입니다. 
+				// 다른 모든 경우에는 프레임 워크에서 예외를 throw 합니다.
+				if(bOK)
+				{
+// 					try
+// 					{
+						///appd._dbMain->ExecuteSQL(L"use `winpache`"); OpenEx() 에서 database지정
+						jobj("StatDB") = L"login";
+						CString smsg; smsg.Format(L"Main Dababase is connected! (DSN: %s).", DSN2);
+						CaptionMessage(smsg);
+// 					}
+// 					catch(CDBException* e)
+// 					{
+// 						CString smsg; smsg.Format(L"Error! Database `winpache` is not created yet.\n%s, %s.", e->m_strError, e->m_strStateNativeOrigin);
+// 						TRACE(L"%s\n", smsg);
+// 					}
+					
+					jobj("_DSN") = DSN2;
+					jobj("_UID") = UID2;
+					jobj("_PWD") = PWD2;
+					DockOdbc::s_me->_DSN = DSN2;
+					DockOdbc::s_me->_UID = UID2;
+					KwBeginInvokeNt(this, ([&]()-> void
+						{
+							DockOdbc::s_me->UpdateUI();
+						}), "to DockOdbc");
+				///	jobj("_database") = database2; 초기값이 변경 하는데가 없다.
+					// 만약 statDB가 ODBC 인데, 값이 비어 있으면 도킹창 ODBC로 간다.
+					//DockClientBase::ShowHide(this, *Pane(IDD_DockOdbc), TRUE);
+				}
+				else
+				{
+					CString smsg; smsg.Format(L"Error! Database `winpache` is not created yet.");
+					KwMessageBoxError(smsg);
+					break;
+				}
+			}
+			bRetry = false;
+			KwBeginInvoke(this, ([&]()-> void
+				{
+					auto app = (CMFCExHttpsSrvApp*)AfxGetApp();
+					app->NewFile();//?PreventViewFirst 
+				}));
+			break;
 		}
-	}
-	catch (CDBException* e)
-	{
-		//Access denied for user 'root'@'localhost' (using password: YES)
-		//State:28000, Native : 1045, Origin : [ma - 3.1.12]
-		PWS Access_denied = L"State:28000";
-		if (tchstr((PWS)e->m_strStateNativeOrigin, Access_denied))
+		catch(CDBException* e)
 		{
-			KwMessageBoxError(L"While connecting to main DB.\n%s.\nRetry on 'Connect to DB' docking window'.", e->m_strError);
-			DockClientBase::ShowHide(this, *Pane(IDD_DockOdbc), TRUE);
+			//Access denied for user 'root'@'localhost' (using password: YES)
+			//State:28000, Native : 1045, Origin : [ma - 3.1.12]
+			PWS Access_denied = L"State:28000";
+			if(tchstr((PWS)e->m_strStateNativeOrigin, Access_denied))
+			{
+				//KwMessageBoxError(L"While connecting to main DB.\n%s.\nRetry on 'Connect to DB' docking window'.", e->m_strError);
+				//DockClientBase::ShowHide(this, *Pane(IDD_DockOdbc), TRUE);
+			}
+			CString smsg; smsg.Format(L"Error! %s, %s.", e->m_strError, e->m_strStateNativeOrigin);
+			CaptionMessage(smsg);
+			//m_strError	L"Access denied for user 'winpache'@'localhost' (using password: YES)\n"
+			if(e->m_strError.Find(L"Access denied for user") >= 0)
+				KwMessageBoxError(smsg);
+			bRetry = true;
 		}
-		CString smsg; smsg.Format(L"Error! %s, %s.", e->m_strError, e->m_strStateNativeOrigin);
-		CaptionMessage(smsg);
-	}
-	catch (CException* e)
-	{
-		CString serr;
-		auto ek = dynamic_cast<KException*>(e);
-		if (ek)
-			serr = ek->m_strError;
-		else
-			e->GetErrorMessage(serr.GetBuffer(1024), 1024); serr.ReleaseBuffer();
-		CString smsg; smsg.Format(L"Error: %s.", serr);
-		CaptionMessage(smsg);
-	}
+		catch(CException* e)
+		{
+			CString serr;
+			auto ek = dynamic_cast<KException*>(e);
+			if(ek)
+				serr = ek->m_strError;
+			else
+				e->GetErrorMessage(serr.GetBuffer(1024), 1024); serr.ReleaseBuffer();
+			CString smsg; smsg.Format(L"Error: %s.", serr);
+			CaptionMessage(smsg);
+			bRetry = false;
+			break;
+		}
 
+		/// 비번 수동으로 받고 다시 시도
+		if(bRetry)
+		{
+			DlgOdbcSetting dlg;
+			dlg._DSN = DSN2;
+			dlg._UID = UID2;
+			dlg._PWD = PWD2;
+			if(dlg.DoModal() != IDOK)
+			{
+				CString s(L"Server errors and logs are recorded only when connecting to the main database.");
+				CaptionMessage(s);
+				KwMessageBoxError(s);
+				break;// while break
+			}
+			else
+			{
+				DSN2 = dlg._DSN;					// ^
+				UID2 = dlg._UID;					// |
+				PWD2 = dlg._PWD;					// |
+				continue;// while loop				// .
+			}
+		}
+	}//while(1)
 }
+
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
 	if( !CMDIFrameWndExInvokable::PreCreateWindow(cs) )
@@ -266,6 +488,10 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 
 BOOL CMainFrame::CreateDockingWindows()
 {
+	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& jobj = *appd._json;
+	bool bFirst = jobj.I("LoadCount") == 0;
+
 	BOOL bNameValid;
 
 	// Create class view
@@ -311,7 +537,7 @@ BOOL CMainFrame::CreateDockingWindows()
 	/// /////////////////////////////////////////////////////////////
 	_dock.InitDocks(this);///?kdw 
 	/// /////////////////////////////////////////////////////////////
-
+	//DockClientBase::ShowHide(this, *Pane(IDD_DockOdbc), !bFirst);
 
 	SetDockingWindowIcons(theApp.m_bHiColorIcons);
 	return TRUE;
@@ -472,6 +698,14 @@ void CMainFrame::ContextCategory(int idd, bool bShow)
 	KRibbon::ContextCategory(this, &m_wndRibbonBar, bShow, idd);
 }
 
+void CMainFrame::UpdateControl(CStringA stat, int iOp)
+{
+	KwBeginInvoke(this, ([&, stat, iOp]()-> void
+		{
+			m_wndRibbonBar.ForceRecalcLayout();
+		}));
+}
+
 
 void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 {
@@ -479,11 +713,22 @@ void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 }
 void CMainFrame::CaptionMessage(PWS msg)
 {
-	CString smsg(msg);
-	m_wndCaptionBar.SetText(smsg, CMFCCaptionBar::ALIGN_LEFT);
-	m_wndCaptionBar.ShowWindow(SW_SHOW);
-	RecalcLayout(FALSE);
-	COutputWnd::s_me->Trace(msg);
+	FOREGROUND();
+	if(!::IsWindow(GetSafeHwnd()))
+		return;//너무 일찍 불릴때 대비
+	wstring smsg = msg;
+	KwBeginInvoke(this, ([&, smsg]()-> void
+		{
+			if(!::IsWindow(m_wndCaptionBar.GetSafeHwnd()))
+				return;//너무 일찍 불릴때 대비
+			CString sw(smsg.c_str());
+			m_wndCaptionBar.SetText(sw, CMFCCaptionBar::ALIGN_LEFT);
+			m_wndCaptionBar.ShowWindow(SW_SHOW);
+			RecalcLayout(FALSE);
+			CStringA sa(sw);
+			COutputWnd::s_me->Trace((PAS)sa);
+		}));
+
 }
 void CMainFrame::OnViewCaptionBar()
 {
@@ -554,19 +799,6 @@ void CMainFrame::OnUpdateViewOutputWindow(CCmdUI* pCmdUI)
 	pCmdUI->SetCheck(m_wndOutput.IsVisible());
 }
 
-void CMainFrame::OnViewPropertiesWindow()
-{
-	// Show or activate the pane, depending on current state.  The
-	// pane can only be closed via the [x] button on the pane frame.
-// 	m_wndProperties.ShowPane(!m_wndProperties.IsVisible(), FALSE, TRUE);
-// 	m_wndProperties.SetFocus();
-}
-
-void CMainFrame::OnUpdateViewPropertiesWindow(CCmdUI* pCmdUI)
-{
-	//pCmdUI->Enable(TRUE);
-}
-
 
 void CMainFrame::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
 {
@@ -586,17 +818,25 @@ void CMainFrame::OnClose()
 		while (posDoc)
 		{
 			CDocument* pDoc = pDocTemplate->GetNextDoc(posDoc);
-			/// view는 각 문서에 View가 여러개 인경우 doc 단위 이고 view에 함수가 있으므로 여러개 view라 하더 라도 한번만 실행 한다.
+
+			CmnDoc* doc = dynamic_cast<CmnDoc*>(pDoc);
+// 			auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+// 			appd.UnregisterServerStart(doc->_GUID);
+
+			if(doc->IsStarted())
+				doc->ShutdownServer();
+
+			/*/// view는 각 문서에 View가 여러개 인경우 doc 단위 이고 view에 함수가 있으므로 여러개 view라 하더 라도 한번만 실행 한다.
 			POSITION posView = pDoc->GetFirstViewPosition();
 			while (posView)
 			{
 				CView* pView = pDoc->GetNextView(posView);
 				auto cvu = dynamic_cast<CmnView*>(pView);
-				if (cvu)
+				if (cvu) // 여기서 
 					cvu->Shutdown("CMainFrame::OnClose()");//CChildFrame::OnClose() 에서도 불러야 한다.
 				//pView->GetParentFrame()->DestroyWindow();
 				break;//현재 doc하나 당 single view
-			}
+			}*/
 		}
 	}
 
@@ -653,7 +893,7 @@ void CMainFrame::OnRibbonStart()
 }
 void CMainFrame::OnUpdateStart(CCmdUI* pCmdUI)
 {
-	OnUpdateCmn(pCmdUI, IDC_Start);
+	OnUpdateCmn(pCmdUI, ID_Start);
 }
 void CMainFrame::OnRibbonStop()
 {
@@ -663,7 +903,7 @@ void CMainFrame::OnRibbonStop()
 }
 void CMainFrame::OnUpdateStop(CCmdUI* pCmdUI)
 {
-	OnUpdateCmn(pCmdUI, IDC_Stop);
+	OnUpdateCmn(pCmdUI, ID_Stop);
 }
 void CMainFrame::OnRibbonRestart()
 {
@@ -673,7 +913,7 @@ void CMainFrame::OnRibbonRestart()
 }
 void CMainFrame::OnUpdateRestart(CCmdUI* pCmdUI)
 {
-	OnUpdateCmn(pCmdUI, IDC_Restart);
+	OnUpdateCmn(pCmdUI, ID_Restart);
 }
 void CMainFrame::OnRibbonStartDB()
 {
@@ -683,7 +923,7 @@ void CMainFrame::OnRibbonStartDB()
 }
 void CMainFrame::OnUpdateStartDB(CCmdUI* pCmdUI)
 {
-	OnUpdateCmn(pCmdUI, IDC_StartDB);
+	OnUpdateCmn(pCmdUI, ID_StartDB);
 }
 
 
@@ -811,8 +1051,10 @@ void CMainFrame::OnOdbcSetting()
 void CMainFrame::OnInitodbc()
 {
 	InitOdbc(3);
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_doc;
-	appd._statDB = "ODBC";
+	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& jobj = *appd._json;
+
+	jobj("StatDB") = "ODBC";
 	appd.SaveData();
 
 	CaptionMessage(L"Step 3. ODBC has been set up on the newly installed MariaDB..");
@@ -822,8 +1064,10 @@ void CMainFrame::OnCreateDatabase()
 	InitOdbc(4);
 // 	DockClientBase::ShowHide(this, *Pane(IDD_DockTestApi), TRUE);
 // 	DockTestApi::s_me->CreateDatabase();
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_doc;
-	appd._statDB = "database";
+	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& jobj = *appd._json;
+
+	jobj("StatDB") = "database";
 	appd.SaveData();
 	CaptionMessage(L"Step 4. A database 'winpache' for logs and samples has been created.");
 }
@@ -834,8 +1078,10 @@ void CMainFrame::OnCreateTableBasic()
 {
 	InitOdbc(5);
 	CaptionMessage(L"Step 5. Main tables have been created.");
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_doc;
-	appd._statDB = "table";
+	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& jobj = *appd._json;
+	
+	jobj("StatDB") = "table";
 	appd.SaveData();
 }
 
@@ -850,11 +1096,13 @@ void CMainFrame::InitOdbc(int step)
 {
 // 	DlgOdbcSetting dlg;
 // 	dlg.DoModal();
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_doc;
+	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& jobj = *appd._json;
+
 	try
 	{
 		PWS dsn0 = L"Winpache";
-		PWS uid0 = L"root";
+		PWS uid0 = L"root";//맨처음에만 필요
 
 		if(step == 4 || step == 5 || step == 6)
 		{
@@ -870,12 +1118,16 @@ void CMainFrame::InitOdbc(int step)
 		/// 1. no pwd로 로그인 시도 해보고, 되면 
 		if(step == 3)// Step 3. init ODBC
 		{
+			/// 1단계에서 MariaDB를 설치할때, root 비번을 물을때 비번을 기억 한다.
+			/// 3단계에서 ODBC에 비번이 없는 경우, OpenEx하면 ODBC설정창이 뜨면서 비번을 묻지만 저장은 안된다.
+			///		그래서 그 전에 Dlg로 비번 받아서 ;PWD=%s 에 넣어 OpenEx하면 복잡한 ODBC설정창이 안뜬다.
 			KWStrMap kmap1;
-			int rv = KDatabase::RegGetODBCMySQL(appd._DSN, kmap1);
+			ASSERT(tchsame(dsn0, jobj.S("_DSN")));
+			int rv = KDatabase::RegGetODBCMySQL(jobj.S("_DSN"), kmap1);
 // +		[L"DSN"]	L"MariaDB ODBC 3.1 Driver"
 // +		[L"Driver"]	L"MariaDB ODBC 3.1 Driver"
 // +		[L"PORT"]	L"3306"
-// +		[L"PWD"]	L"hjkjjklxxx"
+// +		[L"PWD"]	L"bnmnnm,"
 // +		[L"SERVER"]	L"localhost"
 // +		[L"TCPIP"]	L"1"
 // +		[L"UID"]	L"root"
@@ -887,62 +1139,82 @@ void CMainFrame::InitOdbc(int step)
 			{//이미 있다.
 				/// 1. PWD가 없는 경우 ODBC Setting창이 뜨고 비번을 입력 하게 한 후 접속 된다. 하지만 여기서 입력한 경우 비번이 저장 되지는 않는다.
 				/// 2. PWD가 틀린 경우 CDBException이나고 비번이 틀린 오류 박스 아래에서 뜬다. ODBC Docking 창이 떠서 비번을 입력 받고 다시 접속 하도록 한다. 역시 입력한 PWD가 저장되지 않는다.
-				appd._DSN = dsn0;// DSN1.c_str();// L"Winpache";
-				appd._UID = UID1.c_str();
-				if (PWD1.length() > 0)
-					appd._PWD = L"**********";
-				//appd._PWD = PWD1.c_str();
-				DockOdbc::s_me->_DSN = appd._DSN;
-				DockOdbc::s_me->_UID = appd._UID;
+				jobj("_DSN") = dsn0;// DSN1.c_str();// L"Winpache";
+				jobj("_UID") = UID1.c_str();
+				//if (PWD1.length() > 0) jobj("_PWD") = L"**********";
+				jobj("_PWD") = PWD1.c_str();
+				jobj("_SERVER") = kmap1.Get(L"SERVER").c_str();
+
 #ifdef _DEBUGx
 				if (_PWD.GetLength())
 					DockOdbc::s_me->_PWD = _PWD;
 #endif // _DEBUGx
+				CString UID2 = jobj.S("_UID");
+				CString PWD2 = jobj.S("_PWD");
+				if(PWD2.GetLength() > 0)//jobj.Len("_UID"))
+				{
+					DlgOdbcSetting dlg;
+					dlg._DSN = jobj.S("_DSN");//readable
+					dlg._UID = UID2;  // editable
+					dlg._PWD = L"";   // editable
+					if(dlg.DoModal() == IDOK)
+					{
+						UID2 = dlg._UID;
+						PWD2 = dlg._PWD;
+					}
+				}
 
 				DockOdbc::s_me->UpdateData(0); /// ODBC Setting창에 뿌려 준다.
 
 				CString dsn; 
-				if (!appd._UID.IsEmpty())
+				if (UID2.GetLength() > 0)//jobj.Len("_UID"))
 				{
-					if (appd._PWD.IsEmpty())
-						dsn.Format(L"DSN=%s;UID=%s", appd._DSN, appd._UID);//이거는 모든 필수 항목이 다 들어가 있고.
+					if (PWD2.GetLength() == 0)
+						dsn.Format(L"DSN=%s;UID=%s", jobj.S("_DSN"), UID2);//이거는 모든 필수 항목이 다 들어가 있고.
 					else
-						dsn.Format(L"DSN=%s;UID=%s;PWD=%s", appd._DSN, appd._UID, appd._PWD);//이거는 모든 필수 항목이 다 들어가 있고.
+						dsn.Format(L"DSN=%s;UID=%s;PWD=%s", jobj.S("_DSN"), UID2, PWD2);// jobj.S("_PWD"));//이거는 모든 필수 항목이 다 들어가 있고.
 				}
 				else
-					dsn.Format(L"DSN=%s", appd._DSN);//이거는 모든 필수 항목이 다 들어가 있고.
+					dsn.Format(L"DSN=%s", jobj.S("_DSN"));//이거는 모든 필수 항목이 다 들어가 있고.
 				if (appd._dbMain->IsOpen())
 					appd._dbMain->Close();
 				appd._dbMain->OpenEx(dsn);//_T("DSN=UserInfo")); 여기서 비번 오류 난다.
 				/// 아직 database 안만들었을수 있으니. appd._dbMain->ExecuteSQL(L"use `winpache`");
+				
+				// 접속 성공. 저장.
+				jobj("_UID") = UID2;
+				jobj("_PWD") = PWD2;
+				DockOdbc::s_me->_DSN = jobj.S("_DSN");//ODBC 도킹창에도
+				DockOdbc::s_me->_UID = UID2;
 
 				auto smsg = L"Server default (Winpache) ODBC is already initialized. Now connected.";
 				CaptionMessage(smsg);
 				KwMessageBox(smsg);
-				DockClientBase::ShowHide(this, *Pane(IDD_DockOdbc), TRUE);
+				///DockClientBase::ShowHide(this, *Pane(IDD_DockOdbc), TRUE);
 			}
 			else
 			{
-				appd._DSN = dsn0;// L"Winpache";
-				appd._UID = uid0;
+				jobj("_DSN") = dsn0;// L"Winpache";
+				jobj("_UID") = uid0;
 				KWStrMap kmap;
-				kmap[L"UID"] = (PWS)appd._UID;
+				kmap[L"UID"] = (PWS)jobj.S("_UID");
 				/// 1.1 ODBC no pwd로 처음 만들고
-				int rv = KDatabase::RegODBCMySQL(appd._DSN, kmap);
+				int rv = KDatabase::RegODBCMySQL(jobj.S("_DSN"), kmap);
 				
-				DockOdbc::s_me->_DSN = appd._DSN;
-				DockOdbc::s_me->_UID = appd._UID;
+				DockOdbc::s_me->_DSN = jobj.S("_DSN");
+				DockOdbc::s_me->_UID = jobj.S("_UID");
 				DockOdbc::s_me->UpdateData(0); /// ODBC Setting창에 뿌려 준다.
-				DockClientBase::ShowHide(this, *Pane(IDD_DockOdbc), TRUE);
+				///DockClientBase::ShowHide(this, *Pane(IDD_DockOdbc), TRUE);
 				
 				/// 1.2 접속 한다.
-				CString dsn; dsn.Format(L"DSN=%s;UID=%s", appd._DSN, appd._UID);//이거는 모든 필수 항목이 다 들어가 있고.
+				CString dsn; dsn.Format(L"DSN=%s;UID=%s", jobj.S("_DSN"), jobj.S("_UID"));//이거는 모든 필수 항목이 다 들어가 있고.
 				appd._dbMain->OpenEx(dsn);//_T("DSN=UserInfo"));
 				//아직 database도 안만들었다. appd._dbMain->ExecuteSQL(L"use `winpache`");
 
 				CaptionMessage(L"ODBC connected without password as root user to the installed DB server.");
-				KwMessageBox(L"You can save the password in ODBC Setting.");
+				KwMessageBox(L"Connected.\nYou can save the password in ODBC Setting.");
 			}
+			appd.SaveData();//running중인 서버가 없으면 PWD는 저장 안한다.
 		}
 		else if (step == 4)
 		{
@@ -951,27 +1223,113 @@ void CMainFrame::InitOdbc(int step)
 			appd._dbMain->ExecuteSQL(L"use `winpache`");
 			KwMessageBox(L"Database `winpache` has been created.");
 		}
-		else if (step == 5)
+		else if (step == 5 || step == 6)
 		{
-			appd._dbMain->ExecuteSQL(L"use `winpache`");
 			WCHAR my_documents[MAX_PATH];//CSIDL_PERSONAL
 			HRESULT result = SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, my_documents);
 			CStringW flPrj = my_documents;
 			PWS tdir = L"\\Winpache\\DB\\";
+
+
+			appd._dbMain->ExecuteSQL(L"use `winpache`");
+			flPrj += tdir;
+			CString sDir = flPrj;
+
+
+			try
+			{
+				appd._dbMain->CreateTablesInFolderLD(flPrj, [&](CString fn, CString sql, CDBException* e) -> void
+					{
+						//tbiz_af_ins.sql: 
+						///This command is not supported in the prepared statement protocol yet
+						///State:S1000,Native:1295,Origin:[ma-3.1.12][10.5.10-MariaDB]
+						if(e->m_strError.Find(L"command is not supported") >= 0 &&
+							e->m_strStateNativeOrigin.Find(L"Native:1295") >= 0)
+						{
+							/// CREATE TRIGGER하면 ODBC에서 지원 하지 않는다. MariaDB lib를 직접 이용 한다.
+							try
+							{
+								MYSQL* con = mysql_init(NULL);
+// 								auto server = jobj.SA("_SERVER");
+// 								auto server = jobj.SA("_DSN");
+// 								auto server = jobj.SA("_SERVER");
+// 								auto server = jobj.SA("_SERVER");
+								if(mysql_real_connect(con, jobj.SA("_SERVER"), jobj.SA("_UID"), jobj.SA("_PWD"),
+														jobj.SA("_database"), 0, NULL, 0) == NULL)
+									throw_str(mysql_error(con));
+								//if(mysql_query(con, "DROP TABLE IF EXISTS writers"))
+								//if(mysql_query(con, "CREATE TABLE writers(id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255))"))
+								CStringA sqlA(sql);
+								if(mysql_query(con, (PAS)sqlA))
+									throw_str(mysql_error(con));
+								//"CREATE DEFINER=`root`@`localhost` TRIGGER `test_trigger` BEFORE INSERT ON `writers` 
+								//FOR EACH ROW BEGIN insert into writerslog(fname) values(NEW.`name`); END"))
+								//if(mysql_query(con, "INSERT INTO writers(name) VALUES('Leo Tolstoy')"))
+								//__int64 id = mysql_insert_id(con);
+								mysql_close(con);
+							}
+							catch(KException* e)
+							{
+								if(e->m_strStateNativeOrigin.Find(L"already exists") >= 0)
+									throw e;
+								CString s; s.Format(L"KException:%s - %s\n", e->m_strError, e->m_strStateNativeOrigin);
+								TRACE(L"%s\n", s);
+							}
+							catch(CException* )
+							{
+								TRACE("CException\n");
+							}
+						}
+						else
+						{
+							CString smsg; smsg.Format(L"Error! %s: %s, %s.", fn, e->m_strError, e->m_strStateNativeOrigin);
+							CaptionMessage(smsg);
+						}
+// 						if(e->m_strStateNativeOrigin.Find(L"S0001") < 0)//이미 존재 하는 것은 박스 안띄운다.
+// 							KwMessageBoxError(smsg);
+					});
+			}
+			catch(KException* e)
+			{
+				CString s; s.Format(L"KException:%s - %s\n", e->m_strError, e->m_strStateNativeOrigin);
+				TRACE(L"%s\n", s);
+			}
+// 			catch(CDBException* e)
+// 			{
+// 				CString smsg; smsg.Format(L"Error! %s, %s.", e->m_strError, e->m_strStateNativeOrigin);
+// 				CaptionMessage(smsg);
+// 				if(e->m_strStateNativeOrigin.Find(L"S0001") < 0)//이미 존재 하는 것은 박스 안띄운다.
+// 					KwMessageBoxError(smsg);
+// 			}
+			catch(CException* )
+			{
+				TRACE("CException \n");
+			}
+			/*
 			PWS arfsln[] = { 
 				L"CREATE_TABLE_t_reqlog.sql",
 				L"CREATE_TABLE_t_ldblog.sql",
 				L"CREATE_TABLE_t_excepsvr.sql",
-				L"CREATE_TABLE_tbiz.sql",
-				L"CREATE_TABLE_tbizclass.sql", };
-			flPrj += tdir;
-			CString sDir = flPrj;
+				/// 아래 두 테이블은 sample 테이블 이다.
+ 				L"CREATE_TABLE_tbiz.sql",
+ 				L"CREATE_TABLE_tbizclass.sql", 
+			};
 			for (auto fsql : arfsln)
 			{
 				CString fullw = flPrj + fsql;
 				CStringA full(fullw);
-				KDatabase::CreateTable(*appd._dbMain, full);
-			}
+				try
+				{
+					KDatabase::CreateTable(*appd._dbMain, full);
+				}
+				catch(CDBException* e)
+				{
+					CString smsg; smsg.Format(L"Error! %s, %s.", e->m_strError, e->m_strStateNativeOrigin);
+					CaptionMessage(smsg);
+					if(e->m_strStateNativeOrigin.Find(L"S0001") < 0)//이미 존재 하는 것은 박스 안띄운다.
+						KwMessageBoxError(smsg);
+				}
+			}*/
 			/// 4. 첫번째 log table을 만든다.
 // 			KDatabase::CreateTable(*appd._dbMain, "..\\..\\DB\\CREATE_TABLE_t_reqlog.sql");
 // 			KDatabase::CreateTable(*appd._dbMain, "..\\..\\DB\\CREATE_TABLE_t_excepsvr.sql");
@@ -1121,8 +1479,11 @@ void CMainFrame::OnDownloadMariaDB()
 	{
 		::ShellExecute(0, 0, url, 0, 0, SW_SHOW);
 		CaptionMessage(L"Navigating to download site for MariaDB!");
-		auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_doc;
-		appd._statDB = "installDB";
+		
+		auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+		auto& jobj = *appd._json;
+		
+		jobj("StatDB") = "installDB";
 		appd.SaveData();
 	}
 	//else		KwMessageBox(L"File \"%s\" is not found.", fl);
@@ -1254,8 +1615,22 @@ void CMainFrame::OnRunHeidiSQL()
 {
 	WCHAR progrm[MAX_PATH];//CSIDL_PERSONAL CSIDL_PROGRAM_FILES
 	HRESULT result = SHGetFolderPath(NULL, CSIDL_PROGRAM_FILES, NULL, SHGFP_TYPE_CURRENT, progrm);
-	PWS fname = L"heidisql.exe";
-	CString fl; fl.Format(L"%s\\HeidiSQL\\%s", progrm, fname);
+	PWS fname = L"heidisql.exe";// C:\Program Files (x86)\Common Files\MariaDBShared\HeidiSQL
+	CString fl; 
+
+	// env ProgramFiles(x86) = C:\Program Files(x86)
+	WCHAR pf86[MAX_PATH];
+	//ExpandEnvironmentStrings(L"%ProgramW6432%", pf86, ARRAYSIZE(pf86));//Program Files
+	ExpandEnvironmentStrings(L"%ProgramFiles(x86)%", pf86, ARRAYSIZE(pf86));//"%Program Files (x86)%"
+// 	CString s; GetEnvironmentVariableW(L"ProgramFiles(x86)", (LPWSTR)s.GetBuffer(1000), 1000);	s.ReleaseBuffer();
+	fl.Format(L"%s\\Common Files\\MariaDBShared\\HeidiSQL\\%s", pf86, fname);///이건 MariaDB깔때 번들로 깔리는거
+
+	if (!KwIfFileExist(fl))
+		fl.Format(L"%s\\HeidiSQL\\%s", progrm, fname);///이건 HeidiSQL64 따로 직접 깐거
+	
+	if (!KwIfFileExist(fl))
+		fl.Format(L"%s\\HeidiSQL\\%s", pf86, fname);///이건 HeidiSQL32 따로 직접 깐거
+
 	if (KwIfFileExist(fl))
 	{
 		HINSTANCE hi = ::ShellExecute(0, 0, fl, 0, 0, SW_SHOW);
@@ -1290,3 +1665,5 @@ void CMainFrame::OnCopyOutput()
 	if (cvu)
 		cvu->CopyOutput();
 }
+
+

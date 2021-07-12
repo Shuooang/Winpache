@@ -118,6 +118,7 @@ void CPostTestView::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
 	ResizeParentToFit();
+	GetDlgItem(IDC_Stop)->EnableWindow(0);
 
 	UpdateData(0);
 }
@@ -175,7 +176,9 @@ static int svi = 0;
 void CPostTestView::OnBnClickedSend()
 {
 	UpdateData();
-	
+	GetDlgItem(IDC_Send)->EnableWindow(0);
+	GetDlgItem(IDC_Stop)->EnableWindow(1);
+
 //	char* pjs = "{\"key\":\"val1\", \"ikey\":1234}";
 //	cl.RequestGetSSL(L"https://localhost/api?key=xxx", &binr, 1024);//OK
 //	binr.SetPtr(pjs);
@@ -293,8 +296,8 @@ void CPostTestView::SendAsync()
 	QueueFUNCN(lmda, "HTTPS 테스트.");
 */
 	CPostTestDoc* doc = GetDocument();
-	int cnth = doc->_Thread;
-	int nmul = (int)doc->_Count < cnth ? (int)doc->_Count : cnth;
+	int cnth = doc->_Delay >= 10 ? 1 : doc->_Thread;
+	int nmul = doc->_Delay >= 10 ? 1 : ((int)doc->_Count < cnth ? (int)doc->_Count : cnth);
 
 	for(int m=0;m < nmul;m++)
 	{
@@ -390,6 +393,7 @@ void CPostTestView::SendOneAsync(int i)
 	std::map<string, string> hdrs;
 	if(doc->_noCache)
 		hdrs["Cache-Control"] = "no-cache";
+	///?주의: "no-cache"를 안붙여줘도, "POST"일때는 알아서 붙어 버리므로, srl=# 를 캐시 여부로 쓴다.
 	//	hdrs["Content-Length"] = slenA;
 	if (doc->_Method == "POST")
 	{
@@ -549,6 +553,8 @@ void CPostTestView::UiForAsync(int i, const CStringA& resp)
 
 void CPostTestView::SetElapsed()
 {
+	GetDlgItem(IDC_Send)->EnableWindow(1);
+	GetDlgItem(IDC_Stop)->EnableWindow(0);
 	CPostTestDoc* doc = GetDocument();
 	CString selp1;
 	// &말고 더 들어 가면 람다식을 ()로 한던 더 싸줘야 컴파일 오류 안난다.

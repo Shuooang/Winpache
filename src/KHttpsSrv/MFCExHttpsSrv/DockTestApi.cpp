@@ -8,6 +8,10 @@
 #include "Response1.h"
 #include "ApiBase.h"
 
+#ifndef SHARED_HANDLERS
+#include "MFCExHttpsSrv.h"
+#endif
+
 IMPLEMENT_DYNCREATE(DockTestApiPane, CPaneForm)
 
 // DockTestApi
@@ -142,18 +146,26 @@ void DockTestApi::OnBnClickedRunapi()
 {
 	UpdateData();
 	auto mfm = (CMainFrame*)AfxGetMainWnd();
+	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+
 	auto cvu = dynamic_cast<CmnView*>(mfm->GetActiveCmnView());
+	if(!cvu)
+		return;//throw "There is no active Site Server view.";
+	auto doc = cvu->GetDocument();	if(!doc) return;
+	auto api = doc->_svr->_api;
+
 	CString smsg;
+	SHP<KDatabase> sdb = KDatabase::getDbConnected((PWS)api->_ODBCDSN);
+	SHP<KDatabase> sdbLog = KDatabase::getDbConnected((PWS)api->_ODBCDSNlog);
+
 	try
 	{
-		if(!cvu)
-			throw "There is no active window.";
-
-		auto doc = cvu->GetDocument();	if(!doc) return;
-		auto api = doc->_svr->_api;
 		auto jdoc = ShJVal(Json::Parse((PWS)_Input));
 		if(!jdoc)
 			throw "The input JSON syntax is wrong.";
+
+		//api->CheckDB(NULL, appd._dbMain);
+
 		//throw new KException("JSON Parse Error.", GetLastError(), 0, L"JSON syntax is wrong.", NULL, __FUNCTION__, __LINE__);
 		auto& jbj = *jdoc->AsObject().get();
 		CStringW func = jbj.S("func");
@@ -174,19 +186,41 @@ void DockTestApi::OnBnClickedRunapi()
 		API_SITE ExDllApiFunc = (API_SITE)::GetProcAddress(CApiBase::s_hDllExtra, (PAS)fncA);
 		if(ExDllApiFunc)
 		{
-			api->CheckDB();
-			if(!jbj.Has("params"))
-				throw "The field \"params\" is required.";
-			JObj jpa = jbj.Oref("params");
 			JObj jsr;
+			JObj jpa;
+			int rv = 0;
+			KDatabase* pdb = sdb.get();
+			if(jbj.IsObject("params"))//throw "The field \"params\" is required.";
+			{
+				jpa = jbj.O("params");
+				
+				if(jpa.SameS("database", L"winpache") && sdbLog)
+					pdb = sdbLog.get();
+				rv = ExDllApiFunc(*pdb, jpa, jsr, 0);
+			}
+			else // params 없어도 빈것으로 부른다.
+			{
+				rv = ExDllApiFunc(*pdb, jpa, jsr, 0);
+			}
+			JObj jres;
+			if(rv == 0)
+			{
+				//if(jsr.size() > 0)
+				jres("response") = jsr;// {Return:OK/Exists/No Data, Desc}
+				jres("return") = rv;//S_OK 나 S_FALSE
+			}
+			else if(rv > 0)// jsr안에 Return:why 들어 있겠고, 더불어 error, return 도 넣는다.
+			{///여기 올일이 없다. throw_response 하기 때문
+				jres("error") = "API Error.";
+				jres("return") = rv;//S_OK 나 S_FALSE
+			}// rv < 0 이면 call한 쪽에서 Unkown Error를 넣는다.
 
-			int rv = ExDllApiFunc(api->_db, jpa, jsr, 0);
-			_Output = jsr.ToJsonStringW();
-			_Output = KwReplaceStr(_Output, L"\n", L"\r\n");//CEdit 이 \n만 있으면 줄을 안바꾼다.
+			auto Output1 = jres.ToJsonStringW();
+			_Output = KwReplaceStr(Output1, L"\n", L"\r\n");//CEdit 이 \n만 있으면 줄을 안바꾼다.
 			UpdateData(0);
 
 			if(func == L"ExGetApiList")
-			{
+			{/// 위 콤보박스에 샘플 함수 넣는다.
 				//CComboBox* cb = (CComboBox*)GetDlgItem(IDC_ExList);
 				c_ExList.ResetContent();
 				ShJArr jr = jsr.Array("ApiList");
@@ -250,8 +284,9 @@ void DockTestApi::OnBnClickedRunapi()
 
 
 
-void DockTestApi::CreateDatabase()
+void DockTestApi::deprecated_CreateDatabase()
 {
+	ASSERT(0);
 	// 콤보박스에 함수 리스트 초기화
 	if (c_ExList.GetCount() == 0)
 	{
@@ -277,38 +312,92 @@ void DockTestApi::OnBnClickedSelect()
 	SetApiFunc(sfnc);
 }
 
-void DockTestApi::SetApiFunc(PWS sfnc)
+void DockTestApi::SetApiFunc(PWS pfnc)
 {
-
+	CString sfnc(pfnc);
 CString params = L"{\r\n\
 	  \"pr1\":\"val1\",\r\n\
       \"pr2\":10\r\n\
 }\r\n";
 	JObj jpr;
-	if(sfnc == L"ExSelectUUID")
+	if(sfnc == L"ExSelectUser")
 	{
-		jpr("limit") = 5;
+		//jpr("limit") = 5;
 		params = L"\
    {\r\n\
+	  \"database\":\"winpache\",\r\n\
 	  \"limit\":5\r\n\
    }\r\n";
 	}
-	else if(sfnc == L"ExSelectUUIDQS")
+	else if (sfnc == L"ExSelectUserQS")
 	{
-		jpr("limit") = 10;
+		//jpr("limit") = 10;
 		params = L"\
    {\r\n\
+	  \"database\":\"winpache\",\r\n\
 	  \"limit\":10\r\n\
    }\r\n";
 	}
+	else if (sfnc == L"ExSelectBizToJson")
+	{
+		// tbiz
+		params = L"\
+   {\r\n\
+	  \"database\":\"winpache\",\r\n\
+	  \"fBizID\":\"biz-0001\"\r\n\
+   }\r\n";
+	}
+	else if (sfnc == L"ExNewBusiness")
+	{
+		//\"fBizID\":\"biz-0001\"\r\n\
+		// tbiz
+		params = L"\
+   {\r\n\
+	  \"database\":\"winpache\",\r\n\
+	  \"fUsrIdReg\":\"user-0001\",\r\n\
+	  \"fTitle\":\"sample shop data\",\r\n\
+	  \"fForm\":\"shop\",\r\n\
+	  \"fTel\":\"01012345678\",\r\n\
+	  \"fState\":\"close\",\r\n\
+	  \"fBegin\":\"11:00:00\",\r\n\
+	  \"fEnd\":\"19:00:00\",\r\n\
+	  \"fMemo\":\"test insert record\"\r\n\
+   }\r\n";
+	}
+	else if (sfnc == L"ExUpdateBusiness")
+	{
+		params = L"\
+   {\r\n\
+	  \"database\":\"winpache\",\r\n\
+	  \"fUsrIdReg\":\"user-0001\",\r\n\
+	  \"fTitle\":\"sample shop data\",\r\n\
+	  \"fForm\":\"shop\",\r\n\
+	  \"fTel\":\"01012345679\",\r\n\
+	  \"fState\":\"quit\",\r\n\
+	  \"fBegin\":\"11:30:00\",\r\n\
+	  \"fEnd\":\"19:30:00\",\r\n\
+	  \"fMemo\":\"test update record\"\r\n\
+   }\r\n";
+	}
+	else if (sfnc == L"ExRemoveBizClass")
+	{
+		params = L"\
+   {\r\n\
+	  \"database\":\"winpache\",\r\n\
+	  \"fBizID\":\"biz-0001\",\r\n\
+	  \"fBIzClsCD\":\"petBeautyShop\"\r\n\
+   }\r\n";
+	}
+/*
 	else if(sfnc == L"ExCreateServerDatabase")
 	{
 		params = L"\
    {\r\n\
-	  \"database\":\"HttpsSvr\"\r\n\
+	  \"database\":\"database1\",\r\n\
 	  \"collate\":\"utf16_unicode_ci\"\r\n\
    }\r\n";
 	}
+*/
 
 // 	if(jpr.size() > 0)
 // 		params = jpr.ToJsonStringW();

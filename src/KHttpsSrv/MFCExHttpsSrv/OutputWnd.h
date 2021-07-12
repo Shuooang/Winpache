@@ -11,7 +11,9 @@
 
 #pragma once
 
-#include "KwLib64/Lock.h"
+#include "KwLib64/Lock.h"    // CKCriticalSection
+#include "KwLib64/DlgTool.h" // CDockablePaneExInvokable
+
 /////////////////////////////////////////////////////////////////////////////
 // COutputList window
 
@@ -33,7 +35,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-class COutputWnd : public CDockablePane
+class COutputWnd : public CDockablePaneExInvokable
 {
 // Construction
 public:
@@ -66,10 +68,11 @@ public:
 
 	void TraceQueue(string txt);
 	void TraceFlush();
-	void Trace(PWS str)
+	void TraceFlushFore();
+	void Trace(string str)
 	{
-		string txt = (PAS)CStringA(str);
-		TraceQueue(txt);
+		//string txt = (PAS)CStringA(str);
+		TraceQueue(str);
 		TraceFlush();
 	}
 

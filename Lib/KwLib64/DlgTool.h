@@ -8,7 +8,9 @@
 #include "afxdialogex.h"
 
 #include "afxmdiframewndex.h"
-
+#include "afxdockablepane.h"
+// C:\Program Files(x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30037\
+// atlmfc\include\afxdockablepane.h
 extern CKTrace std_trace;
 
 #ifdef _Use_Sample
@@ -108,6 +110,7 @@ KwBeginInvoke(this, [&]()-> void {	this->UpdateData(0);	});//?beginInvoke 4.2
 
 #define WM_USER_INVOKE (WM_USER+0x0100)
 
+/// PostMessage뿐만 아니라 SendMessage에도 쓰인다.
 class KBeginInvoke
 {
 public:
@@ -118,18 +121,16 @@ public:
 	CStringA _note;
 	CStringA m_fnc;
 	int m_line;
+	ULONGLONG _tik{0};
+	HWND _hwnd{NULL};
+	bool _bSend{false};
 
-	KBeginInvoke(std::function<void()>* pLambda, PAS fnc, int line)
-		: m_pLambda(pLambda)
-		, m_fnc(fnc)
-		, m_line(line)
-	{
-	}
+	KBeginInvoke(std::function<void()>* pLambda, PAS fnc, int line);
 	~KBeginInvoke()
 	{
 		delete m_pLambda;
 	}
-
+	static WORD s_srl;
 	/// BeginInvoke가 동시에 여러 스레드에서 되는건 gabage free에 위험 하다.
 	static CKCriticalSection* GetCS()
 	{
@@ -162,7 +163,7 @@ public:
 LRESULT clss::OnBeginInvoke(WPARAM wParam, LPARAM lParam)\
 {	CSyncAutoLock __lock(KBeginInvoke::GetCS(), TRUE, __FUNCTION__, __LINE__, #clss);\
 	KBeginInvoke* pbi = (KBeginInvoke*)lParam;\
-	(*pbi->m_pLambda)(); pbi->_bCalled = true; KBeginInvoke::freeInvokeFree(); \
+	pbi->_bCalled = true; (*pbi->m_pLambda)(); KBeginInvoke::freeInvokeFree(); \
 	return 0;\
 }
 //auto pLambda = (std::function<void()>*)lParam; delete pbi;
@@ -186,13 +187,15 @@ void _KwBeginInvoke(HWND hw, Func lmda, PAS fnc = NULL, int line = -1, LPCSTR no
 		new
 #endif // _DEBUG
 		KBeginInvoke(pLambda, fnc, line);
-	static WPARAM s_w = 0;
-	s_w++;
-	pbi->_srl = s_w;
+// 	static WPARAM s_w = 0;
+// 	s_w++;
+// 	pbi->_srl = s_w; class constructor 에서 한다.
 	pbi->_note = note;
+	pbi->_hwnd = hw;
 	KBeginInvoke::setInvokeFree(pbi);
-	::PostMessage(hw, WM_USER_INVOKE, s_w, (LPARAM)pbi);
+	::PostMessage(hw, WM_USER_INVOKE, pbi->_srl, (LPARAM)pbi);
 }
+///?example : 매크로 KwBeginInvoke를 쓸때는 람다 부분을 가로로 한번더 싸 줘야 한다.
 //_KwBeginInvoke(_wnd, [&, param]()-> void
 //	{
 //		OnBoxSelected(param);
@@ -216,8 +219,10 @@ void _KwSendInvoke(HWND hw, Func lmda, PAS fnc = NULL, int line = -1, LPCSTR not
 #endif // _DEBUG
 		KBeginInvoke(pLambda, fnc, line);
 	pbi->_note = note;
+	pbi->_hwnd = hw;
+	pbi->_bSend = true;
 	KBeginInvoke::setInvokeFree(pbi);
-	::SendMessage(hw, WM_USER_INVOKE, 0, (LPARAM)pbi);
+	::SendMessage(hw, WM_USER_INVOKE, pbi->_srl, (LPARAM)pbi);
 }
 
 template<typename Func>
@@ -415,6 +420,19 @@ class CMDIFrameWndExInvokable : public CMDIFrameWndEx
 	DECLARE_DYNAMIC(CMDIFrameWndExInvokable)
 public:
 	CMDIFrameWndExInvokable() noexcept;
+protected:
+	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg LRESULT OnBeginInvoke(WPARAM wParam, LPARAM lParam);//?beginInvoke 1
+	afx_msg void OnTimer(UINT_PTR nIDEvent);//?LbTimer 3
+};
+
+class CDockablePaneExInvokable : public CDockablePane
+	, public KLambdaTimer//?LbTimer 1
+{
+	DECLARE_DYNAMIC(CDockablePaneExInvokable)
+public:
+	CDockablePaneExInvokable() noexcept;
 protected:
 	DECLARE_MESSAGE_MAP()
 public:

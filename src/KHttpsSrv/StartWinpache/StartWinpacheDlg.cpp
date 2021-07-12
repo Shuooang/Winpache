@@ -32,7 +32,7 @@ void CStartWinpacheDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CStartWinpacheDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_WinpachePro, &CStartWinpacheDlg::OnBnClickedWinpachepro)
+//	ON_BN_CLICKED(IDC_WinpachePro, &CStartWinpacheDlg::OnBnClickedWinpachepro)
 	ON_BN_CLICKED(IDC_Winpache, &CStartWinpacheDlg::OnBnClickedWinpache)
 	ON_BN_CLICKED(IDC_Wincatcher, &CStartWinpacheDlg::OnBnClickedWincatcher)
 	ON_BN_CLICKED(IDC_GotoBinary, &CStartWinpacheDlg::OnBnClickedGotobinary)
@@ -134,7 +134,7 @@ void CStartWinpacheDlg::OnBnClickedWinpache()
 {
 	LPCWSTR tdir = L"\\Winpache\\bin\\x64\\Release\\";
 	LPCWSTR fsln = L"Winpache.exe";
-	LPCWSTR desc = L"Open the Winpache Server as freeware.";
+	LPCWSTR desc = L"Open the Winpache Server as shareware.";
 	OpenFile(tdir, fsln, desc);
 }
 

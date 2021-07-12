@@ -44,10 +44,11 @@ public:
 	virtual CDocument* GetDoc() override;
 	_STitleWidthField* GetArListConf(int* nCols) override;
 
-	void MonitorRequest(shared_ptr<KArray<string>> shar) override;
+	void MonitorRequest(SHP<KArray<string>> shar) override;
 
 	void CopyRequest();
 	void CopyOutput();
+	void OnUpdateCmn(CCmdUI* pCmdUI, int idc);
 	// Operations
 public:
 
@@ -65,11 +66,26 @@ public:
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
+	void UpdateControl(CStringA stat, int iOp = 0) override;
+	void UpdateControlFore(CStringA stat, int iOp);
+
 	void EnableCtrl(int idc, int bEnable) override
 	{
 		// 버튼이 있을때만.
 		KwEnableWindow(_vu, idc, bEnable);
 	}
+	void Trace(PAS txt, int iOp = 0);
+	void Trace(PWS txt, int iOp = 0);
+
+	void CallbackOnStarted(int vuid) override;
+	int CallbackOnStopped(HANDLE hev, int vuid) override;
+	int CallbackOnReceived(const void* buffer, size_t size) override;
+	int CallbackOnReceivedRequest(KSessionInfo& inf, int vuid, SHP<KBinData> shbin, HTTPResponse& res) override;
+	int CallbackOnSent(KSessionInfo& inf, int vuid, size_t sent, size_t pending) override;
+
+	
+	void RecoverServer();
+
 protected:
 	CListCtrl _cMonitor;
 
@@ -102,7 +118,15 @@ public://리본메뉴에서 부른다.
 	afx_msg void OnBnClickedRestart();
 	afx_msg void OnBnClickedStartDB();
 	//afx_msg void OnFreeLibrary();
+	afx_msg void OnSiteStart();
+	afx_msg void OnUpdateSiteStart(CCmdUI* pCmdUI);
 
+	afx_msg void OnSiteStop();
+	afx_msg void OnUpdateSiteStop(CCmdUI* pCmdUI);
+	afx_msg void OnSiteRestart();
+	afx_msg void OnUpdateSiteRestart(CCmdUI* pCmdUI);
+	afx_msg void OnConnectSiteDB();
+	afx_msg void OnUpdateConnectSiteDB(CCmdUI* pCmdUI);
 };
 
 #ifndef _DEBUG  // debug version in SrvView.cpp

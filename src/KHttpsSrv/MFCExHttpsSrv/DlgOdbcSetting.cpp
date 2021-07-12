@@ -37,8 +37,8 @@ void DlgOdbcSetting::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(DlgOdbcSetting, CDialogEx)
 	ON_BN_CLICKED(IDC_Close, &DlgOdbcSetting::OnBnClickedClose)
-	ON_BN_CLICKED(IDC_CreateSimple, &DlgOdbcSetting::OnBnClickedCreatesimple)
-	ON_BN_CLICKED(IDC_CreateSimple2, &DlgOdbcSetting::OnBnClickedCreatesimple2)
+// 	ON_BN_CLICKED(IDC_CreateSimple, &DlgOdbcSetting::OnBnClickedCreatesimple)
+ON_BN_CLICKED(IDC_OdbcSetting, &DlgOdbcSetting::OnBnClickedOdbcsetting)
 END_MESSAGE_MAP()
 
 
@@ -81,8 +81,14 @@ void DlgOdbcSetting::OnBnClickedCreatesimple()
 }
 
 
-void DlgOdbcSetting::OnBnClickedCreatesimple2()
+
+void DlgOdbcSetting::OnBnClickedOdbcsetting()
 {
-	auto frm = (CMainFrame*)AfxGetMainWnd();
-	frm->OnOdbcSetting();
+// 	auto frm = (CMainFrame*)AfxGetMainWnd();
+// 	frm->OnOdbcSetting();
+	WCHAR my_documents[MAX_PATH]{0,};
+	::GetSystemDirectory(my_documents, MAX_PATH);//위랑 결과가 같다.
+	CStringW flPrj = my_documents;
+	flPrj += L"\\odbcad32.exe";
+	::ShellExecute(0, 0, flPrj, 0, 0, SW_SHOW);
 }

@@ -176,25 +176,25 @@ void CPropertiesWnd::InitPropList()
 
 	CMFCPropertyGridProperty* pGroup1 = new CMFCPropertyGridProperty(_T("Product"));
 	pGroup1->AddSubItem(new CMFCPropertyGridProperty(_T("Class"), (_variant_t)L"Web Application Server", _T("This applicatin is light server.")));
-	CMFCPropertyGridProperty* pProp = new CMFCPropertyGridProperty(_T("Protocol"), _T("HTTP"), _T("HTTP is for Web Service."));
+	////CMFCPropertyGridProperty* pProp = new CMFCPropertyGridProperty(_T("Protocol"), _T("HTTP"), _T("HTTP is for Web Service."));
 // 	pProp->AddOption(_T("HTTP"));
 // 	pProp->AddOption(_T("TCP"));
 // 	pProp->AddOption(_T("UDP"));
 // 	pProp->AddOption(_T("WS"));
 // 	pProp->AllowEdit(FALSE);
 //	pGroup1->AddSubItem(pProp);
-	pGroup1->AddSubItem(new CMFCPropertyGridProperty(_T("Product Name"), (_variant_t) _T("Winpache Pro"), _T("Winpache is the simplest server.")));
+	pGroup1->AddSubItem(new CMFCPropertyGridProperty(_T("Product Name"), (_variant_t) _T("Winpache Server"), _T("Winpache is the simplest server.")));
 	m_wndPropList.AddProperty(pGroup1);
 
 	CMFCPropertyGridProperty* pGroup2 = new CMFCPropertyGridProperty(_T("File"));
-	pGroup2->AddSubItem(new CMFCPropertyGridProperty(_T("Product Version"), (_variant_t)"1.0.0.2", _T("Version number.")));
-	CMFCPropertyGridProperty* pProp2 = new CMFCPropertyGridProperty(_T("File OS"), _T("Windows 10"), _T("Current Windows OS Version."));
+	pGroup2->AddSubItem(new CMFCPropertyGridProperty(_T("Product Version"), (_variant_t)"1.0.0.5", _T("Version number.")));
+	//CMFCPropertyGridProperty* pProp2 = new CMFCPropertyGridProperty(_T("File OS"), _T("Windows 10"), _T("Current Windows OS Version."));
 // 	pProp2->AddOption(_T("Windows 10"));
 // 	pProp2->AddOption(_T("Windows 7"));
 // 	pProp2->AddOption(_T("Windows Server"));
 // 	pProp2->AllowEdit(FALSE);
 //	pGroup2->AddSubItem(pProp2);
-	pGroup2->AddSubItem(new CMFCPropertyGridProperty(_T("File Name"), (_variant_t)_T("WinpachePro.exe"), _T("MFCExHttpsSrv is the orginal file name.")));
+	pGroup2->AddSubItem(new CMFCPropertyGridProperty(_T("File Name"), (_variant_t)_T("Winpache.exe"), _T("MFCExHttpsSrv is the orginal file name.")));
 	pGroup2->AddSubItem(new CMFCPropertyGridProperty(_T("Original file"), (_variant_t)_T("MFCExHttpsSrv.exe"), _T("MFCExHttpsSrv is the orginal file name.")));
 	pGroup2->AddSubItem(new CMFCPropertyGridProperty(_T("Platform"), (_variant_t)_T("x64"), _T("This is only for Windows x64 version.")));
 	m_wndPropList.AddProperty(pGroup2);
@@ -204,7 +204,7 @@ void CPropertiesWnd::InitPropList()
 	pGroup3->AddSubItem(new CMFCPropertyGridProperty(_T("Company Name"), (_variant_t)"Keepspeed", _T("This is name of company.")));
 	pGroup3->AddSubItem(new CMFCPropertyGridProperty(_T("Copyright"), (_variant_t)_T("(c) artisticlectures@gmail.com.  All rights reserved."), _T("This is Legal copyright.")));
 	pGroup3->AddSubItem(new CMFCPropertyGridProperty(_T("Author"), (_variant_t)_T("Json Kang"), _T("This is Legal copyright.")));
-	pGroup3->AddSubItem(new CMFCPropertyGridProperty(_T("Date"), (_variant_t)_T("2021-06-16 20:19"), _T("This is build time.")));
+	pGroup3->AddSubItem(new CMFCPropertyGridProperty(_T("Date"), (_variant_t)_T("2021-06-24 11:19"), _T("This is build time.")));
 	m_wndPropList.AddProperty(pGroup3);
 	
 	CMFCPropertyGridProperty* pGroup4 = new CMFCPropertyGridProperty(_T("API Support"));

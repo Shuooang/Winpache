@@ -25,9 +25,13 @@ public:
 #endif
 #endif
 	CString _DSN{ L"Winpache" };
-	CString _UID{ L"root" };
+	CString _UID{ L"winpache" };
 	CString _PWD;
 
+	void UpdateUI()
+	{
+		UpdateData();
+	}
 protected:
 	virtual void OnInitialUpdate();
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support

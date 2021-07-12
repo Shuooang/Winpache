@@ -55,25 +55,36 @@ BEGIN_MESSAGE_MAP(CSrvView, CFormInvokable)
 
 	ON_WM_DESTROY()
 	ON_WM_SIZE()
+	ON_WM_CLOSE()
 
 
 
+/// 버튼은 없어지고, 리본메뉴로 가능. 팝업메뉴도 가능
+// 	ON_BN_CLICKED(IDC_Start, &CSrvView::OnBnClickedStart)
+// 	ON_BN_CLICKED(IDC_Stop, &CSrvView::OnBnClickedStop)
+// 	ON_BN_CLICKED(IDC_Restart, &CSrvView::OnBnClickedRestart)
+// 	ON_BN_CLICKED(IDC_BtnPath, &CSrvView::OnBnClickedBtnpath)
 
-	ON_BN_CLICKED(IDC_Start, &CSrvView::OnBnClickedStart)
-	ON_BN_CLICKED(IDC_Stop, &CSrvView::OnBnClickedStop)
-	ON_BN_CLICKED(IDC_Restart, &CSrvView::OnBnClickedRestart)
-	ON_BN_CLICKED(IDC_BtnPath, &CSrvView::OnBnClickedBtnpath)
-	//ON_BN_CLICKED(IDC_bSSL, &CSrvView::OnBnClickedbssl)
+
+//ON_BN_CLICKED(IDC_bSSL, &CSrvView::OnBnClickedbssl)
 	ON_BN_CLICKED(IDC_BtnRootLocal, &CSrvView::OnBnClickedBtnimalocal)
-	ON_BN_CLICKED(IDC_StartDB, &CSrvView::OnBnClickedStartDB)
-	ON_BN_CLICKED(IDC_TestAPI, &CSrvView::OnBnClickedTestapi)
+	//ON_BN_CLICKED(ID_StartDB, &CSrvView::OnBnClickedStartDB)
+	//ON_BN_CLICKED(IDC_TestAPI, &CSrvView::OnBnClickedTestapi)
 	//	ON_BN_CLICKED(IDC_StartUDP, &CSrvView::OnBnClickedStartUDP)
 	ON_BN_CLICKED(IDC_BtnUploadLocal, &CSrvView::OnBnClickedBtnUploadLocal)
 	ON_BN_CLICKED(IDC_BtnSslSetting, &CSrvView::OnBnClickedBtnSslSetting)
 
 	ON_COMMAND(ID_MIGRATION_IMAGESIZEADJUST, &CSrvView::OnMigrationImageSizeAdjust)
 //	ON_COMMAND(ID_FreeLibrary, &CSrvView::OnFreeLibrary)
-	ON_WM_CLOSE()
+	ON_COMMAND(ID_SiteStart, &CSrvView::OnSiteStart)
+	ON_UPDATE_COMMAND_UI(ID_SiteStart, &CSrvView::OnUpdateSiteStart)
+	ON_COMMAND(ID_SiteStop, &CSrvView::OnSiteStop)
+	ON_UPDATE_COMMAND_UI(ID_SiteStop, &CSrvView::OnUpdateSiteStop)
+	ON_COMMAND(ID_SiteRestart, &CSrvView::OnSiteRestart)
+	ON_UPDATE_COMMAND_UI(ID_SiteRestart, &CSrvView::OnUpdateSiteRestart)
+	
+	ON_COMMAND(ID_ConnectSiteDB, &CSrvView::OnConnectSiteDB)
+	ON_UPDATE_COMMAND_UI(ID_ConnectSiteDB, &CSrvView::OnUpdateConnectSiteDB)
 END_MESSAGE_MAP()
 
 // CSrvView construction/destruction
@@ -99,7 +110,32 @@ void CSrvView::DoDataExchange(CDataExchange* pDX)
 // 	if(doc == NULL)
 // 		return;
 
-	CmnView::DoDataExchange(pDX);
+	//CmnView::DoDataExchange(pDX);
+	CmnDoc* doc = GetDocument();
+	if(doc == NULL)
+		return;
+	KDDX_Check(_bSSL);
+	KDDX_Check(_bStaticCache);
+	KDDX_Text(_CacheLife);
+	KDDX_TextA(_rootLocal);
+	KDDX_TextA(_defFile);
+	KDDX_TextA(_uploadLocal);
+	KDDX_TextA(_ApiURL);
+	KDDX_Text(_port);
+	KDDX_TextA(_ODBCDSN);
+	KDDX_Text(_note);
+
+	DDX_Control(pDX, IDC_CacheLife, c_CacheLife);
+	DDX_Control(pDX, IDC_rootLocal, c_rootLocal);
+	DDX_Control(pDX, IDC_defFile, c_defFile);
+	DDX_Control(pDX, IDC_ApiURL, c_ApiURL);
+	DDX_Control(pDX, IDC_port, c_port);
+	DDX_Control(pDX, IDC_ODBCDSN, c_ODBCDSN);
+	DDX_Control(pDX, IDC_note, c_note);
+
+	if(!pDX->m_bSaveAndValidate) //읽어 들이면 UpdateData(); 
+		doc->InitApi();
+
 
 	DDX_Control(pDX, IDC_MonitorList, _cMonitor);
 }
@@ -125,43 +161,46 @@ void CSrvView::OnInitialUpdate()
 	int idVu = _id;
 	
 	//버튼을 숨긴다. 리본메뉴에 있으므로
-	GetDlgItem(IDC_Start)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_Stop)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_Restart)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_TestAPI)->ShowWindow(SW_HIDE);
-	GetDlgItem(IDC_StartDB)->ShowWindow(SW_HIDE);
+// 	GetDlgItem(IDC_Start)->ShowWindow(SW_HIDE);
+// 	GetDlgItem(IDC_Stop)->ShowWindow(SW_HIDE);
+// 	GetDlgItem(IDC_Restart)->ShowWindow(SW_HIDE);
+// 	GetDlgItem(IDC_TestAPI)->ShowWindow(SW_HIDE);
+// 	GetDlgItem(IDC_StartDB)->ShowWindow(SW_HIDE);
 
 	UpdateControl("init");// 이걸 해줘야. Enable  정보가 들어 있어서 메뉴가 UpdateEnable 정보
 
 	/// CmnView::_fncExtraTrace 에 OutputWnd에 내보내는 람다를 등록한다.
 	// 이 _fncExtraTrace는 스타트서버할때 서버에게도 복사 된다.
+#ifdef __MovedToMainFrame
 	AddCallbackExtraTrace([&, this, idVu, idOw](string txt) -> void //?ExTrace 1 실제 루틴을 정의 한다.람다
 		{
 			// 람다 불리기전에 받은 vuid가 아직 살아 있는지 확인 한다.
 			auto ivc = dynamic_cast<KCheckWnd*>(AfxGetApp());
 			bool bVu = !ivc ? false : ivc->ViewFind(idVu);
 			bool bOutput = !ivc ? false : ivc->ViewFind(idOw);
-			if(bOutput)//?destroy 7 : 여기서 NULL이 나와야 하는데, 0xddddddddddd
+			if(bOutput && bVu)//?destroy 7 : 여기서 NULL이 나와야 하는데, 0xddddddddddd
 			{
 				COutputWnd::s_me->TraceQueue(txt.c_str());//?ExTrace 7
-				if(CMainPool::s_UiThreadId == ::GetCurrentThreadId())//FOREGROUND();
+				COutputWnd::s_me->TraceFlush();//?ExTrace 7 //?destroy 8
+				/*if(CMainPool::s_UiThreadId == ::GetCurrentThreadId())//FOREGROUND();
 					COutputWnd::s_me->TraceFlush();//?ExTrace 7 //?destroy 8
 				else
 				{
-					if(bVu)// KwBeginInvoke하려면 this View가 살아 있어야지.
+					//if(bVu)// _KwBeginInvoke하려면 this View가 살아 있어야지.
 					{
-						KwBeginInvoke(this, ([&, txt]()-> void { //?beginInvoke 4
-								COutputWnd::s_me->TraceFlush();//?ExTrace 7 //?destroy 8
+						_KwBeginInvoke(this, ([&, txt]()-> void { //?beginInvoke 4
+							COutputWnd::s_me->TraceFlush();//?ExTrace 7 //?destroy 8
 							}));
 					}
-				}
+				}*/
 			}
 		});
+#endif // __MovedToMainFrame
 
 	SrvDoc* doc = GetDocument();
-	doc->_svr->_api->AddCabackOutput([&](PAS msg, int err) -> void
+	doc->_svr->_api->AddCallbackOutput([&](string msg, int err) -> void
 		{
-			Trace(msg);
+			Trace(msg.c_str());
 		});
 
 	int nCol = 0;
@@ -174,8 +213,114 @@ void CSrvView::OnInitialUpdate()
 		SampleServer();
 		UpdateData(0);
 	}
-	KwEnableWindow(this, IDC_Stop, FALSE);
-	KwEnableWindow(this, IDC_Restart, FALSE);
+	KwEnableWindow(this, ID_Stop, FALSE);
+	KwEnableWindow(this, ID_Restart, FALSE);
+
+	RecoverServer();//?server recover 5 contunue running server
+}
+
+void CSrvView::Trace(PAS txt, int iOp)
+{
+	if(iOp == 0)
+	{
+		string str = txt;
+		_KwBeginInvoke(this, ([&, str]()-> void
+			{ //?beginInvoke 4
+				Trace(str.c_str(), 1);
+			}));
+	}
+	else if(iOp == 1)
+	{
+		auto fm = (CMainFrame*)AfxGetMainWnd();
+		if(fm && fm->_fncExtraTrace)
+			(*fm->_fncExtraTrace)(txt);
+		TRACE("%s\n", txt);
+	}
+
+}
+
+void CSrvView::Trace(PWS txt, int iOp)
+{
+	CStringA str(txt);
+	Trace(str, iOp);
+// 	auto fm = (CMainFrame*)AfxGetMainWnd();
+// 	CStringA stra(txt);
+// 	if(fm->_fncExtraTrace)
+// 		(*fm->_fncExtraTrace)((PAS)stra);
+// 	TRACE("%s\n", txt);
+}
+
+void CSrvView::CallbackOnStarted(int vuid)//?server recover 1 펜딩 서버 저장 OnStarted에서
+{
+	BACKGROUND(1);
+	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& jobj = *appd._json;
+	//auto ivc = dynamic_cast<KCheckWnd*>(AfxGetApp());
+	//bool bVu = !ivc ? false : ivc->ViewFind(vuid);
+	//if(bVu)//_vu && ::IsWindow(_vu->GetSafeHwnd()))
+	auto doc = GetDocument();
+	/// Start한 서버를 저장 해둔다.
+	ShJObj sjsvr = std::make_shared<JObj>();
+	doc->JsonToData(sjsvr, true);///서버정보를 JObj에 담아 온다.
+	appd.RegisterServerStart(sjsvr);//?server recover 1.1
+	//doc->GetPathName();
+	__super::CallbackOnStarted(vuid);//주로 EnableControl한다
+	
+}
+int CSrvView::CallbackOnStopped(HANDLE hev, int vuid)//?server recover 2 펜딩 서버 제거
+{
+	BACKGROUND(1);
+	/// Stop한 서버를 제거 한다.
+	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto doc = GetDocument();
+
+	auto guid = doc->_GUID;//키는 GUID
+	appd.UnregisterServerStart(guid);
+
+	return __super::CallbackOnStopped(hev, vuid);
+}
+
+int CSrvView::CallbackOnReceived(const void* buffer, size_t size)
+{
+	return 0;
+}
+int CSrvView::CallbackOnReceivedRequest(KSessionInfo& inf, int vuid, SHP<KBinData> shbin, HTTPResponse& res)
+{
+	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& jobj = *appd._json;
+
+	appd.ReqOccured(inf._ssid);
+	//TRACE("CallbackOnReceived %I64u\n", size);
+	_KwBeginInvoke(this, ([&]()-> void
+		{
+			double npm = appd.GetSpeedPerSec();
+			CString s;// 100msec: 0.1초: 1000ms/100ms
+			if(npm > 0)//평균 간격을 초당 횟수로 바꿈
+			{
+				s.Format(L"Speed: %4.0f/sec", 10000000. / npm);
+				SetDlgItemText(IDC_NPM, s);//없어지므로. 마지막꺼 보여
+			}
+		}));
+	return 0;
+}
+
+int CSrvView::CallbackOnSent(KSessionInfo& inf, int vuid, size_t sent, size_t pending)
+{
+	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	if(pending == 0)
+	{
+		double npm = appd.OnResponse(inf._ssid);
+		if(npm > 0)
+		{
+			_KwBeginInvoke(this, ([&, npm]()-> void
+				{
+					CString s;
+					s.Format(L"Elapsed: %7.3f msec", npm / 10000.);
+					SetDlgItemText(IDC_Elapsed, s);//없어지므로. 마지막꺼 보여
+				}));
+		}
+	}
+	return __super::CallbackOnSent(inf, vuid, sent, pending);
 }
 
 void CSrvView::OnRButtonUp(UINT /* nFlags */, CPoint point)
@@ -204,7 +349,6 @@ void CSrvView::Dump(CDumpContext& dc) const
 {
 	CFormInvokable::Dump(dc);
 }
-
 SrvDoc* CSrvView::GetDocument() const // non-debug version is inline
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(SrvDoc)));
@@ -213,13 +357,151 @@ SrvDoc* CSrvView::GetDocument() const // non-debug version is inline
 #endif //_DEBUG
 
 
+void CSrvView::UpdateControl(CStringA stat, int iOp)
+{
+	_KwBeginInvoke(this, ([&, stat, iOp]()-> void
+		{ //?beginInvoke 4
+			UpdateControlFore(stat, iOp);
+		}));
+}
+
+void CSrvView::UpdateControlFore(CStringA stat, int iOp)
+{
+	FOREGROUND();
+	//iOp not used yet
+	if(stat == "init")
+	{
+		EnableCommand(ID_StartDB, 1);
+		stat = "stopped";
+	}
+	else if(stat == "error")
+	{
+		stat = "stopped";
+	}
+
+	if(stat == "starting")
+	{
+		EnableCommand(IDC_bSSL, FALSE);
+		EnableCommand(IDC_bStaticCache, FALSE);
+		EnableCommand(IDC_CacheLife, FALSE);
+		EnableCommand(IDC_port, FALSE);
+
+		EnableCommand(ID_Start, FALSE);
+		EnableCommand(ID_Stop, FALSE);
+		EnableCommand(ID_Restart, FALSE);
+	}
+	else if(stat == "restarting")
+	{
+		EnableCommand(ID_Start, FALSE);
+		EnableCommand(ID_Stop, FALSE);
+		EnableCommand(ID_Restart, FALSE);
+	}
+	else if(stat == "started")
+	{
+		EnableCommand(IDC_bSSL, FALSE);
+		EnableCommand(IDC_bStaticCache, FALSE);
+		EnableCommand(IDC_CacheLife, FALSE);
+		EnableCommand(IDC_port, FALSE);
+		EnableCommand(IDC_defFile, FALSE);
+		EnableCommand(IDC_ApiURL, FALSE);
+		EnableCommand(IDC_ODBCDSN, FALSE);
+		EnableCommand(IDC_rootLocal, FALSE);
+		EnableCommand(IDC_uploadLocal, FALSE);
+
+		EnableCommand(ID_Start, FALSE);
+		EnableCommand(ID_Stop, 1);
+		EnableCommand(ID_Restart, 1);
+	}
+	else if(stat == "stopping")
+	{
+		EnableCommand(ID_Start, FALSE);
+		EnableCommand(ID_Stop, FALSE);
+		EnableCommand(ID_Restart, FALSE);
+	}
+	else if(stat == "stopped")
+	{//iOp not used
+		EnableCommand(IDC_bSSL, 1, iOp);
+		EnableCommand(IDC_bStaticCache, 1, iOp);//?destroy 4.5
+		EnableCommand(IDC_CacheLife, 1, iOp);//?destroy 4.5
+		EnableCommand(IDC_port, 1);
+		EnableCommand(IDC_defFile, 1);
+		EnableCommand(IDC_ApiURL, 1);
+		EnableCommand(IDC_ODBCDSN, 1);
+		EnableCommand(IDC_rootLocal, 1);
+		EnableCommand(IDC_uploadLocal, 1);
+
+		EnableCommand(ID_Start, 1, iOp);
+		EnableCommand(ID_Stop, FALSE, iOp);
+		EnableCommand(ID_Restart, FALSE, iOp);
+	}
+
+	auto frm = (CMainFrame*)AfxGetMainWnd();
+	frm->UpdateControl(stat, iOp);
+}
+
+
+
 // CSrvView message handlers
+
+void CSrvView::RecoverServer()//?server recover 5.1 contunue running server
+{
+	//("_bRecover") = TRUE; 이미 OnStart에서 등록 하면서 한다.
+	auto app = (CMFCExHttpsSrvApp*)AfxGetApp();
+	auto& appd = app->_docApp;
+	auto doc = GetDocument();
+	{
+		AUTOLOCK(appd._csRecover);
+		auto& jobj = *appd._json;
+		auto dsnMain = jobj.S("_DSN");
+		auto srsv = jobj.O("RunningServers");
+		if(!srsv || srsv->size() == 0)//펜딩서버 있고
+			return;
+
+		auto sjo = srsv->O(doc->_GUID);//내 아디가 있으면 나는 펜딩서버나 보다
+		if(!sjo)
+			return;
+
+		if(sjo->I("_bRecover") == FALSE)
+			return;
+		//원래 파일데이터 보다 RunningServers가 new일수 있다. 저장 안했으면. 그래서 덮어 쓴다.
+		doc->JsonToData(sjo, false); //이제 멤버값과 sjo값이 같아 졌다. 덮어 썻으니
+	}
+	UpdateData(0);
+
+	/// 이게 무의미 하게 되었다.
+	//if(doc->_bDbConnected)//당시 런닝중에 DB가 연결된 상태 였으면 다시 연결 해야지.
+	{
+//		ASSERT(appd._dbMain->IsOpen());
+		CString ODBCDSN(doc->_ODBCDSN);
+		//auto rs = doc->_svr->_api->CheckDB(ODBCDSN, appd._dbMain);
+		doc->_svr->_api->_ODBCDSN= doc->_ODBCDSN;
+		doc->_svr->_api->_ODBCDSNlog = appd.MakeDsnString();
+	}
+
+	auto fm = (CMainFrame*)AfxGetMainWnd();
+	if(fm->_fncExtraTrace)
+		doc->AddCallbackOnTrace(fm->_fncExtraTrace);//?ExTrace 3 CmnView -> MyHttps + std_cout(KTrace)
+
+	//SSL쓰면 비번도 RunningServers에는 저장 되므로 
+	ASSERT(!doc->_bSSL || doc->_prvpwd.GetLength() > 0);
+	StartServer();
+}
 
 void CSrvView::OnBnClickedStart()
 {
 	FOREGROUND();
 	UpdateData();
+
+	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& jobj = *appd._json;
+
 	CmnDoc* doc = GetDocument();
+	doc->_svr->_api->_ODBCDSNlog = appd.MakeDsnString();
+
+	auto fm = (CMainFrame*)AfxGetMainWnd();
+	if(fm->_fncExtraTrace)
+		doc->AddCallbackOnTrace(fm->_fncExtraTrace);//?ExTrace 3 CmnView -> MyHttps + std_cout(KTrace)
+
 	if(doc->_bSSL && doc->_prvpwd.GetLength() == 0)
 	{
 		OnBnClickedBtnSslSetting();//비번을 받는다.
@@ -227,17 +509,23 @@ void CSrvView::OnBnClickedStart()
 			return;
 	}
 
-// 	KwEnableWindow(this, IDC_Start, FALSE);
-// 	KwEnableWindow(this, IDC_Stop, FALSE);
-// 	KwEnableWindow(this, IDC_Restart, FALSE);
-// 	KwEnableWindow(this, IDC_bSSL, FALSE);
-// 	KwEnableWindow(this, IDC_bStaticCache, FALSE);
+	///moveto CallbackOnStarted
+	//[ server start하자 마자 메인에 등록하고, 스톱 하면 제거 한다. 중간에 끊긴것이 다음 로운지때 바로 시작 한다.
+	//auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	//ShJObj sjobjSvr;// = std::make_shared<JObj>();
+	//doc->JsonToData(sjobjSvr, TRUE);
+	//appd.RegisterServerStart(sjobjSvr);
+	//]
 	StartServer();
 }
 
 
 void CSrvView::OnBnClickedStop()
 {
+	CmnDoc* doc = GetDocument();
+// 	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+// 	appd.UnregisterServerStart(doc->_GUID);
+
 	StopServer();
 }
 
@@ -328,19 +616,34 @@ void CSrvView::OnBnClickedStartDB()
 	CStringW ODBCDSN(doc->_ODBCDSN);
 	if(tchlen((PWS)ODBCDSN) == 0)
 	{
-		PAS pas = "Data Source name is empty.";
+		PAS pas = "Data Source name is empty.\nEx:DSN=MyDSN;UID=myid;PWD=pypwd;database=sitedb";
 		KwMessageBoxA(pas);
 		Trace(pas);
 		return;
 	}
 	Trace("ODBC Data Source conneting...");
 	auto frm = (CMainFrame*)AfxGetMainWnd();
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_doc;
-	auto rs = doc->_svr->_api->CheckDB(ODBCDSN, appd._dbMain);
-	if(rs)
-		Trace(rs);
-	SetDlgItemText(IDC_STATICDB, L" DB Connected.");
-	Trace("Site Database Connected.");
+	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& jobj = *appd._json;
+	try
+	{
+		doc->_svr->_api->_ODBCDSNlog = appd.MakeDsnString();
+
+//		SHP<KDatabase> db = make_shared<KDatabase>();
+// 		auto rs = doc->_svr->_api->CheckDbThread(ODBCDSN, db);// appd._dbMain);
+// 		if(rs.length() > 0)
+// 			Trace(rs.c_str());
+		SHP<KDatabase> sdb = KDatabase::getDbConnected((PWS)doc->_svr->_api->_ODBCDSN);
+		doc->_svr->_api->InitDbLogProc(sdb.get());
+
+		SetDlgItemText(IDC_STATICDB, L" DB Connected.");
+		Trace("Site Database is Tested.");
+	}
+	catch (KException* e)
+	{
+		CString smsg; smsg.Format(L"%s\n%s.", e->m_strError, e->m_strStateNativeOrigin);
+		KwMessageBoxError(smsg);
+	}
 }
 void CSrvView::OnMigrationImageSizeAdjust()
 {
@@ -359,7 +662,6 @@ void CSrvView::OnBnClickedTestapi()
 	auto api = (ApiSite1*)&doc->_svr->_api;
 	try
 	{
-		//api->CheckDB();
 		UpdateData(); //InitApi(); 포함.
 
 		CStringW ODBCDSN(doc->_ODBCDSN);
@@ -449,12 +751,12 @@ _STitleWidthField* CSrvView::GetArListConf(int* nCols)
 		*nCols = _countof(s_arlstCtrl);
 	return s_arlstCtrl;
 }
-// void CSrvView::MonitorRequest(shared_ptr<KArray<string>> shar)
+// void CSrvView::MonitorRequest(SHP<KArray<string>> shar)
 // {
 // 	//자체 리스트가 아니고 다른 도킹 창에서 해야 한다.
 // 	/// DockReceiveList::s_me->MonitorRequest(shar);
 // }
-void CSrvView::MonitorRequest(shared_ptr<KArray<string>> shar)
+void CSrvView::MonitorRequest(SHP<KArray<string>> shar)
 {
 	int i = 0;
 	auto& ar = *shar;
@@ -517,4 +819,44 @@ void CSrvView::CopyOutput()
 		ss << (PWS)cel << L"\r\n";
 	}
 	KwCopyTextClipboad(this, ss.str().c_str());
+}
+
+
+void CSrvView::OnUpdateCmn(CCmdUI* pCmdUI, int idc)
+{
+	BOOL b = this->GetUpdate(idc);//CChildFrame::OnClose() 에서도 불러야 한다.
+	pCmdUI->Enable(b);
+}
+
+void CSrvView::OnSiteStart()
+{
+	OnBnClickedStart();
+}
+void CSrvView::OnUpdateSiteStart(CCmdUI* pCmdUI)
+{
+	OnUpdateCmn(pCmdUI, ID_Start);
+}
+void CSrvView::OnSiteStop()
+{
+	OnBnClickedStop();
+}
+void CSrvView::OnUpdateSiteStop(CCmdUI* pCmdUI)
+{
+	OnUpdateCmn(pCmdUI, ID_Stop);
+}
+void CSrvView::OnSiteRestart()
+{
+	OnBnClickedRestart();
+}
+void CSrvView::OnUpdateSiteRestart(CCmdUI* pCmdUI)
+{
+	OnUpdateCmn(pCmdUI, ID_Restart);
+}
+void CSrvView::OnConnectSiteDB()
+{
+	OnBnClickedStartDB();
+}
+void CSrvView::OnUpdateConnectSiteDB(CCmdUI* pCmdUI)
+{
+	OnUpdateCmn(pCmdUI, ID_StartDB);
 }

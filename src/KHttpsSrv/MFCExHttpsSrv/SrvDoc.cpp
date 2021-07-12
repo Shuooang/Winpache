@@ -20,9 +20,10 @@
 #include "MFCExHttpsSrv.h"
 #endif
 
+#include "ApiSite1.h"
 #include "SrvDoc.h"
 
-#include <propkey.h>
+//#include <propkey.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -52,14 +53,52 @@ BOOL SrvDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
 		return FALSE;
-
-	if (_GUID.IsEmpty())
-		_GUID = KwGetFormattedGuid();
+	auto app = (CMFCExHttpsSrvApp*)AfxGetApp();
+	auto& appd = (app)->_docApp;
+	//_fullPath = GetPathName();
+	if(_GUID.IsEmpty())
+	{
+		CString guid;
+		if(appd.PopRecoveringServer(guid))//?server recover 4
+			_GUID = guid;
+		else
+			_GUID = KwGetFormattedGuid();
+	}
 
 	// TODO: add reinitialization code here
 	// (SDI documents will reuse this document)
-
 	return TRUE;
+}
+
+BOOL SrvDoc::OnOpenDocument(LPCTSTR lpszPathName)
+{
+	BOOL b = __super::OnOpenDocument(lpszPathName);
+	_fullPath = lpszPathName;
+// 	auto app = (CMFCExHttpsSrvApp*)AfxGetApp();
+// 	auto& appd = (app)->_docApp;
+// 	auto& jobj = *appd._json;
+// 	auto srsv = jobj.O("RunningServers");
+// 	auto sjo = srsv->O(_GUID);
+// 	if(sjo)
+	{
+		//원래 파일데이터 보다 RunningServers가 new일수 있다. 저장 안했으면
+// 		if(sjo->I("_bRecover"))
+// 		JsonToData(sjo, false);
+// 		if(_bRecover)
+		{
+// 			GetActive
+// 			if(_bDbConnected)
+// 			{
+// 				ASSERT(appd._dbMain->IsOpen());
+// 				CString ODBCDSN(_ODBCDSN);
+// 				auto rs = _svr->_api->CheckDB(ODBCDSN, appd._dbMain);
+// 			}
+// 			StartServer();
+
+		}
+
+	}
+	return b;
 }
 
 
@@ -142,7 +181,95 @@ void SrvDoc::Dump(CDumpContext& dc) const
 {
 	CDocument::Dump(dc);
 }
-#endif //_DEBUG
+#endif
+
+void SrvDoc::JsonToData(ShJObj& sjobj, bool bToJson)
+{
+
+	if(bToJson)//ar.IsStoring())
+	{
+		if(!sjobj)
+			sjobj = std::make_shared<JObj>();///이거 때문에 파라미터를 ShJObj&
+		JObj& js = *sjobj;
+		//js("_port") = _port;
+		ASSERT(!_GUID.IsEmpty());
+		//	_GUID = KwGetFormattedGuid();
+		KJSPUT(_GUID);
+		KJSPUT(_port);
+		KJSPUT(_bSSL);
+		KJSPUT(_bStaticCache);
+		KJSPUT(_CacheLife);
+		//		KJSPUT(_Title);
+		// 		KJSPUT(_cachedPath);
+		// 		KJSPUT(_cachedUrl);
+		KJSPUT(_certificate);
+		KJSPUT(_privatekey);
+		KJSPUT(_prvpwd);
+		KJSPUT(_dhparam);
+		KJSPUT(_ODBCDSN);
+		KJSPUT(_rootLocal);
+		KJSPUT(_defFile);
+		KJSPUT(_uploadLocal);
+		KJSPUT(_rootURL);
+		KJSPUT(_ApiURL);
+		// 		KJSPUT(_UdpSvr);
+		// 		KJSPUT(_portUDP);
+		KJSPUT(_SQL);
+		KJSPUT(_SrcImagePath);
+		KJSPUT(_note);
+		//	JSPUT(_SrcTable);
+		//	JSPUT(_SrcKeyField);
+
+		KJSPUT(_bDbConnected);
+		KJSPUT(_bRecover);
+		KJSPUT(_tLastRunning);
+		KJSPUT(_fullPath);
+	}
+	else
+	{
+		//auto& js = *jdoc->AsObject().get();
+		JObj& js = *sjobj;
+
+		KJSGETS(_GUID);
+		//ASSERT(!_GUID.IsEmpty());
+		if(_GUID.IsEmpty())
+			_GUID = KwGetFormattedGuid();
+		KJSGETI(_port);// 숫자인 경우
+		KJSGETI(_bSSL);// 숫자인 경우
+		KJSGETI(_bStaticCache);// 숫자인 경우
+		KJSGETI(_CacheLife);// 숫자인 경우
+// 		KJSGETS(_Title);
+// 		KJSGETS(_cachedPath);
+// 		KJSGETS(_cachedUrl);
+		KJSGETS(_certificate);
+		KJSGETS(_privatekey);
+		KJSGETS(_dhparam);
+		KJSGETS(_prvpwd);
+		KJSGETS(_ODBCDSN);
+		if(_ODBCDSN.Find('=') < 0)
+		{//원래 DSN명만 담았으나, "DSN=dsname;UID=%s;PWD=..." 연결 문장 
+			_ODBCDSN.Format(L"DSN=%s", _ODBCDSN);
+			js("_ODBCDSN") = _ODBCDSN;
+		}
+		KJSGETS(_rootLocal);
+		KJSGETS(_defFile);
+		KJSGETS(_uploadLocal);
+		//if (_rootURL.IsEmpty())
+		KJSGETS(_rootURL);
+		KJSGETS(_ApiURL);
+
+		KJSGETS(_SQL);
+		KJSGETS(_SrcImagePath);
+		KJSGETS(_note);
+		// 		KJSGETS(_UdpSvr);
+		// 		KJSGETI(_portUDP);// 숫자인 경우
+		KJSGETI(_bDbConnected);// 숫자인 경우
+		KJSGETI(_bRecover);// 숫자인 경우
+		KJSGETS(_tLastRunning);
+		KJSGETS(_fullPath);
+
+	}
+}
 
 
 // SrvDoc commands

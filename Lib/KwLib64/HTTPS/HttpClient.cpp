@@ -115,26 +115,27 @@ hres CHttpClient::_ReqProgress(EReqStep erq)
 	}
 	return S_OK;
 }
+
 hres CHttpClient::RequestPost( LPCTSTR pszServerName, INTERNET_PORT nPort, LPCTSTR sUrlTail, KBinary* pBin, KBinary* pBinr, int iOp)
 {
-
 	// SmoBranch가 로그인 할때
 	// 	+		pszServerName	"daree.gugose.co.kr"	const wchar_t *
 // 			nPort	18470	unsigned short
 // 	+		sUrlTail	"/gps/?Req_20Login=0"	const wchar_t *
-
 	// push 보낼떄
 // 	+		pszServerName	0x00a27200 "push.gugose.co.kr"	const wchar_t *
 // 	nPort	80	unsigned short
 // 	+		sUrlTail	0x014beda8 "/daree/pushdaree3.php"	const wchar_t *
 	hres hr = S_OK;
 	CInternetSession session(m_sSession);
-
 	CHttpConnection* pServer = NULL;
 	//CAutoPtrClose<CHttpConnection> _pServer(pServer, this);//여기서 아직 NULL
 	KAtEnd d_stream([&]() {
 		if(pServer)
+		{
+			session.Close();
 			pServer->Close();
+		}
 	});
 	CHttpFile* pFile = NULL;
 	//CAutoPtrClose<CHttpFile> _pFile(pFile);
@@ -147,21 +148,17 @@ hres CHttpClient::RequestPost( LPCTSTR pszServerName, INTERNET_PORT nPort, LPCTS
 	/// //////////////////////////////////////////////////////////////////////////
 	try
 	{// 이전에 goto EndLabel; 를 대신 하여 throwLINE 로 바꿈.
-
 		try
 		{
 			session.SetOption(INTERNET_OPTION_CONNECT_RETRIES, 3);
-
 		if(m_nMilSecTimeout > 0)// 60sec
 			session.SetOption(INTERNET_OPTION_CONNECT_TIMEOUT, m_nMilSecTimeout);//5sec
-
 		if(m_nMilSecTimeoutSend > 0)// 60sec
 			session.SetOption(INTERNET_OPTION_SEND_TIMEOUT, m_nMilSecTimeoutSend);
 		if(m_nMilSecTimeoutRcv > 0)// 이게 타임아웃/응답없음 모두 영향 있네. 
 			session.SetOption(INTERNET_OPTION_RECEIVE_TIMEOUT, m_nMilSecTimeoutRcv);
 		if(m_nMilSecTimeoutDataRcv > 0)// 60sec
 			session.SetOption(INTERNET_OPTION_DATA_RECEIVE_TIMEOUT, m_nMilSecTimeoutDataRcv);
-
 #ifdef _before_edit
 	// 		session.SetOption(INTERNET_OPTION_CONNECT_TIMEOUT, m_nMilSecTimeout);
 			// 		session.SetOption(INTERNET_OPTION_CONNECT_RETRIES, 3);
@@ -172,10 +169,6 @@ hres CHttpClient::RequestPost( LPCTSTR pszServerName, INTERNET_PORT nPort, LPCTS
 			}
 #endif // _before_edit
 			pServer = session.GetHttpConnection(pszServerName, nPort);//	ThrowIfNull(pServer);
-			//if(pServer)
-				//_pServer.SetClose(true);
-			
-			//m_pServer = pServer;//CServerPtr연결이 하나라는 전제로 시도 해보는 건데.. KeepAlive 연결해제 하기 위함.
 
 			_ReqProgress(eRsSetOp);
 		}
@@ -196,7 +189,6 @@ hres CHttpClient::RequestPost( LPCTSTR pszServerName, INTERNET_PORT nPort, LPCTS
 			DelException(e);
 			throwLINE;
 		}
-
 
 		HttpLog(L"서버에 연결.");
 		try
@@ -278,7 +270,8 @@ hres CHttpClient::RequestPost( LPCTSTR pszServerName, INTERNET_PORT nPort, LPCTS
 
 	=====================================
 	POST /Default.aspx HTTP/1.1\r\n
-	Accept: image/gif, image/jpeg, image/pjpeg, image/pjpeg, application/x-shockwave-flash, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, application/x-ms-application, application/x-ms-xbap, applicati
+		Accept: image/gif, image/jpeg, image/pjpeg, image/pjpeg, application/x-shockwave-flash, application/vnd.ms-excel, 
+		application/vnd.ms-powerpoint, application/msword, application/x-ms-application, application/x-ms-xbap, applicati
 	Referer: http://203.225.22.74/Default.aspx\r\n
 	Accept-Language: ko\r\n
 	User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Trident/4.0; InfoPath.2; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)\r\n
@@ -290,7 +283,6 @@ hres CHttpClient::RequestPost( LPCTSTR pszServerName, INTERNET_PORT nPort, LPCTS
 	Cache-Control: no-cache\r\n
 	\r\n
 	=====================================
-
 	L"Accept: text, */*\r\n"
 	L"Accept-Language: ko\r\n"
 	L"User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Trident/4.0; InfoPath.2; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)\r\n"
@@ -311,8 +303,6 @@ hres CHttpClient::RequestPost( LPCTSTR pszServerName, INTERNET_PORT nPort, LPCTS
 			//	); 
 
 	//		AddRequestHeaders("Accept: */*rn" )
-
-
 
 	//		괄호 부분에 "User-Agent: Test....", "Content-type..." 이렇게도 있을 때 있고요.
 
@@ -515,13 +505,6 @@ hres CHttpClient::RequestPost( LPCTSTR pszServerName, INTERNET_PORT nPort, LPCTS
 		pFile->Close();
 		DeleteMeSafe(pFile);
 	}
-	if(pServer)
-	{// CAutoPtrClose 로 자동 되므로 불필요 _pServer.SEtClose() 해야만 된다.
-		session.Close();
-		pServer->Close();//이미 Auto
-//		DeleteMeSafe(pServer);
-	}
-
 	return hr;
 }
 
@@ -857,6 +840,7 @@ int CHttpClient::RequestPostSSL( LPCTSTR surl, KBinary* pBinr, LPCSTR buf, UINT 
 			{
 				request->setRequestHeader(_bstr_t(kv.first.c_str()), _bstr_t(kv.second.c_str()));
 			}
+
 			//CKRbVal<CStringW, CStringW>& lst = *httpHdr;
 			//for(POSITION _pos = (lst).GetHeadPosition();_pos;)
 			//{
@@ -867,6 +851,9 @@ int CHttpClient::RequestPostSSL( LPCTSTR surl, KBinary* pBinr, LPCSTR buf, UINT 
 			//	request->setRequestHeader((BSTR)(PWS)key, (BSTR)(PWS)val);
 			//}
 		}
+		BSTR bstr1 = nullptr;
+		request->getResponseHeader(L"Cache-Control", (BSTR*)&bstr1);
+
 // 		else // Conformance mode : No 해야 됨
 // 			request->setRequestHeader(L"Content-type", L"application/json");
 		//error C2664: 'HRESULT IXMLHTTPRequest::setRequestHeader(BSTR,BSTR)': cannot convert argument 1 from 'const wchar_t [13]' to 'BSTR'

@@ -97,7 +97,10 @@ namespace Kw
 
 		void ErrTest();
 		//void DeleteAll();clear
+#ifdef _DEBUG
+		PWS _aaa;
 		CStringW _txt;
+#endif // _DEBUG
 		CStrBufferT<CStringW, LPCWSTR> _buf;
 		CStrBufferT<CStringA, LPCSTR> _bufa;
 		void toString();
@@ -393,6 +396,23 @@ namespace Kw
 		JVal(const ShJVal sjv, bool bClone = true);
 		//JVal(const JObj* object_value1);// , JStrArray& array_key1);
 		//JVal(const ShJVal jv);
+#ifdef _DEBUG
+		CStringW _txt;
+		string __{"                                                                                                    "};
+		//wstring _text;// ui에 보여지는 text로 디버깅용으로만 사용
+
+#endif // _DEBUG
+		void toString();
+
+// 		void DebugValue()
+// 		{
+// #ifdef DEBUG
+// 			toString();
+// 			//JSonTextVal(_text, 50);
+// #endif
+// 		}
+		void JSonTextVal(std::wstring& sts, int maxlen = 50, bool bNoQuat = false);
+
 		CStrBufferT<CStringW, LPCWSTR> _buf;
 		CStrBufferT<CStringA, LPCSTR> _bufa;
 
@@ -477,15 +497,7 @@ namespace Kw
 	public:
 		/// /////////////////////////////////////////////////////////////////////////
 		//wstring _key;// 나는 상위 map 에 어떤 키로 setat 되었다.
-		wstring _text;// ui에 보여지는 text로 디버깅용으로만 사용
 
-		void DebugValue()
-		{
-#ifdef DEBUG
-			JSonTextVal(_text, 50);
-#endif
-		}
-		void JSonTextVal(std::wstring& sts, int maxlen = 50);
 
 					  //std::vector<std::wstring> _keyOrder;// isObject인 경우 key는 처음 읽을때 어떤 순서로 들어 갔다.
 		//DWORD_PTR _uiData{ 0 }; // HTREEITEM

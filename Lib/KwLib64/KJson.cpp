@@ -61,7 +61,7 @@ namespace Kw
 		if(SkipWhitespace(&data))
 			return shv;//fail
 
-		shv->DebugValue();
+		shv->toString();
 		// We're now at the end of the string
 		return shv;
 	}
@@ -228,6 +228,52 @@ namespace Kw
 			s.Format(L"%s: %s, ", k.c_str(), v->Str());
 			_txt += s;
 		}
+		_aaa = (PWS)_txt;
+#endif
+	}
+
+	void JVal::toString()
+	{
+#if _DEBUG
+		_txt.Empty();
+		std::wstring sts;
+		JSonTextVal(sts, 50, true);
+		_txt = sts.c_str();
+		//_aaa = (PWS)_txt;
+/*
+		CString s;
+		if(IsObject())
+		{
+			auto jobj = AsObject();
+			_txt = L"(object)";// jobj->_txt;
+			_aaa = jobj->_aaa;
+		}
+		else if(IsString())
+		{
+			auto& ws = AsString();
+			_txt = ws.c_str();
+			_aaa = (PWS)_txt;
+		}
+		else if(IsInt())
+		{
+			auto i = AsInt();
+			wstring ws = std::to_wstring(i);
+			_txt = ws.c_str();
+		}
+		else if(IsInt64())
+		{
+			auto i = AsInt64();
+			wstring ws = std::to_wstring(i);
+			_txt = ws.c_str();
+		}
+		else if(IsDouble())
+		{
+			auto i = AsDouble();
+			wstring ws = std::to_wstring(i);
+			_txt = ws.c_str();
+		}
+*/
+
 #endif
 	}
 
@@ -238,6 +284,7 @@ namespace Kw
 		SetAt((PWS)k, val);// []를 쓰지 않고 Set을 써야 toString이 적용 된다.
 // 		(*this)[name] = val;
 // 		toString();
+		toString();
 	}
 	void JObj::SetObj(PWS name, ShJObj sjo, BOOL bClone)
 	{
@@ -933,22 +980,8 @@ namespace Kw
 	/// 복사 되는게 아니고, 내부 객체가 그대로 가르킨것이 포인터로 리턴된다.
 	ShJObj JObj::Obj(PWS k)
 	{
-		/// PWS exception
-		//if(this == NULL)
-		//	throw (L"JObj.this == NULL");
-
-		/// 이거 뺴면 어떤 exception
 		/// 아래 ->find에서 unhandled로 못빠져 나온다. 왜 unhandled
 		//?주의: if((*this)[k]) 이걸 쓰는 쑨간 만들어져 버린다.
-		ShJObj pbj = NULL;
-		if(this == nullptr)
-			_break;
-		/*auto it = Find(k);
-		if(it != this->end())
-		{
-			ShJVal sjv = it->second;
-			return sjv->AsObject();
-		}*/
 		if(this == nullptr)
 			throw_str("this == nullptr.");
 
@@ -960,9 +993,7 @@ namespace Kw
 			else
 				throw_str("IsObject() returns false.");
 		}
-		//if(this->find(k) != this->end() && (*this)[k]->IsObject())
-		//	return (*this)[k]->AsObject();
-		return pbj;
+		return ShJObj();
 	}
 
 	CStringW JVal::SLeft(int len)
@@ -1564,61 +1595,61 @@ namespace Kw
 	JVal::JVal()
 	{
 		type = JsonType_Null;
-		DebugValue();
+		toString();
 	}
 
 	JVal::JVal(const wchar_t* char_value1)
 	{
 		type = JsonType_String;
 		string_value = JSonKey(char_value1);
-		DebugValue();
+		toString();
 	}
 
 	JVal::JVal(const JSonKey& string_value1)
 	{
 		type = JsonType_String;
 		string_value = string_value1;
-		DebugValue();
+		toString();
 	}
 
 	JVal::JVal(bool mbool_value)
 	{
 		type = JsonType_Bool;
 		bool_value = mbool_value;
-		DebugValue();
+		toString();
 	}
 
 	JVal::JVal(double value1)
 	{
 		type = JsonType_Double;
 		double_value = value1;
-		DebugValue();
+		toString();
 	}
 	JVal::JVal(int value1)
 	{
 		type = JsonType_Int;
 		int_value = value1;
-		DebugValue();
+		toString();
 	}
 	JVal::JVal(__int64 value1)
 	{
 		type = JsonType_Int64;
 		int64_value = value1;
-		DebugValue();
+		toString();
 	}
 	JVal::JVal(unsigned int value1)
 	{
 		ASSERT(value1 <= 0x7fffffff);
 		type = JsonType_Int;
 		int_value = (int)value1;
-		DebugValue();
+		toString();
 	}
 	JVal::JVal(unsigned __int64 value1)
 	{
 		ASSERT(value1 <= 0x7fffffffffffffff);
 		type = JsonType_Int64;
 		int64_value = (__int64)value1;
-		DebugValue();
+		toString();
 	}
 
 
@@ -1632,7 +1663,7 @@ namespace Kw
 		}
 		else
 			array_value = sja;
-		DebugValue();
+		toString();
 	}
 
 	/// object value가 clone된다.
@@ -1648,7 +1679,7 @@ namespace Kw
 		{
 			object_value = sjo;
 		}
-		DebugValue();
+		toString();
 	}
 
 	JVal::JVal(JArr& ja, bool bClone)
@@ -1661,7 +1692,7 @@ namespace Kw
 		}
 		else
 			array_value = ShJArr(&ja, TNotFree());
-		DebugValue();
+		toString();
 	}
 
 	/// object value가 clone된다. fail
@@ -1676,7 +1707,7 @@ namespace Kw
 		}
 		else
 			object_value = ShJObj(&jo, TNotFree());// jo의 최초 태색이 스택변수 이면 이렇게 가면 안되지.
-		DebugValue();
+		toString();
 	}
 
 	/// <summary>
@@ -1920,7 +1951,7 @@ namespace Kw
 		case JsonType_Null:		// Nothing to do.
 			break;
 		}
-		DebugValue();
+		toString();
 	}
 
 	std::size_t JVal::CountChildren() const
@@ -2210,7 +2241,7 @@ namespace Kw
 		}
 		else
 			rv =  -2;
-		DebugValue();
+		toString();
 		return rv;
 	}
 
@@ -2299,7 +2330,7 @@ namespace Kw
 		return sts;
 	}
 
-	void JVal::JSonTextVal(std::wstring& sts, int maxlen)
+	void JVal::JSonTextVal(std::wstring& sts, int maxlen, bool bNoQuat)
 	{
 		sts.clear();
 		//std::wstring sts;
@@ -2319,10 +2350,19 @@ namespace Kw
 			if(wstr.length() > maxlen)
 			{
 				wstr = wstr.substr(0, 30);
-				swprintf_s(sbuf, 1020, L"\"%s...\"", wstr.c_str());
+				if(bNoQuat)
+					swprintf_s(sbuf, 1020, L"%s...", wstr.c_str());
+				else
+					swprintf_s(sbuf, 1020, L"\"%s...\"", wstr.c_str());
 			}
 			else
-				swprintf_s(sbuf, 1020, L"\"%s\"", wstr.c_str());
+			{
+				if(bNoQuat)
+					swprintf_s(sbuf, 1020, L"%s", wstr.c_str());
+				else
+					swprintf_s(sbuf, 1020, L"\"%s\"", wstr.c_str());
+
+			}
 			sts = sbuf;
 			return;
 		}
@@ -2388,7 +2428,10 @@ namespace Kw
 	void JVal::operator=(JVal& jv)
 	{
 		//_key = jv._key;
-		_text = jv._text;
+#ifdef _DEBUG
+		_txt = jv._txt;
+		//_aaa = (PWS)_txt;
+#endif // _DEBUG
 		//_uiData = jv._uiData;
 		parent = jv.parent;
 		type = jv.type;

@@ -69,10 +69,18 @@ protected:  // control bar embedded members
 	CPropertiesWnd    m_wndProperties;
 	CMFCCaptionBar    m_wndCaptionBar;
 
-
 public:
 	void ContextCategory(int idd, bool bShow = true);
 
+	void UpdateControl(CStringA stat, int iOp = 0);
+
+	shared_ptr<function<void(string)>> _fncExtraTrace;
+
+	template<typename TFNC> void AddCallbackExtraTrace(TFNC fnc)
+	{
+		_fncExtraTrace = make_shared<function<void(string)>>(fnc);//?ExTrace 2 CmnView¿¡ ³Ö¾îµÐ´Ù.
+	}
+	void ExtraTrace(string txt, int idOw);
 
 // Generated message map functions
 protected:
@@ -86,8 +94,6 @@ protected:
 	afx_msg void OnUpdateViewClassView(CCmdUI* pCmdUI);
 	afx_msg void OnViewOutputWindow();
 	afx_msg void OnUpdateViewOutputWindow(CCmdUI* pCmdUI);
-	afx_msg void OnViewPropertiesWindow();
-	afx_msg void OnUpdateViewPropertiesWindow(CCmdUI* pCmdUI);
 	afx_msg void OnViewCaptionBar();
 	afx_msg void OnUpdateViewCaptionBar(CCmdUI* pCmdUI);
 	afx_msg void OnOptions();
@@ -104,6 +110,10 @@ public:
 	void InitOdbc(int step);
 	void GotoTheDirectory(PWS tdir);
 	void ConnectMainDB();
+	void CheckRecoverServers();
+	void TimerCheckServers();
+
+
 
 public:
 	afx_msg void OnClose();

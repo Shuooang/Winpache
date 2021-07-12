@@ -11,7 +11,7 @@ extern "C" {
 
 
 
-int DEXPORT ExSelectUUID(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
+int DEXPORT ExSelectUser(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	KRecordset rs(&_db);
@@ -25,16 +25,16 @@ int DEXPORT ExSelectUUID(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 		swh.Format(L"where %s ", jpa.S("where"));
 
 	CString sql;
-	sql.Format(L"select * from t_uuid %s limit %d", swh, limit);
+	sql.Format(L"select * from tuser %s limit %d", swh, limit);
 
 	BOOL bOpen = rs.OpenSelectFetch(sql);//이때 아직 연결 전이면 ODBC선택 창이 발 뜬다.
 
-	rs.MakeRecsetToJson(jrs, L"t_uuid");
+	rs.MakeRecsetToJson(jrs, L"tuser");
 	jrs("Return") = L"OK";
 	return 0;
 }
 
-int DEXPORT ExSelectUUIDQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
+int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	KRecordset rs(&_db);
@@ -55,11 +55,11 @@ int DEXPORT ExSelectUUIDQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 	qs.InsideSQL("where", swh);// 빈값이라도 일단 넣어줘야 한다.
 	//HeidiSQL과 호환을 위해 \n\ 앞에 '--'를 넣는다.
 	qs.SetSQL(L"SELECT -- \n\
-* from t_uuid @where limit @limit");
+* from tuser @where limit @limit");
 
 	BOOL bOpen = rs.OpenSelectFetch(qs);//이때 아직 연결 전이면 ODBC선택 창이 발 뜬다.
 
-	rs.MakeRecsetToJson(jrs, L"t_uuid");
+	rs.MakeRecsetToJson(jrs, L"tuser");
 	jrs("Return") = L"OK";
 	return 0;
 }

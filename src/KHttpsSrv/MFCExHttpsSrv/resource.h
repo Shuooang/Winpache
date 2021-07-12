@@ -125,12 +125,16 @@
 #define IDC_ConnectDB                   1005
 #define IDC_dhparam                     1006
 #define IDC_BtnPath                     1007
+#define IDC_LinkToGithub                1007
 #define IDC_BtnCertificate              1008
 #define IDC_BtnPrivate                  1009
+#define IDC_OdbcSetting                 1009
 #define IDC_BtnDhparam                  1010
+#define IDC_NPM                         1010
 #define IDC_port                        1011
 #define IDC_MonitorList                 1012
 #define IDC_cachedUrl                   1013
+#define IDC_Elapsed                     1013
 #define IDC_Title                       1014
 #define IDC_prvpwd                      1014
 #define IDC_bSSL                        1015
@@ -193,14 +197,20 @@
 #define ID_CopyRequestList              32807
 #define ID_CopyRequest                  32807
 #define ID_CopyOutput                   32808
+#define ID_SiteStart                    32809
+#define ID_SiteStop                     32810
+#define ID_RestartSite                  32811
+#define ID_EDIT_CONNECTSITEDB           32812
+#define ID_ConnectSiteDB                32813
+#define ID_SiteRestart                  32814
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        317
-#define _APS_NEXT_COMMAND_VALUE         32809
-#define _APS_NEXT_CONTROL_VALUE         1006
+#define _APS_NEXT_RESOURCE_VALUE        319
+#define _APS_NEXT_COMMAND_VALUE         32815
+#define _APS_NEXT_CONTROL_VALUE         1011
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

@@ -23,8 +23,8 @@ protected:
 public:
 	afx_msg void OnBnClickedClose();
 	afx_msg void OnBnClickedCreatesimple();
-	afx_msg void OnBnClickedCreatesimple2();
 	CString _UID;
 	CString _PWD;
 	CString _DSN;
+	afx_msg void OnBnClickedOdbcsetting();
 };

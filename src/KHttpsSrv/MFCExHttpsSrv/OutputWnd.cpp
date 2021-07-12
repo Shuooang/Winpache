@@ -39,7 +39,7 @@ COutputWnd::~COutputWnd()
 {
 }
 
-BEGIN_MESSAGE_MAP(COutputWnd, CDockablePane)
+BEGIN_MESSAGE_MAP(COutputWnd, CDockablePaneExInvokable)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_WM_CLOSE()
@@ -48,7 +48,7 @@ END_MESSAGE_MAP()
 
 int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CDockablePane::OnCreate(lpCreateStruct) == -1)
+	if (__super::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
 	CRect rectDummy;
@@ -87,6 +87,8 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	bNameValid = strTabName.LoadString(IDS_FIND_TAB);
 	ASSERT(bNameValid);
 	m_wndTabs.AddTab(&m_wndOutputFind, strTabName, (UINT)2);
+
+
 
 	// Fill output tabs with some dummy text (nothing magic here)
 	FillBuildWindow();
@@ -136,22 +138,71 @@ void COutputWnd::TraceQueue(string txt)
 	if(!::IsWindow(m_hWnd))
 		return;
 	AUTOLOCK(_cs_lstTrace);//?destroy 7.5
-	_lstTrace.push_back(txt);
+	vector<string> txts;
+	KwCutByToken(txt.c_str(), "\r\n", txts);
+	for(auto t : txts)
+		_lstTrace.push_back(t);
 }
 
 void COutputWnd::TraceFlush()
 {
+	KwBeginInvoke(this, ([&]()-> void { //?beginInvoke 4
+		COutputWnd::s_me->TraceFlushFore();//?ExTrace 7 //?destroy 8
+		}));
+}
+void COutputWnd::TraceFlushFore()
+{
+	FOREGROUND();
 	if(!::IsWindow(m_hWnd))
 		return;
 	AUTOLOCK(_cs_lstTrace);//?destroy 8.5
 
 // 	auto n = _lstTrace.size();
 // 	for(size_t i = 0;i<n;i++)
+	CString stm = KwGetCurrentTimeFullString();
 	for(auto& v : _lstTrace)
 	{
 		//string str = _lstTrace.pop_back();
-		CStringW sw(v.c_str());
-		m_wndOutputBuild.InsertString(0, sw);
+		CStringW msg(v.c_str());
+		int i0 = -1;
+		int icnt = 0;
+		for(int i=0;i<5;i++)
+		{
+			if(m_wndOutputBuild.GetCount() <= i)
+				break;
+			CString txt;
+			m_wndOutputBuild.GetText(i, txt);
+			std::vector<std::wstring> ars;
+			KwCutByToken(txt, L"\t", ars, true);
+			if(ars.size() > 1 && ars[1] == (PWS)msg)/// 이미 동일한게 바로 밑에 있어.
+			{
+				if(ars.size() > 2)
+				{
+					CString cnt = ars[2].c_str();
+					cnt.Trim(L"()");
+					icnt = KwAtoi((PWS)cnt);
+					ASSERT(icnt >= 2);
+				}
+				else
+					icnt = 1;
+				i0 = i;
+				break;
+			}
+		}
+		CStringW sw;
+		if(i0 < 0)
+		{
+			sw.Format(L"%s \t%s", stm, msg);
+			m_wndOutputBuild.InsertString(0, sw);
+		}
+		else
+		{
+			icnt++;
+			CString cnt1; cnt1.Format(L"(%d)", icnt);
+			sw.Format(L"%s \t%s \t%s", stm, msg, cnt1);
+			m_wndOutputBuild.InsertString(0, sw);
+			m_wndOutputBuild.DeleteString(i0 +1);
+		}
 	}
 	_lstTrace.clear();
 #ifdef _DEBUG
@@ -187,9 +238,41 @@ void COutputWnd::FillFindWindow()
 
 void COutputWnd::UpdateFonts()
 {
-	m_wndOutputBuild.SetFont(&afxGlobalData.fontRegular);
-	m_wndOutputDebug.SetFont(&afxGlobalData.fontRegular);
-	m_wndOutputFind.SetFont(&afxGlobalData.fontRegular);
+	// 갑자기 시스템 폰트로 바뀜
+// 	m_wndOutputBuild.SetFont(&afxGlobalData.fontRegular);
+// 	m_wndOutputDebug.SetFont(&afxGlobalData.fontRegular);
+// 	m_wndOutputFind.SetFont(&afxGlobalData.fontRegular);
+	/* 이거 갑자기 안되.
+	CFont fntItem;
+	BOOL bf = fntItem.CreateFont(
+		15,                  // 문자 폭
+		0,                   // 문자 높이
+		0,                   // 문자 기울기
+		0,                   // 문자 방향
+		FW_NORMAL,           // 문자 굵기
+		FALSE,               // 기울기
+		FALSE,               // 밑줄
+		0,                   // 취소선
+		DEFAULT_CHARSET,     // 문자셋
+		OUT_DEFAULT_PRECIS,  // 출력 정확도
+		CLIP_DEFAULT_PRECIS, // 클리핑 정확도
+		DEFAULT_QUALITY,     // 출력의 질
+		DEFAULT_PITCH | FF_SWISS, L"Arial ");*/
+	
+	CFont font;
+	LOGFONT lf;
+	::ZeroMemory(&lf, sizeof(lf));
+	lf.lfHeight = 16;
+	lf.lfWeight = FW_NORMAL;// FW_BOLD;
+	tchcpy(lf.lfFaceName, (LPCWSTR)"Consolas");
+	BOOL bf1 = font.CreateFontIndirect(&lf);
+//	GetDlgItem(IDC_STATIC)->SetFont(&font);
+
+	m_wndOutputBuild.SetFont(&font);
+	m_wndOutputDebug.SetFont(&font);
+	m_wndOutputFind.SetFont(&font);
+	font.Detach();
+
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -275,7 +358,7 @@ void COutputWnd::OnClose()
 	auto ivc = dynamic_cast<KCheckWnd*>(AfxGetApp());
 	ivc->ViewRemove(_id);
 
-	CDockablePane::OnClose();
+	__super::OnClose();
 }
 
 
@@ -283,7 +366,7 @@ void COutputWnd::OnDestroy()
 {
 	auto ivc = dynamic_cast<KCheckWnd*>(AfxGetApp());
 	ivc->ViewRemove(_id);//BG에서 이 창이 살아 있는지 확인할 필요가 있을때 사용
-	CDockablePane::OnDestroy();
+	__super::OnDestroy();
 
 	// TODO: Add your message handler code here
 }

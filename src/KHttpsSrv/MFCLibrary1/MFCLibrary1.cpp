@@ -160,12 +160,12 @@ LPCWSTR arFnc[][2] = {
 	{L"ExNewBusiness",L"Sample for inserting record."},
 	{L"ExUpdateBusiness",L"Sample for updating record."},
 	{L"ExRemoveBizClass",L"Sample for deleting record."},
-	{L"ExSelectUUID",L"Test for accesing DB table 't_uuid'."},
-//	{L"ExSelectUUID",L"Sample that parameter is used by legacy way."},
-	{L"ExSelectUUIDQS",L"Sample that parameter is used by Quat class."},
-	{L"ExCreateServerLogTable",L"Create Request, Error Log Table."},
+	{L"ExSelectUser",L"Test for accesing DB table 'tuser'."},
+//	{L"ExSelectUser",L"Sample that parameter is used by legacy way."},
+	{L"ExSelectUserQS",L"Sample that parameter is used by Quat class."},
+//	{L"ExCreateServerLogTable",L"Create Request, Error Log Table."},
 	{L"ExCreateServerSampleTable",L"Create sample Table."},
-	{L"ExCreateServerDatabase",L"Create first databse for Winpache."},
+//	{L"ExCreateServerDatabase",L"Create first databse for Winpache."},
 	
 };
 
@@ -201,7 +201,7 @@ int DEXPORT ExGetApiDesc(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 }
 
 
-int DEXPORT SelectBizToJson(KDatabase& _db, JObj& jpa, JObj& jrs)
+int DEXPORT ExSelectBizToJson(KDatabase& _db, JObj& jpa, JObj& jrs)
 {
 	Rec(rec);
 	//KRecordset Rec(&_db);
@@ -231,18 +231,18 @@ int DEXPORT ExNewBusiness(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 	Quat qs;
 	// 필드입력,JSON에서, 필드키, 필수여부, quatation여부, 값이 없으면 null 이 입력됨
 	qs.Field(jpa, "fUsrIdReg", TRUE, TRUE, TRUE);
-	qs.Field(jpa, "fBizID", TRUE);//필수, 
-	qs.Field(jpa, "fBizPath", TRUE);//필수
-	qs.Field(jpa, "fForm", TRUE);//필수
+	//qs.Field(jpa, "fBizID", TRUE);//필수, 
+	qs.Field(jpa, "fBizPath");//
+	qs.Field(jpa, "fForm", TRUE);//필수 shop
 	qs.Field(jpa, "fTel", TRUE);//필수
 	qs.Field(jpa, "fTel2");
 	qs.Field(jpa, "fTel3");
-	qs.Field(jpa, "fState", TRUE);//필수
-	qs.Field(jpa, "fStJoin", TRUE);//필수
-	qs.Field(jpa, "fAnimal", TRUE);//필수
-	qs.Field(jpa, "fShowPrice", TRUE);//필수
-	qs.Field(jpa, "fBegin", TRUE);//필수
-	qs.Field(jpa, "fEnd", TRUE);//필수
+	qs.Field(jpa, "fState", TRUE);//필수 open
+	qs.Field(jpa, "fStJoin");//필수 data
+	qs.Field(jpa, "fAnimal");//필수 dog
+	qs.Field(jpa, "fShowPrice");//필수 show
+	qs.Field(jpa, "fBegin");//필수 10:00:00
+	qs.Field(jpa, "fEnd");//필수 18:00:00
 	qs.Field(jpa, "fTitle", TRUE);//필수
 	qs.Field(jpa, "fDesc");
 	qs.Field(jpa, "fMemo");
@@ -254,7 +254,7 @@ fBizID, fBizPath, fBizReq, fUsrIdReg, fUsrIdCeo, fUsrIdAdm, fForm, fTel, fTel2, 
 VALUES(NULL, @fBizPath, @fBizID, @fUsrIdReg, NULL, @fUsrIdReg, @fForm, @fTel, @fTel2, @fTel3, @fState, @fStJoin, @fAnimal, @fShowPrice, @fBegin, @fEnd, @fTitle, @fSubTitle, @fDesc, @fMemo, @fAddr, @fLat, @fLon, @fUsrIdReg);\
 ");
 	_db.ExecuteSQL(qs);
-	SelectBizToJson(_db, jpa, jrs);
+	ExSelectBizToJson(_db, jpa, jrs);
 
 	jrs("Return") = L"OK";
 	return 0;
@@ -268,7 +268,7 @@ int DEXPORT ExUpdateBusiness(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 	qs.SetSQL(L"UPDATE tbiz SET @SetField where fBizID = @fBizID;");
 	_db.ExecuteSQL(qs);
 
-	SelectBizToJson(_db, jpa, jrs);
+	ExSelectBizToJson(_db, jpa, jrs);
 
 	jrs("Return") = L"OK";
 	return 0;
@@ -278,7 +278,7 @@ int DEXPORT ExUpdateBusiness(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 int DEXPORT ExRemoveBizClass(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 {
 	Quat qs;
-	qs.Field(jpa, "fOrdOptID", TRUE);//필수
+	qs.Field(jpa, "fBizID", TRUE);//필수
 	qs.Field(jpa, "fBIzClsCD", TRUE);//필수
 
 	qs.SetSQL(L"DELETE FROM tbizclass WHERE fBizID = @fBizID and fBIzClsCD = @fBIzClsCD;");
@@ -299,6 +299,7 @@ ENGINE=MyISAM -- \n\
 AUTO_INCREMENT=1024"
 */
 
+/* 보안상 제거
 int DEXPORT ExCreateServerDatabase(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 {
 	// set default value
@@ -308,7 +309,7 @@ int DEXPORT ExCreateServerDatabase(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp
 	Quat qs;
 	qs.Field(jpa, "database", TRUE, FALSE);//필수l, no quat
 	qs.Field(jpa, "collate", TRUE);//필수
-	qs.SetSQL(L"CREATE DATABASE `@database` COLLATE 'collate'");
+	qs.SetSQL(L"CREATE DATABASE `@database` COLLATE @collate");
 
 	//L"CREATE DATABASE `HttpSvr` COLLATE 'utf16_unicode_ci'");
 	_db.ExecuteSQL(qs);
@@ -350,6 +351,7 @@ int DEXPORT ExCreateServerSampleTable(KDatabase& _db, JObj& jpa, JObj& jrs, int 
 	jrs("Return") = L"OK";
 	return 0;
 }
+*/
 
 
 

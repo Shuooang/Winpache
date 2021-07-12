@@ -18,7 +18,18 @@ BEGIN_MESSAGE_MAP(CMDIFrameWndInvokable, CMDIFrameWnd)
 	ON_WM_TIMER() //?LbTimer 4
 END_MESSAGE_MAP()
 
+#ifdef _DEBUG
+LRESULT CMDIFrameWndInvokable::OnBeginInvoke(WPARAM wParam, LPARAM lParam)
+{
+	CSyncAutoLock __lock(KBeginInvoke::GetCS(), TRUE, __FUNCTION__, __LINE__, "CMDIFrameWndInvokable");
+	KBeginInvoke* pbi = (KBeginInvoke*)lParam;
+	pbi->_bCalled = true; (*pbi->m_pLambda)();
+	KBeginInvoke::freeInvokeFree();
+	return 0;
+}
+#else
 OnBeginInvoke_Define(CMDIFrameWndInvokable)//?beginInvoke 3
+#endif // _DEBUG
 CMDIFrameWndInvokable::CMDIFrameWndInvokable() noexcept
 	: KLambdaTimer(this) //?LbTimer 2
 {
@@ -44,7 +55,17 @@ BEGIN_MESSAGE_MAP(CMDIFrameWndExInvokable, CMDIFrameWndEx)
 	ON_WM_TIMER() //?LbTimer 4
 END_MESSAGE_MAP()
 
+#ifdef _DEBUG
+LRESULT CMDIFrameWndExInvokable::OnBeginInvoke(WPARAM wParam, LPARAM lParam)
+{	CSyncAutoLock __lock(KBeginInvoke::GetCS(), TRUE, __FUNCTION__, __LINE__, "CMDIFrameWndExInvokable"); 
+	KBeginInvoke* pbi = (KBeginInvoke*)lParam; 
+	pbi->_bCalled = true; (*pbi->m_pLambda)(); 
+	KBeginInvoke::freeInvokeFree(); 
+	return 0;
+}
+#else
 OnBeginInvoke_Define(CMDIFrameWndExInvokable)//?beginInvoke 3
+#endif // _DEBUG
 CMDIFrameWndExInvokable::CMDIFrameWndExInvokable() noexcept
 	: KLambdaTimer(this) //?LbTimer 2
 {
@@ -65,10 +86,70 @@ void CMDIFrameWndExInvokable::OnTimer(UINT_PTR nIDEvent)//?LbTimer 5
 
 
 
+IMPLEMENT_DYNAMIC(CDockablePaneExInvokable, CDockablePane)
+BEGIN_MESSAGE_MAP(CDockablePaneExInvokable, CDockablePane)
+	ON_MESSAGE(WM_USER_INVOKE, &CDockablePaneExInvokable::OnBeginInvoke)//?beginInvoke 2
+	ON_WM_TIMER() //?LbTimer 4
+END_MESSAGE_MAP()
+#ifdef _DEBUG
+LRESULT CDockablePaneExInvokable::OnBeginInvoke(WPARAM wParam, LPARAM lParam)
+{
+	CSyncAutoLock __lock(KBeginInvoke::GetCS(), TRUE, __FUNCTION__, __LINE__, "CDockablePaneExInvokable");
+	KBeginInvoke* pbi = (KBeginInvoke*)lParam;
+	pbi->_bCalled = true; (*pbi->m_pLambda)();
+	KBeginInvoke::freeInvokeFree();
+	return 0;
+}
+#else
+OnBeginInvoke_Define(CDockablePaneExInvokable)//?beginInvoke 3
+#endif // _DEBUG
+CDockablePaneExInvokable::CDockablePaneExInvokable() noexcept
+	: KLambdaTimer(this) //?LbTimer 2
+{
+}
+void CDockablePaneExInvokable::OnTimer(UINT_PTR nIDEvent)//?LbTimer 5
+{
+	DoTimerTask(nIDEvent);
+	CDockablePane::OnTimer(nIDEvent);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ///?변경
 /// Invoke때 할당한 게 Post 받아서 읿을  수도 있으니, gabage를 프리 하는 방법을 쓴다.
 /// static auto free array를 쓴다.
+WORD KBeginInvoke::s_srl = 0;
+
+KBeginInvoke::KBeginInvoke(std::function<void()>* pLambda, PAS fnc, int line)
+	: m_pLambda(pLambda)
+	, m_fnc(fnc)
+	, m_line(line)
+{
+	s_srl++;
+	_srl = s_srl;
+	_tik = GetTickCount64();
+	auto pbi = this;
+	//TRACE("!!! Created, %ld, %s (%d)\n", pbi->_srl, pbi->m_fnc, pbi->m_line);
+}
 
 void KBeginInvoke::setInvokeFree(KBeginInvoke* pbi)
 {
@@ -81,39 +162,34 @@ void KBeginInvoke::freeInvokeFree()
 {
 	CSyncAutoLock __lock(KBeginInvoke::GetCS(), TRUE, __FUNCTION__, __LINE__, "KBeginInvoke");
 	KPtrList<KBeginInvoke>* pl = getGabage();
-	LONGLONG n = pl->size() -
-#ifdef _DEBUG
-		1000;
-#else
-		10000;
-#endif
+	auto sz = pl->size();
 	int nDeleted = 0;
+	int nNotYet = 0;
 	BOOL bRapped = FALSE;
-	for(LONGLONG i = 0; i < n; i++)
+	for(LONGLONG i = 0; i < sz; i++)
 	{
 		KBeginInvoke* pbi = (KBeginInvoke*)pl->front();
 		if(pbi)
 		{
 			if(pbi->_bCalled)// 수행하기 전에 free된 경우도 있드라.
 			{
-				//std_trace << "delete pop_front: " << pbi->_srl << std_endl;
-				delete pbi;
-				pl->pop_front();
-				//TRACE("pop_front ### NOT CALLED, %ld, %s (%d)\n", pbi->_srl, pbi->m_fnc, pbi->m_line);
-				nDeleted++;
+				if(i < (sz - 2000))// 2000개는 항상 남겨 두자.
+				{
+					//TRACE("@@@ CALLED delete, %ld, %s (%d)\n", pbi->_srl, pbi->m_fnc, pbi->m_line);
+					delete pbi;
+					pl->pop_front();
+					nDeleted++;
+				}
 			}
 			else
 			{
 				//TRACE("### NOT CALLED YET, %ld, %s (%d)\n", pbi->_srl, pbi->m_fnc, pbi->m_line);
-				//std_trace << "### NOT CALLED YET " << pbi->_srl << ", " << pbi->m_fnc << " (" << pbi->m_line << ")" << std_endl;
-				//std_trace << "### NOT CALLED YET " << pbi->_srl << std_endl;
 				bRapped = TRUE;
+				nNotYet++;
 				break;
 			};
 		}
 	}
-	if(bRapped)
-		std_trace << "### NOT CALLED YET " << nDeleted << " deleted, " << pl->size() << " remains." << std_endl;
 }
 
 
@@ -137,8 +213,8 @@ LRESULT CFormInvokable::OnBeginInvoke(WPARAM wParam, LPARAM lParam)
 	//std_trace << "OnBeginInvoke " << (pbi->_bCalled ? "T" : "F") << wParam << " = " << pbi->_srl << ", " << pbi->m_fnc << " (" << pbi->m_line << ")" << std_endl;
 	if(!pbi->_bCalled)
 		_break;
-	(*pbi->m_pLambda)(); 
-	pbi->_bCalled = true; 
+	pbi->_bCalled = true;
+	(*pbi->m_pLambda)();
 	KBeginInvoke::freeInvokeFree();
 
 	//delete pbi;
@@ -225,7 +301,19 @@ BEGIN_MESSAGE_MAP(CDlgInvokable, CDialogEx)
 	ON_MESSAGE(WM_USER_INVOKE, &CDlgInvokable::OnBeginInvoke)//?beginInvoke 2
 END_MESSAGE_MAP()
 
+#ifdef _DEBUG
+LRESULT CDlgInvokable::OnBeginInvoke(WPARAM wParam, LPARAM lParam)
+{
+	CSyncAutoLock __lock(KBeginInvoke::GetCS(), TRUE, __FUNCTION__, __LINE__, "CDlgInvokable");
+	KBeginInvoke* pbi = (KBeginInvoke*)lParam;
+	pbi->_bCalled = true; (*pbi->m_pLambda)();
+	TRACE("### NOT CALLED YET, %ld, %s (%d)\n", pbi->_srl, pbi->m_fnc, pbi->m_line);
+	KBeginInvoke::freeInvokeFree();
+	return 0;
+}
+#else
 OnBeginInvoke_Define(CDlgInvokable)//?beginInvoke 3
+#endif // _DEBUG
 
 
 /// ////////////////////////////////////////////////////////////////////////////////////////

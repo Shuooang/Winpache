@@ -46,7 +46,7 @@ public:
 	afx_msg	void OnBnClickedSelect();
 	CComboBox c_ExList;
 public:
-	void CreateDatabase();
+	void deprecated_CreateDatabase();
 	void SetApiFunc(PWS sfnc);
 
 };

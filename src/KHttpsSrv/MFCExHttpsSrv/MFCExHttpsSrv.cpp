@@ -22,6 +22,9 @@
 #include "ChildFrm.h"
 #include "SrvDoc.h"
 #include "SrvView.h"
+#include "OpenSsl.h"
+#include "KwLib64/KDebug.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -38,10 +41,134 @@ BEGIN_MESSAGE_MAP(CMFCExHttpsSrvApp, CWinAppEx)
 END_MESSAGE_MAP()
 
 
+
+#include <tuple>
+
+/// error C2065: 'value': undeclared identifier
+template <typename TP> size_t TupleSizeT(TP& tp)
+{
+	return std::tuple_size<decltype(tp)>::value;
+}
+
+#define TplCount(tp) std::tuple_size<decltype(tp)>::value
+#define TplItem(i, tp) std::get<i>(tp)
+using std::pair;
+using std::tuple;
+using std::make_tuple;
+
+
+
+void Test1()
+{
+	std::map<double, double> map;
+	map.insert(pair<double, double>(0.123, 0.1));
+	map.insert(pair<double, double>(2.5, 0.4));
+	map.insert(pair<double, double>(5.6, 0.8));
+	map.insert(pair<double, double>(6.6, 0.8));
+	map.insert(pair<double, double>(7.6, 0.8));
+	map.insert(pair<double, double>(8.6, 0.8));
+	map.insert(pair<double, double>(9.6, 0.8));
+	map.insert(pair<double, double>(18.6, 0.8));
+	map.insert(pair<double, double>(28.6, 0.8));
+
+	std::map<double, double>::iterator low, high;
+	double pos = 10.0;
+	low = map.lower_bound(pos);
+	high = map.upper_bound(pos);
+}
+
+int Test2()
+{
+	std::map<int, int> mymap;
+
+	mymap[1] = 10;
+	mymap[2] = 40;
+	mymap[3] = 100;
+	mymap[4] = 200;
+	mymap[5] = 500;
+
+	int wantedvalue = 50;
+
+	///키가 아니고 값을 찾는다.
+	auto it = std::min_element(mymap.begin(), mymap.end(),
+		[&](const auto& p1, const auto& p2)
+		{// p1이 더 가까워
+			return std::abs((long)p1.second - wantedvalue) <
+				std::abs((long)p2.second - wantedvalue);
+		});
+
+	std_coutD << "The closest value of " << wantedvalue << " in the map is located";
+	std_coutD << " on " << it->first << " and is " << it->second << std_endl;
+
+	return 0;
+}
+
+
+template <typename T1, typename T2, typename T3>
+class Tpl3
+	: public std::tuple<T1, T2, T3>
+{
+public:
+	Tpl3(){}
+	Tpl3(T1 t1, T2 t2, T3 t3)
+	{
+		Set(t1, t2, t3);
+	}
+	void Set(T1 t1, T2 t2, T3 t3)
+	{
+		//*this = std::make_tuple((T1)t1, (T2)t2, (T3)t3);//error C2679: binary '=': no operator found which takes a right-hand operand of type 'std::tuple<int,std::string,bool>' (or there is no acceptable conversion)
+		std::get<0>(*this) = t1;
+		std::get<1>(*this) = t2;
+		std::get<2>(*this) = t3;
+	}
+// 	template <typename T>
+// 	T Get(size_t i, T defval)
+// 	{
+// 		return std::get<i>(*this);// TplItem(i, *this);
+// 	}
+	//size_t Size(){	return TplCount(*this);	} always 3
+	T1 a() { return TplItem(0, *this); }
+	T2 b() { return TplItem(1, *this); }
+	T3 c() { return TplItem(2, *this); }
+};
+int Test3()
+{
+	// make tuple variable.
+	typedef std::tuple<int, std::string, bool> OddOrEven;
+	OddOrEven myNumber = std::make_tuple(10, std::string("Even"), true);
+	Tpl3<int, string, bool> t3;
+	t3.Set(11, "Odd", true);
+	Tpl3<int, string, bool> t31(11, "Odd", true);
+	int v1 = t31.a();
+
+	// get tuple size
+	auto tsv = std::tuple_size<decltype(myNumber)>::value;
+	//tsv	3	unsigned __int64
+
+	std_coutD << "size 1: " << std::tuple_size<decltype(myNumber)>::value << std_endl;
+	//std_coutD << "size 2: " << TupleSizeT(myNumber) << std_endl;
+	std_coutD << "size 3: " << TplCount(myNumber) << std_endl;
+
+	// get each value and get type using std::tuple_element, auto keyword.
+	std::tuple_element<0, decltype(myNumber)>::type nNum = std::get<0>(myNumber);
+	auto szVal = std::get<1>(myNumber);
+	bool bEven = std::get<2>(myNumber);
+
+	auto nNum1 = TplItem(0, myNumber);
+	auto szVal1 = TplItem(1, myNumber);
+	bool bEven1 = TplItem(2, myNumber);
+
+	Tas ss;
+	ss << nNum << ", " << szVal << ", " << std::boolalpha << bEven << std_endl;
+
+	return 0;
+}
 // CMFCExHttpsSrvApp construction
 
 CMFCExHttpsSrvApp::CMFCExHttpsSrvApp() noexcept
 {
+	Test3();
+
 	m_bHiColorIcons = TRUE;
 
 
@@ -58,7 +185,7 @@ CMFCExHttpsSrvApp::CMFCExHttpsSrvApp() noexcept
 	// TODO: replace application ID string below with unique ID string; recommended
 	// format for string is CompanyName.ProductName.SubProduct.VersionInformation
 	//SetAppID(_T("WinpachePro.AppID.NoVersion"));
-	SetAppID(_T("Keepspeed.Winpache.WinpachePro.Ver1.0.1"));
+	SetAppID(_T("Keepspeed.Winpache.Winpache.Ver1.0.1"));
 
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
@@ -111,7 +238,9 @@ BOOL CMFCExHttpsSrvApp::InitInstance()
 	/// 이렇게 주면 안된다. free 하고 _tcsdup해서 할당 해야 내부적으로 free할때 안죽는다.
 	///m_pszProfileName = L"WinpachePro";
 	free((void*)m_pszProfileName);
-	m_pszProfileName = _tcsdup(L"WinpachePro");// m_pszAppName);는 어디서 초기화 되는지 몰라서 긱접.
+	m_pszProfileName = _tcsdup(L"Winpache");// m_pszAppName);는 어디서 초기화 되는지 몰라서 긱접.
+
+	g_opTrace |= 1 << 0;
 
 	LoadStdProfileSettings(10);  // Load standard INI file options (including MRU)
 
@@ -127,6 +256,11 @@ BOOL CMFCExHttpsSrvApp::InitInstance()
 	theApp.GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL,
 		RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
 
+
+
+	_docApp.LoadData();
+	/// 여기서 창이 뜨기 전에 LoadCount 가 1이면 초기화 창중에 숨길건 숨긴다.
+
 	// Register the application's document templates.  Document templates
 	//  serve as the connection between documents, frame windows and views
 	CMultiDocTemplate* pDocTemplate;
@@ -137,15 +271,6 @@ BOOL CMFCExHttpsSrvApp::InitInstance()
 	if (!pDocTemplate)
 		return FALSE;
 	AddDocTemplate(pDocTemplate);
-
-
-
-
-
-	_doc.LoadData();
-
-
-
 
 
 
@@ -172,6 +297,14 @@ BOOL CMFCExHttpsSrvApp::InitInstance()
 	RegisterShellFileTypes(TRUE);
 
 
+// 	enum {
+// 		FileNew, FileOpen, FilePrint, FilePrintTo, FileDDE, FileDDENoShow, AppRegister,
+// 		AppUnregister, RestartByRestartManager, FileNothing = -1
+// 	} m_nShellCommand;
+	cmdInfo.m_nShellCommand = CCommandLineInfo::FileNothing;//?PreventViewFirst 
+	//이렇게 해야 Mainframe 창에 뜬 후에  view 뜨기 전에 BeginInvoke한 DB접속 문제를 해결 한다.
+	//그리고 나서 접속 성공 하면, 그때 app->OnFileNew() 를 불려
+
 	// Dispatch commands specified on the command line.  Will return FALSE if
 	// app was launched with /RegServer, /Register, /Unregserver or /Unregister.
 	if (!ProcessShellCommand(cmdInfo))
@@ -185,7 +318,7 @@ BOOL CMFCExHttpsSrvApp::InitInstance()
 
 int CMFCExHttpsSrvApp::ExitInstance()
 {
-	_doc.SaveData();
+	_docApp.SaveData();
 	//TODO: handle additional resources you may have added
 	AfxOleTerm(FALSE);
 
@@ -236,6 +369,7 @@ void CMFCExHttpsSrvApp::OnAppAbout()
 
 // CMFCExHttpsSrvApp customization load/save methods
 
+
 void CMFCExHttpsSrvApp::PreLoadState()
 {
 	BOOL bNameValid;
@@ -283,59 +417,11 @@ BOOL KAppDoc::OnNewDocument()
 
 	return TRUE;
 }
-void KAppDoc::Serialize(CArchive& ar)
-{
-	if (ar.IsStoring())
-	{
-		//CJsonPbj js;
-		JObj js;
-
-		if (_GUID.IsEmpty())
-			_GUID = KwGetFormattedGuid();
-		KJSPUT(_GUID);
-		KJSPUT(_fname);
-		KJSPUT(_DSN);
-		KJSPUT(_UID);
-		KJSPUT(_database);
-		KJSPUT(_statDB);
-		CFile* fr = ar.GetFile();
-
-		CStringA sUtf8 = js.ToJsonStringUtf8();
-		fr->Write((PAS)sUtf8, sUtf8.GetLength());
-	}
-	else
-	{
-		CFile* fr = ar.GetFile();
-		int len = (int)fr->GetLength();
-		CStringA sa;
-		char* buf = sa.GetBufferSetLength(len);
-		fr->Read(buf, len);
-		CString sWstr;
-		KwUTF8ToWchar(buf, sWstr);
-
-		auto jdoc = ShJVal(Json::Parse((PWS)sWstr));
-		if (jdoc.get() == nullptr)
-		{
-			AfxMessageBox(L"파일 포맷 오류.");
-			return;
-		}
-		auto& js = *jdoc->AsObject().get();
-
-		KJSGETS(_GUID);
-		if (_GUID.IsEmpty())
-			_GUID = KwGetFormattedGuid();
-		KJSGETS(_fname);
-		KJSGETS(_DSN);
-		KJSGETS(_UID);
-		//KJSGETS(_PWD);
-		KJSGETS(_database);
-		KJSGETS(_statDB);
-		//KJSGETI(_UID);// 숫자인 경우
-	}
-}
-
 void KAppDoc::LoadData()
 {
+	if(_json->size() == 0)
+		InitDoc();
+
 	CString full = GetFilePath();
 	if (KwIfFileExist(full))
 	{
@@ -356,10 +442,14 @@ CString KAppDoc::GetFilePath()
 	//L"Winpache.json";
 	WCHAR appdata[MAX_PATH];//CSIDL_PERSONAL
 	HRESULT result = SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, appdata);
+	auto& jobj = *_json;
+	if(jobj.size() == 0)
+		InitDoc();
 
 	CString fl; fl.Format(L"%s\\Winpache\\", appdata);
-	CString full = fl + _fname;
-	//CString fl; fl.Format(L"..\\..\\%s", fname);
+	ASSERT(jobj.Len("FName"));
+	CString fname = jobj.S("FName"); //	fname = L"WinpacheMain.cfg";
+	CString full = fl + fname;
 	return full;
 }
 //C:\Program Files(x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30037
@@ -367,7 +457,7 @@ CString KAppDoc::GetFilePath()
 //#include <afximpl.h>
 void KAppDoc::SaveData()
 {
-#ifdef _DEBUG
+#ifdef _DEBUGx //KwGetFullPathName test : 폴더 존재 여부에 상관 없이 경로 현실화 함
 	PWS fname = L"..\\..\\..\\log\\t_reqlog.log";
 	PWS fname1 = L"..\\..\\..\\log\\t_reqlogx.log";//wrong file
 	PWS fname2 = L"..\\..\\..\\logx\\t_reqlog.log";//wrong dir
@@ -381,14 +471,364 @@ void KAppDoc::SaveData()
 	DWORD dw2 = KwGetFullPathName(fname2, path, &pFile);//58
 	DWORD dw3 = KwGetFullPathName(fname3, path, &pFile);//59
 #endif // _DEBUG
+	try
+	{
+		/// rule
+		/// memory에 pwd를 가지고 있다가. 
+		/// SaveData할때 running중인 서버가 있으면 pwd도 저장 하고, 없으면 제외 한다.
+		///		따라서 모든 서버가 정상적으로 Stop한 경우, Winpache가 launch될때 마다 비번을 물든다.
+		///		비번에 ODBC registry에 포함되어 있다만 그걸 읽어서 비번 안물을수도 있다.
+		/// SaveData는 종료할때, 값이 변경되었을때, 서버 Start했을때, 매 5분마다 호출 된다.
+		/// 따라서 비정상 종료한 Start 서버 목록이 5분이 안되어서 다시 로운치 할때는, 
+		///	자동 문서 오픈, Site DB 연결, Start가 되어야 한다.
+		const CString& full0 = GetPathName();//load한 파일 이면
+		if(full0.GetLength() > 0)
+			VERIFY(DoFileSave()); // 그대로 덮어쓰기.
+		else // 새파일 처음
+		{
+			CString full = GetFilePath();	//full += L"WinpacheMain.cfg";
+			VERIFY(DoSave(full, 0));
+		}
+	}
+	catch (CFileException* e)
+	{
+		CString sErrorW;
+		e->GetErrorMessage(sErrorW.GetBuffer(1024), 1024); sErrorW.ReleaseBuffer();
+		CStringA err(sErrorW);
+		TRACE("CFileException(%d, %ld, %s)\n", e->m_cause, e->m_lOsError, err);
+	}
+	catch (CException* e)
+	{
+		CString sErrorW;
+		e->GetErrorMessage(sErrorW.GetBuffer(1024), 1024); sErrorW.ReleaseBuffer();
+		CStringA err(sErrorW);
+		auto rc = e->GetRuntimeClass();
+		
+		TRACE("CException<%s>(%s)\n", rc->m_lpszClassName, err);
+	}
+}
 
-	const CString& full0 = GetPathName();
-	if (full0.GetLength() > 0)
-		VERIFY(DoFileSave());
+
+/// site server start 된것을 메인 설정에 저장 한다. 
+/// 예상하지 않은 정치때 다음 런에 자동 시작 하도록
+
+void KAppDoc::RegisterServerStart(ShJObj sjsvr)//?server recover 1.2
+{
+	BACKGROUND(1);
+	AUTOLOCK(_csRecover);
+// 	auto lc = sjsvr->I("LoadCount");
+// 	(*sjsvr)("LoadCount") = lc + 1;//다시 시도 되면 2
+	(*sjsvr)("_bRecover") = TRUE;//일단 RunningServers에만 TRUE로 저장
+	(*sjsvr)("_tLastRunning") = KwGetCurrentTimeFullString();
+
+	auto& jobjM = *_json;
+	auto oRS = jobjM.O("RunningServers");
+	CStringW guid = sjsvr->S("_GUID");
+	oRS->DeleteKey(guid);//없어야 하지만 만약에 있다면 없앤다.
+	(*oRS)(guid) = sjsvr;// 사이트문서 전체를 넣어 둔다.
+						 //jobjM("RunningServers") = oRS; clone이 아니니까 다시 넣을 필요 없다.
+	SaveData();
+}
+
+void KAppDoc::UnregisterServerStart(CStringA GUID)
+{
+	BACKGROUND(1);
+	AUTOLOCK(_csRecover);
+
+	auto& jobjM = *_json;
+	auto oRS = jobjM.O("RunningServers");
+	if(oRS->DeleteKey(GUID))
+		SaveData();
+}
+
+void KAppDoc::PushRecoveringServer(wstring guid)
+{
+	FOREGROUND();
+	AUTOLOCK(_csRecover);
+	_pendingNewServer.push_back(guid);
+}
+
+bool KAppDoc::PopRecoveringServer(CString& guid)
+{
+	AUTOLOCK(_csRecover);
+	FOREGROUND();
+
+	if(_pendingNewServer.size() > 0)
+	{
+		wstring wguid = _pendingNewServer.front();
+		guid = wguid.c_str();
+		_pendingNewServer.pop_front();
+		return true;
+	}
+	return false;
+}
+void KAppDoc::ReqOccured(string ssid)
+{
+	AUTOLOCK(_csReqs);
+	//auto tik = GetTickCount64();
+	LARGE_INTEGER li{0};
+	auto bnow = QueryPerformanceCounter(&li);
+	auto tik = li.QuadPart;
+	//_lstReqs.push_back(tik);
+	//auto tp = make_tuple(tik, 0, ssid);
+	SHP<KReqRes> sre = make_shared<KReqRes>(tik, ssid);
+	_lstReqs2.push_back(sre);
+	/// 나중에 elapsed time 계산 하기 위해
+	_mapReq[ssid] = sre;
+	//TRACE("ReqOccured %I64u\n", tik);
+}
+
+/// <summary>
+/// OnSent 때 응답시각 기록
+/// </summary>
+/// <param name="ssid"></param>
+/// <returns>최근 10개 평균을 내서 return</returns>
+double KAppDoc::OnResponse(string ssid)
+{
+	AUTOLOCK(_csReqs);
+	//auto tik = GetTickCount64();
+	const int gap = 5000000; // usec 측정 간격 = 0.5sec
+	const int nsum = 10;//최근거 10개의 평균 간격을 편균 낸다.
+	LARGE_INTEGER li{0};
+	auto bnow = QueryPerformanceCounter(&li);
+	SHP<KReqRes> sre;
+	if(!_mapReq.Lookup(ssid, sre))//시작 들어있고, 끝
+		return 0;
+	sre->_tRes = li.QuadPart;
+
+	if(_lastCheckElapsed > (ULONGLONG)(li.QuadPart - gap))//간격
+		return -1;//최근것이 1초도 안 지났으면 너무 자주 계산 하니 리턴
+
+	//LONGLONG dfElapesed = sre->_tRes - sre->_tReq;
+	//TRACE("OnResponse %I64d = %I64u - %I64u \n", dfElapesed, sre->_tReq, sre->_tRes);
+
+	size_t sz = _lstReqs2.size();
+	size_t szm = sz > nsum ? nsum : sz;
+	ULONGLONG tsumElp = 0;
+#ifdef _DEBUGx
+	CStringW sa1;
+#endif // _DEBUG
+	int szma = 0;
+	for(size_t i = 0; i < sz; i++)///뒤에 10를 평균 된다.
+	{
+		auto sre1 = _lstReqs2.back();
+		if(sre1->_tRes > 0)
+		{
+			auto elp = sre1->_tRes - sre1->_tReq;
+			tsumElp += elp;
+			szma++;
+			//_lstReqs2.pop_back();//제거는 GetSpeedPerSec 에서 한다.
+#ifdef _DEBUGx
+			CStringW sa; sa.Format(L"%I64d+", elp);
+			sa1 += sa;
+#endif // _DEBUG
+			if(szma >= nsum)
+				break;
+		}
+	}
+	_lastCheckElapsed = li.QuadPart;
+	double dElapesed = szma == 0 ? 0. : (double)tsumElp / szma;// _mapReq[ssid] - tik;
+#ifdef _DEBUGx
+	KTrace(L"OnResponse %I64u/%d = %f, %d : %s\n", tsumElp, szma, dElapesed, sz, sa1);
+#endif // _DEBUG
+	return dElapesed;
+}
+
+
+
+//#include <boost/range/adaptor/reversed.hpp>
+/// <summary>
+/// 요청시 최근 10의 요청간격의 평균을 내서 초당 처리 속도를 계산 한다.
+/// </summary>
+/// <returns>최근 10의 요청간격의 평균</returns>
+double KAppDoc::GetSpeedPerSec()
+{
+	AUTOLOCK(_csReqs);
+	const int nsum = 10;//최근거 10개의 평균 간격을 편균 낸다.
+	const int gap = 5000000; // usec 측정 간격 = 0.5sec
+
+	//auto now = GetTickCount64();
+	LARGE_INTEGER li{0};
+	auto bnow = QueryPerformanceCounter(&li);/// 0.1usec = 100 nano sec
+	auto now = li.QuadPart;
+	if(_lastCheckSpeed > (ULONGLONG)(now - gap))//간격
+		return -1;//최근것이 1초도 안 지났으면 너무 자주 계산 하니 리턴
+	_lastCheckSpeed = now;
+	int n = 0;
+	int x = 0;
+	size_t sz = _lstReqs2.size();
+/*
+	for(int i = 0; i < (int)sz - nsum; i++)// ULONGLONG 형으로 하면 - 값이 큰 양수로 바뀐다.
+	{
+		auto& sre = _lstReqs2.front();
+		_mapReq.RemoveKey(sre->_ssid);
+		_lstReqs2.pop_front();//5개간격만 평균
+	}
+*/
+	if(sz > 10)
+		_break;
+	size_t cnt = sz >= nsum ? nsum : sz;//실제 갯수 5개 이하
+	ULONGLONG tsum = 0;
+	ULONGLONG tbfr = 0;
+#ifdef _DEBUGx
+	CStringW sa1;
+#endif // _DEBUG
+	int cntSum = 0;
+	//for(auto sre : _lstReqs2)
+	//for(auto i : boost::adaptors::reverse(_lstReqs2))	{	}
+	//for(auto&& el : std::reverse(_lstReqs2)) {	}  c++20
+// 	for(int i = 0; i < (int)sz; i++)// ULONGLONG 형으로 하면 - 값이 큰 양수로 바뀐다.
+	for_reverse(sre, _lstReqs2)
+	{
+// 		auto& sre = _lstReqs2.back();
+		if(tbfr != 0)
+		{
+			LONGLONG df = tbfr - sre->_tReq;//durtns dlamfh
+			tsum += df;//시간 간격을 합산
+#ifdef _DEBUGx
+			CStringW sa; sa.Format(L"(%I64d:%I64d)+", sre->_tReq, df);
+			sa1 += sa;
+#endif // _DEBUG
+			cntSum++;
+			if(cntSum >= 10)
+				break;
+		}
+		tbfr = sre->_tReq;
+	}
+	double rn = cntSum == 0 ? 0 : (double)tsum / cntSum;// (cnt - 1.);
+
+#ifdef _DEBUGx
+	size_t cnt2 = _lstReqs2.size();
+	KTrace(L"GetSpeedPerSec %I64u/%d = %f, %d : %s\n", tsum, cnt, rn, sz, sa1);
+#endif // _DEBUG
+	for(int i = 0; i < (int)sz - 5000; i++)// 5000개 넘으면 지운다.
+	{
+		auto& sre = _lstReqs2.front();
+		_mapReq.RemoveKey(sre->_ssid);
+		_lstReqs2.pop_front();//5개간격만 평균
+	}
+
+	return rn;
+}
+void KAppDoc::SetPathName(LPCTSTR lpszPathName, BOOL bAddToMRU)
+{
+	__super::SetPathName(lpszPathName, FALSE);//무조건 FALSE
+}
+
+
+void KAppDoc::Serialize(CArchive& ar)
+{
+	const CString& full0 = GetPathName();//load한 파일 이면
+	CString full1 = GetFilePath();	//full += L"WinpacheMain.cfg";
+
+	char* ecdkey = "947083839";
+	if(ar.IsStoring())
+	{
+		//JObj js;
+		auto& jobj = *_json;// ->AsObject();// .get();
+
+		ASSERT(jobj.Len("_GUID"));//		jobj("_GUID") = KwGetFormattedGuid(FALSE);
+		CStringA guidA(jobj.S("_GUID"));
+		OSslEncrypt ose((PAS)guidA.Left(24), (PAS)guidA.Right(8));//key, salt
+
+		//jobj("RunningServers") = JObj(); // RunningServers : { GUID1 : { }, GUID2:{} }
+		CString PWD = jobj.S("_PWD");// 러닝 중인 서버가 없는 경우 제외 하기 위해 임시로 받아 둔다.
+		auto rs = jobj.O("RunningServers");
+		bool bPendingServer = rs && rs->size() > 0;// && jobj.Len("_PWD");
+		if(!bPendingServer)
+			jobj.DeleteKey("_PWD");
+		/// else 
+		///	pending server가 있는 경우, launch가 자동으로 시스템이 해주는데, 그때 아래 3가지를 하여, 다시 가동 되게 해야 한다.
+		///		문서 오픈
+		///		DB연결
+		///		SSL인경우 비번도 저장 되어 있어야 한다.
+		///		Start server
+
+		CFile* fr = ar.GetFile();
+		CStringA sUtf8 = jobj.ToJsonStringUtf8();
+		if(!bPendingServer && PWD.GetLength() > 0)// 물안전 종료된 서버가 없으면 비번은 저장 않는다.
+			jobj("_PWD") = PWD;
+
+		int descLen = sUtf8.GetLength() * 2 ;
+
+// 		PUCHAR pu8 = new UCHAR[descLen];
+// 		KAtEnd d_pu8([&]() { delete pu8; });
+		KBinary bin8(descLen);
+		PUCHAR pu8 = (PUCHAR)bin8.GetPA();
+
+		BOOL bec = ose.Encrypt((PUCHAR)(PAS)sUtf8, sUtf8.GetLength(), pu8, &descLen);
+		pu8[descLen] = '\0';//binary인데 뒤에 '\0' 넣는거는 넌센스
+
+		if(bec)
+		{
+			KBinary guidB(guidA);
+			KBinary guidBE(guidA.GetLength());
+			EncodeBinary(guidB, ecdkey, true, &guidBE);
+
+			fr->Write(guidBE.m_p, guidA.GetLength());
+			fr->Write(pu8, descLen);
+#ifdef _DEBUG
+			CString full2 = full1 + L".json";
+			KwFileSafeRemove(full2);
+			CStringA json; KwUTF8ToChar(sUtf8, json);
+			CFile fj(full2, CFile::modeCreate | CFile::modeWrite);
+			fj.Write((PAS)json, json.GetLength());
+			fj.Close();
+#endif // _DEBUG
+		}
+		else
+			TRACE("Encoding error.");
+	}
 	else
 	{
-		//auto app = AfxGetApp();
-		CString full = GetFilePath();
-		VERIFY(DoSave(full, 0));
+		int glen = 32;
+		CFile* fr = ar.GetFile();
+		int lenData = (int)fr->GetLength() - glen;
+
+		KBinary guidBE(glen);
+		fr->Read(guidBE.m_p, glen);// guidA.GetBufferSetLength(32), 32);
+		KBinary guidB(glen);
+		EncodeBinary(guidBE, ecdkey, false, &guidB);
+
+		CStringA guidA(guidB.m_p);//header 32byte
+// 		guidA.GetBufferSetLength(32)
+// 		guidA.ReleaseBuffer();
+
+		KBinary bUtf8(lenData);
+		fr->Read(bUtf8.m_p, lenData);
+
+		OSslEncrypt ose((PAS)guidA.Left(24), (PAS)guidA.Right(8));
+		int descLen = lenData * 2;//그냥 넉넉히
+		KBinary bin8(descLen);
+		PUCHAR pu8 = (PUCHAR)bin8.GetPA();
+
+		bool bError = false;
+		BOOL bdc = ose.Decrypt((PUCHAR)bUtf8.m_p, lenData, pu8, &descLen);
+		if(!bdc)
+			bError = true;
+		CString sWstr;
+		KwUTF8ToWchar((PAS)pu8, sWstr);
+
+		auto jdoc = ShJVal(Json::Parse((PWS)sWstr));
+		if(!jdoc)//.get() == nullptr)
+			bError = true;
+		_json = jdoc->AsObject();// .get();
+		
+		if(bError)
+			KwMessageBoxError(L"WinpacheMain.cfg 파일 포맷 오류.");
+
+		/*
+				auto& js = *jdoc->AsObject();// .get();
+				KJSGETS(_GUID);
+				if (_GUID.IsEmpty())
+					_GUID = KwGetFormattedGuid();
+				KJSGETS(_fname);
+				KJSGETS(_DSN);
+				KJSGETS(_UID);
+				//KJSGETS(_PWD);
+				KJSGETS(_database);
+				KJSGETS(_statDB);
+				//KJSGETI(_UID);// 숫자인 경우
+		*/
 	}
 }

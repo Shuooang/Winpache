@@ -8,19 +8,32 @@
 #include <vector>
 #include <xstring>
 //#include <afxmt.h>
+#include <tuple>
+#include <xtree>
 
 using std::string;
 using std::wstring;
 using std::shared_ptr;
+using std::pair;
+using std::tuple;
 using std::make_shared;
+using std::make_tuple;
 using std::function;
 using std::vector;
 using std::wstringstream;
 using std::stringstream;
 using std::string_view;
-// std::map은 너무 단순 하여 full name으로 쓴다.
+
+template<typename T>
+using SHP = std::shared_ptr<T>;
+
+// std::map은 너무 단순 하여 full name으로 쓴다. KStrMap 참조
 typedef std::wstringstream Tss;
 typedef std::stringstream Tas;
+typedef std::string_view stringv;
+
+#define TplCount(tp) std::tuple_size<decltype(tp)>::value
+#define TplItem(i, tp) std::get<i>(tp)
 
 // Tss 를 문자열 포인터로 리턴 할려면
 #define Psr(ss) (ss.str().c_str())
@@ -78,7 +91,17 @@ void KwCreateFuncValue(std::shared_ptr<TFNC>& rtval, TRAMBD lambda)
 
 
 
-#include <xtree>
+
+
+#define for_reverse(v, lst) std::reverse((lst).begin(), (lst).end());\
+	for(auto v : (lst))
+
+
+
+
+
+
+
 /// KwStr ws1 = L"xx";
 //error C2440: '초기화 중': 'const wchar_t [3]'에서 'KwStr'(으)로 변환할 수 없습니다.
 /*
@@ -227,6 +250,8 @@ public:
 	{
 		if(this == nullptr)
 			throw "KStdMap::Lookup() this is null.";
+		if(size() == 0)
+			return FALSE;
 		auto it = this->find(k);
 		if(it != this->end())
 		{
@@ -239,6 +264,8 @@ public:
 	{
 		if(this == nullptr)
 			throw "KStdMap::Has() this is null.";
+		if(size() == 0)
+			return false;
 		auto it = this->find(k);
 		return (it != this->end());
 	}
@@ -268,6 +295,16 @@ public:
 		TVal v;
 		Lookup(key, v);
 		return v;
+	}
+	BOOL RemoveKey(TKey k)
+	{
+		auto it = this->find(k);
+		if(it != this->end())
+		{
+			erase(it);
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 	
@@ -453,6 +490,12 @@ public:
 	{
 		return GetCount() - 1;
 	}
+	/// loop
+	// 	for(int& el : *this)
+	// 		el += i++;
+	// 	for(int& el : reverse(*this))
+	// 		el += i++;
+
 };
 
 template<typename T>
@@ -486,6 +529,11 @@ class KList : public std::list<T>
 {
 public:
 	//CCriticalSection _cs;
+
+	/// loop
+// 	for(auto&& el : reverse(*this))
+// 		cout << el << ',';
+
 };
 
 template<typename TObj>
@@ -514,9 +562,19 @@ inline wstring ToWStr(const string str)
 	Ucode(str, ws);
 	return ws;
 }
+inline wstring ToWStr(const char* ptr)
+{
+	string str = ptr;
+	return ToWStr(str);
+}
 inline string ToAStr(const wstring ws)
 {
 	string as;
 	Ucode(ws, as);
 	return as;
+}
+inline string ToAStr(const WCHAR* pws)
+{
+	wstring ws = pws;
+	return ToAStr(ws);
 }

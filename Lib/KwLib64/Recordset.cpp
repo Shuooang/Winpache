@@ -92,12 +92,16 @@ bool KDatabase::IsReopenable()
 }
 
 // 쓰는법: KRecset을 하나도 할당하지 않은 상태에서 불러야 한다. 예: CheckDB()
-void KDatabase::TimeCheckReopen()
+string KDatabase::TimeCheckReopen()
 {
 	auto tick = GetTickCount64();
 	auto intv = tick - _tLastAcess;
 	if(intv > _secReopenInterval)
+	{
 		Reopen();//reopen 하면 KRecordset의 CDatabase가 리셋 된다.
+		return "Reopen";
+	}
+	return "";
 }
 
 
@@ -144,7 +148,7 @@ CStringA KDatabase::GetTypeToStr(int typeSql)
 
 
 // text를 ?로 바이너리로 보낼때는 UTF8로 바꿔서 저장해야 한글이 보인다. KwWcharToUTF8
-void KDatabase::ExecuteSQL(LPCWSTR sql, KDataPacket dts[], int numVar)
+void KDatabase::ExecuteSQL(LPCWSTR sql, KDataPacket dts[], int numVar, int iOp)
 {
 	PTR* pData = new PTR[numVar];
 	SQLLEN* cbRv = new SQLLEN[numVar];
@@ -164,15 +168,15 @@ void KDatabase::ExecuteSQL(LPCWSTR sql, KDataPacket dts[], int numVar)
 		sqlType[i] = (SQLSMALLINT)dts[i]._sqlType;
 	}
 
-	ExecuteSQL(sql, numVar, pData, cbRv, cType, sqlType);
+	ExecuteSQL(sql, numVar, pData, cbRv, cType, sqlType, iOp);
 }
 /// <summary>
 /// 전송할 바이너리 필드가 ? 가 하나 일떄
 /// </summary>
-void KDatabase::ExecuteSQL(LPCWSTR sql, PTR pData, SQLLEN cbRv, SQLSMALLINT cType, SQLSMALLINT sqlType)
+void KDatabase::ExecuteSQL(LPCWSTR sql, PTR pData, SQLLEN cbRv, SQLSMALLINT cType, SQLSMALLINT sqlType, int iOp)
 {
 	KDataPacket dts((char*)pData, cbRv, cType, sqlType);
-	ExecuteSQL(sql, &dts, 1);
+	ExecuteSQL(sql, &dts, 1, iOp);
 }
 
 /// <summary>
@@ -188,7 +192,7 @@ void KDatabase::ExecuteSQL(LPCWSTR sql, int numVar, // '?'의 갯수 :  BIND해야할 
 							PTR* pData,			// Data Point ARRAY 
 							SQLLEN* cbRv,			// 실제 전달된 length ARRAY
 							SQLSMALLINT* cType,		// array of c type
-							SQLSMALLINT* sqlType)
+							SQLSMALLINT* sqlType, int iOp)
 {
 	AUTOLOCK(_mxDbAcess);
 	ULONGLONG tick = GetTickCount64();
@@ -196,12 +200,11 @@ void KDatabase::ExecuteSQL(LPCWSTR sql, int numVar, // '?'의 갯수 :  BIND해야할 
 	//if(intv > this->_secReopenInterval)
 	//	Reopen();//ReopenDb();
 
-	KAtEnd d_sql([&, sql, tick]()->void {
+	KAtEnd d_sql([&, sql, tick, iOp]()->void {
 		auto elapsed = GetTickCount64() - tick;
-		if (_fncDbLog)
+		if (_fncDbLog && !KwAttr(iOp, eNoLog))/// KDatabase::eNoLog를 주면 로그를 안쌓는다.
 		{
-			auto rv = (*_fncDbLog)(sql, (DWORD)elapsed);
-			// rv < 0 이면 실패
+			auto rv = (*_fncDbLog)(sql, (DWORD)elapsed);// rv < 0 이면 실패
 		}
 	});
 
@@ -216,78 +219,101 @@ void KDatabase::ExecuteSQL(LPCWSTR sql, int numVar, // '?'의 갯수 :  BIND해야할 
 
 	ENSURE_VALID(this);
 	ENSURE_ARG(AfxIsValidString(sql));
-
-	AFX_SQL_SYNC(::SQLAllocStmt(m_hdbc, &hstmt));
-	if(!CheckHstmt(nRetCode, hstmt))
-		AfxThrowDBException(nRetCode, this, hstmt);
-
-	TRY
+	int nTry = 1;
+	while(1)
 	{
-		OnSetOptions(hstmt);
+		AFX_SQL_SYNC(::SQLAllocStmt(m_hdbc, &hstmt));
+		if(!CheckHstmt(nRetCode, hstmt))
+			AfxThrowDBException(nRetCode, this, hstmt);
+
+		TRY
+		{
+			OnSetOptions(hstmt);
 
 		// Give derived CDatabase classes option to use parameters
 		//BindParameters(hstmt); override하라고 비어 있고, 그걸 아래에서 한다.
 
-		for(int i=0;i<numVar;i++)
-		{
-			SQLLEN len = cbRv[i];
-			SQLLEN lLength = len;
-
-			lLength = SQL_LEN_DATA_AT_EXEC(lLength);
-			nRetCode = SQLBindParameter(hstmt, i+1, SQL_PARAM_INPUT, cType[i], sqlType[i],
-											len, //ColumnSize 
-											0, //DecimalDigits 
-											(PTR)pData[i], //ParameterValuePtr 
-											0,	//BufferLength 
-											&lLength);//StrLen_or_IndPtr 
-			if(!CheckHstmt(nRetCode, hstmt))
-				AfxThrowDBException(nRetCode, this, hstmt);
-		}
-
-		LPTSTR pszSQL = const_cast<LPTSTR>(sql);
-		AFX_ODBC_CALL(::SQLExecDirect(hstmt, reinterpret_cast<SQLTCHAR*>(pszSQL), SQL_NTS));
-		if(!CheckHstmt(nRetCode, hstmt) && nRetCode != SQL_NEED_DATA)
-			AfxThrowDBException(nRetCode, this, hstmt);
-
-		CHAR* pTarget = NULL;
-		if(nRetCode == SQL_NEED_DATA)
-		{
-			for(int i=0;i<numVar;i++)
+			for(int i = 0; i < numVar; i++)
 			{
-				AFX_ODBC_CALL(::SQLParamData(hstmt, (SQLPOINTER*)&pTarget)); // get the pointer that will receive the data.
-				if(!CheckHstmt(nRetCode, hstmt) && nRetCode != SQL_NEED_DATA)
+				SQLLEN len = cbRv[i];
+				SQLLEN lLength = len;
+
+				lLength = SQL_LEN_DATA_AT_EXEC(lLength);
+				nRetCode = SQLBindParameter(hstmt, i + 1, SQL_PARAM_INPUT, cType[i], sqlType[i],
+												len, //ColumnSize 
+												0, //DecimalDigits 
+												(PTR)pData[i], //ParameterValuePtr 
+												0,	//BufferLength 
+												&lLength);//StrLen_or_IndPtr 
+				if(!CheckHstmt(nRetCode, hstmt))
 					AfxThrowDBException(nRetCode, this, hstmt);
+			}
 
-				SQLLEN lenSent = 0, dw=0;
-				while(lenSent != cbRv[i])
+			LPTSTR pszSQL = const_cast<LPTSTR>(sql);
+			AFX_ODBC_CALL(::SQLExecDirect(hstmt, reinterpret_cast<SQLTCHAR*>(pszSQL), SQL_NTS));
+			if(!CheckHstmt(nRetCode, hstmt) && nRetCode != SQL_NEED_DATA)
+				AfxThrowDBException(nRetCode, this, hstmt);
+
+			CHAR* pTarget = NULL;
+			if(nRetCode == SQL_NEED_DATA)
+			{
+				for(int i = 0; i < numVar; i++)
 				{
-					SQLLEN dwSend = cbRv[i] - lenSent;
-					if(dwSend > 0x8000) dwSend = 0x8000; // each time maximum block size
-
-					AFX_ODBC_CALL(::SQLPutData(hstmt, (PTR)pTarget, (SQLLEN)dwSend));
+					AFX_ODBC_CALL(::SQLParamData(hstmt, (SQLPOINTER*)&pTarget)); // get the pointer that will receive the data.
 					if(!CheckHstmt(nRetCode, hstmt) && nRetCode != SQL_NEED_DATA)
 						AfxThrowDBException(nRetCode, this, hstmt);
 
-					pTarget += dwSend;
-					lenSent += dwSend;
+					SQLLEN lenSent = 0, dw = 0;
+					while(lenSent != cbRv[i])
+					{
+						SQLLEN dwSend = cbRv[i] - lenSent;
+						if(dwSend > 0x8000) dwSend = 0x8000; // each time maximum block size
+
+						AFX_ODBC_CALL(::SQLPutData(hstmt, (PTR)pTarget, (SQLLEN)dwSend));
+						if(!CheckHstmt(nRetCode, hstmt) && nRetCode != SQL_NEED_DATA)
+							AfxThrowDBException(nRetCode, this, hstmt);
+
+						pTarget += dwSend;
+						lenSent += dwSend;
+					}
+				}
+				// Make final SQLParamData call. 이거 안해주면 안들어 간다.
+				AFX_ODBC_CALL(::SQLParamData(hstmt, (SQLPOINTER*)&pTarget));
+				if(!CheckHstmt(nRetCode, hstmt))
+				{
+					// 				(-1) : Unknown command
+					// 				(State : 08S01, Native:1047
+					///	AfxThrowDBException(nRetCode, this, hstmt);
+					/// 여기서 throw db 안하고 재시도 해보자.
+					CDBException* pException = new CDBException(nRetCode);
+					KAtEnd d_sql([&]()->void {	if(pException)
+						pException->Delete();	});
+					if(nRetCode == SQL_ERROR)// && pdb != NULL)
+					{
+						pException->BuildErrorString(this, hstmt);
+						if(pException->m_strError.Find(L"Got packets out of order") >= 0 && 
+							pException->m_strStateNativeOrigin.Find(L"State:08S01") >= 0)
+						{
+							::SQLCancel(hstmt);
+							AFX_SQL_SYNC(::SQLFreeStmt(hstmt, SQL_DROP));
+							nTry++;
+							continue;
+						}
+					}
 				}
 			}
-			// Make final SQLParamData call. 이거 안해주면 안들어 간다.
-			AFX_ODBC_CALL(::SQLParamData(hstmt, (SQLPOINTER*)&pTarget)); 
-			if(!CheckHstmt(nRetCode, hstmt))
-				AfxThrowDBException(nRetCode, this, hstmt);
 		}
-	}
-	CATCH_ALL(e)
-	{
-		::SQLCancel(hstmt);
+		CATCH_ALL(e)
+		{
+			::SQLCancel(hstmt);
+			AFX_SQL_SYNC(::SQLFreeStmt(hstmt, SQL_DROP));
+			THROW_LAST();
+		}
+		END_CATCH_ALL
+
 		AFX_SQL_SYNC(::SQLFreeStmt(hstmt, SQL_DROP));
-		THROW_LAST();
-	}
-	END_CATCH_ALL
-
-	AFX_SQL_SYNC(::SQLFreeStmt(hstmt, SQL_DROP));
-
+		break;
+	}//while(1)
 	//_dbLog->ExecuteSQL(
 }
 
@@ -438,6 +464,17 @@ BOOL KRecordset::OpenSelect(PWS sql)
 		}
 	}
 	return bOpen;
+}
+BOOL KRecordset::OpenSelectFetch(PWS sql)
+{
+	if(m_pDatabase == NULL)
+		throw_str("Database is not connected! (OpenSelectFetch)");
+	auto pdb = (KDatabase*)m_pDatabase;
+	AUTOLOCK(pdb->_mxDbAcess);
+	BOOL b = OpenSelect(sql);
+	if(b)
+		Fetch();
+	return b;
 }
 
 CString KRecordset::GetFieldName(int col)
@@ -1573,4 +1610,78 @@ void KDatabase::SplitSQL(CStringW& sqlw, KArray<wstring>& ar)
 		}
 	}
 	TRACE("SplitSQL %d sqls.\n", ar.GetCount());
+}
+
+
+CKCriticalSection KDatabase::s_csDbConnect;
+
+SHP<KDatabase> KDatabase::getDbConnected(wstring dsn, int sec)
+{
+	AUTOLOCK(s_csDbConnect);
+
+	/// DSN : (openTick + KDatabase) map
+	static KStdMapPtr<wstring, KList<SHP<KDatabaseOdbc>>> s_mapOdbc;
+	SHP<KDatabase> rsdb;
+	if(dsn.length() == 0)
+		return rsdb;
+
+	ULONGLONG tick = GetTickCount64();
+	KList<SHP<KDatabaseOdbc>>* pldb = NULL;
+	int ndbUsing = 0;
+	int ndb = 0;
+
+	if(!s_mapOdbc.Lookup(dsn, pldb))// 특정 dsn 연결중 놀고 있는 거 있나?
+	{///1.dns의 것이 없으면 만들어서 리턴
+		pldb = new KList<SHP<KDatabaseOdbc>>();
+		auto sdbo = make_shared<KDatabaseOdbc>(dsn);
+		pldb->push_back(sdbo);
+		s_mapOdbc[dsn] = pldb;//하나의 dsn에 여러개 스레드별로 연결이 List에 넣어 둔다.
+		sdbo->_tick = tick;
+		rsdb = sdbo->_sdb;
+	}
+	else 
+	{
+		ndb = pldb->size();
+		for(auto& sdbo : *pldb) // item: SHP<KDatabaseOdbc>
+		{
+			auto ou = sdbo.use_count();//이거는 상관 없다.
+			auto du = sdbo->_sdb.use_count();///이거는 리턴 하기 때문에 use_count올라 간다.
+			if(du == 1)// 1이면 shared된게 없어서 노는 중.
+			{
+				LONGLONG trm = tick - sdbo->_tick;
+				if(trm < (1000L * (LONGLONG)sec))//연결만료 전이면
+				{///2.1 놀고 있는 db가 있으면, 만료 되었나 확인 후 리턴
+					if(!sdbo->_sdb->IsOpen())
+						sdbo->_sdb->OpenEx(dsn.c_str());///never come. open 안된경우만
+					sdbo->_tick = tick;
+					rsdb = sdbo->_sdb;
+				}
+				else 
+				{///2.2 만료된 db는 다시 연결 하여 리턴
+					if(sdbo->_sdb->IsOpen())
+						sdbo->_sdb->Close();
+					sdbo->_sdb->OpenEx(dsn.c_str());
+					sdbo->_tick = tick;
+					rsdb = sdbo->_sdb;
+				}
+#ifndef _DEBUG
+				break;
+#endif // _DEBUG
+			}
+			else
+				ndbUsing++;
+		}
+
+		if(!rsdb)
+		{
+			// 아직 리턴이 안되었다면 노는 db가 없다는 건데 그럼 추가 해야지.
+			///3. 없거나 있더라도 사용 중이면 추가.
+			auto sdbo = make_shared<KDatabaseOdbc>(dsn);
+			pldb->push_back(sdbo);
+			sdbo->_tick = tick;
+			rsdb = sdbo->_sdb;
+		}
+	}
+	//KTrace(L"getDbConnected: %d using: %d (%s)\r\n", ndb, ndbUsing, dsn.c_str());
+	return rsdb;
 }

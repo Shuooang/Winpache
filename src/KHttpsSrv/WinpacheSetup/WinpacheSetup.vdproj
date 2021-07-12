@@ -15,6 +15,12 @@
     {
         "Entry"
         {
+        "MsmKey" = "8:_007783D1EED245FFB06FA52797B19FE4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_03567D7E3DAB4DB08C3B0023137F8496"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -33,13 +39,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_0668ADB0225B4FE28754B308F83F364D"
+        "MsmKey" = "8:_097F8498AE884B4FB5FB74063585068D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_097F8498AE884B4FB5FB74063585068D"
+        "MsmKey" = "8:_0EC83C42BCE3495EB8E26747F8B4403D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -69,6 +75,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_12E042F3F45043D49589F09AE9DEB3D3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_14A6F4DB74BB49BB8ED8317995C2583B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -81,7 +93,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_193B74F05F274358A5CD009A74D8A404"
+        "MsmKey" = "8:_18346BDCE14E48ACA162A567149ED986"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1A02CE0B665741378D6290F4A06A3EDD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -105,7 +123,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_1F90F5AD190946F4873C17E58AB4E941"
+        "MsmKey" = "8:_1DDEED4A47C74B0E86364BC0F2D9763F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -118,6 +136,12 @@
         "Entry"
         {
         "MsmKey" = "8:_24620BB5CD99487C8A929BD8524E08DA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_266476DE959C4B4CA16EBAFF2EB413B4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -136,6 +160,12 @@
         "Entry"
         {
         "MsmKey" = "8:_35037514C232451E87590CF79249B415"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_355D8EF48B064571B22F3963BA0B396B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -213,6 +243,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_4E62060F720F49CB91B023733524736A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_534D3EC8BA9A48B6A161240071F7E763"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -244,6 +280,12 @@
         "Entry"
         {
         "MsmKey" = "8:_58593F78109A4BAEA340BDD7FF42D9B2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_594D0D7E09BE4C75820FCF63E3AA5FB2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -292,6 +334,12 @@
         "Entry"
         {
         "MsmKey" = "8:_6BB09A89BB364E5D929DAFCC6AE81B91"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6C2931BA13E14A73AF930BCCF1D3A621"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -357,7 +405,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_7702F89BA1A542A4B0323A10EE38FC96"
+        "MsmKey" = "8:_7B8C6C156B6C41CF9883E5BDEB1F3554"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -369,13 +417,19 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_7BF7E4556D14431887DBEF1600D4D029"
+        "MsmKey" = "8:_7BE80BBB7AF5485BA16FC8C799DA84DE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_7C848AAB72154CD594A758CD08F9C402"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7D6B4B9A815C4D1787B4E12D1328CD6C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -393,6 +447,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_8029DB3BF8004BD69C375BD56416AAD6"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_809C04FD5DAA454085A48C4EBEAAC5C9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_8419DB635D2D4C7FA654AAF7237FD5CF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -405,6 +471,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_8783A44C344F4235A37D587B8EE17604"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_8872F8A7CA08436CA814C027E2BC48F8"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -412,6 +484,12 @@
         "Entry"
         {
         "MsmKey" = "8:_88A8D54C8A7947849420009B9CF3096E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_88EFDDD22E5D472BA05968D8F704615E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -447,6 +525,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_9304731DE0324B31B4F45A1C53B4FD4D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_949F5A53CD6B46D4896566C4638B47B6"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -459,7 +543,25 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_951D0DBF3B434958BFC23B8D3B2B9C13"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_966B1D9927BA469F83CCB6383941B9D7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_995D673C512C4CE4B9C347285AE9BA0E"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9BE405BA275A42EA8E47324845B1D455"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -477,6 +579,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_9DE72D3922BD417E827A9A41A738AD12"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_9E9BD97748014605A6F93CEFB3CA7EF7"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -489,7 +597,19 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_A23CEFA320F64705880FF7828F82FFB5"
+        "MsmKey" = "8:_A386A2DDC3E046FBA24302D963CFB0D3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A3D97227A9B74B8CBBD08C5F8AB6FE0B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_A48C307439B1435AA69429E0FECC2B48"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -507,6 +627,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_A714D1926327401AA42540C7153071B0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_A77CB82DB5494FE49B7280AEA37FB246"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -519,19 +645,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_AC89A54D2C974612AF16FC6D6267B27B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_ACDAE8E9AC214AAFA9B60B9A237EE599"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_AD3C4EC9B2E7460C89950DCB86430F16"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -549,13 +663,19 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_B2D150D246CC4342B48031D7FCC281AB"
+        "MsmKey" = "8:_B5CF37D7F71A42E29896B3E4059073F0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_B5CF37D7F71A42E29896B3E4059073F0"
+        "MsmKey" = "8:_B5ED61D5684448CE8C6CC020F490C881"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B9EAADAD7F3044BE8AD85BA2182C2378"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -568,6 +688,12 @@
         "Entry"
         {
         "MsmKey" = "8:_BB52DD93882C4E748924A6415D563F45"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BD36A18394864A0B9B00011518379563"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -609,6 +735,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_CFF194C37E3A45A5B3F94F114134A42F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_D19FB37EEC82407B87055EE16F24D170"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -616,6 +748,12 @@
         "Entry"
         {
         "MsmKey" = "8:_D68ED93F7C74462D869C99A10A893775"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D722AA0688214FD48B07869DD09E2B7C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -633,18 +771,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_DE9C59F404C54EE6A4D063F9E187CE15"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_E06095FC3968442695439958681AEF26"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_E30F715C42DF4E43B57B6321F5E07650"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -657,7 +783,19 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_E7EF2F85AC084986950E711566B4F279"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_E8A40DC0E4D3475B813E201F1B466B88"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E8B93BD848314C2385F38F50A29D5854"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -669,7 +807,19 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_F0F137712F0340A9B4915E04E533C6EF"
+        "MsmKey" = "8:_EA38B1A55B514A459CD7D9EB0312B463"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EEEC1E3A22A348DE92417ED6E34903FC"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F00BE2E096024E7CA7417A0B902A7212"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -682,6 +832,18 @@
         "Entry"
         {
         "MsmKey" = "8:_F446B0F8D20F4E4ABCCE516E0F8BCC52"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F477B5CA4CF04FE69F133F5642B501ED"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FC17DBCD805548E8B20DCD56E55E501B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -731,11 +893,11 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:..\\..\\..\\Setup\\Release\\WinpacheSetup.msi"
+        "OutputFilename" = "8:..\\..\\..\\Setup\\ReleaseWinpache\\WinpacheSetup.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
-        "Compression" = "3:2"
+        "Compression" = "3:3"
         "SignOutput" = "11:FALSE"
         "CertificateFile" = "8:"
         "PrivateKeyFile" = "8:"
@@ -743,10 +905,10 @@
         "InstallerBootstrapper" = "3:2"
             "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
             {
-            "Enabled" = "11:TRUE"
+            "Enabled" = "11:FALSE"
             "PromptEnabled" = "11:TRUE"
             "PrerequisitesLocation" = "2:1"
-            "Url" = "8:https://www.dropbox.com/sh/sz1g0dcznm9mdvr/AABMk2vefdUZv955EwReA-y5a?dl=0"
+            "Url" = "8:https://github.com/Shuooang/Winpache"
             "ComponentsUrl" = "8:"
                 "Items"
                 {
@@ -786,6 +948,26 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_007783D1EED245FFB06FA52797B19FE4"
+            {
+            "SourcePath" = "8:..\\..\\..\\pkg\\MariaDB\\lib\\libmariadb.dll"
+            "TargetName" = "8:libmariadb.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_CFCDAC76D829408CB6031FF3DAD84AA3"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_03567D7E3DAB4DB08C3B0023137F8496"
             {
             "SourcePath" = "8:..\\..\\..\\bin\\mariadb-connector-odbc-3.1.12-win64.msi"
@@ -846,26 +1028,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0668ADB0225B4FE28754B308F83F364D"
-            {
-            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\CREATE_TABLE_tbizclass.sql"
-            "TargetName" = "8:CREATE_TABLE_tbizclass.sql"
-            "Tag" = "8:"
-            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_097F8498AE884B4FB5FB74063585068D"
             {
             "SourcePath" = "8:..\\..\\..\\bin\\x64\\Release\\MFCLibrary1.exp"
@@ -879,6 +1041,26 @@
             "Hidden" = "11:FALSE"
             "System" = "11:FALSE"
             "Permanent" = "11:TRUE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0EC83C42BCE3495EB8E26747F8B4403D"
+            {
+            "SourcePath" = "8:..\\..\\..\\pkg\\MariaDB\\lib\\libmariadb.dll"
+            "TargetName" = "8:libmariadb.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_EA55028DB26E49E2A27CE36F104CA69D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
@@ -966,6 +1148,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_12E042F3F45043D49589F09AE9DEB3D3"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tbiz.sql"
+            "TargetName" = "8:tbiz.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_14A6F4DB74BB49BB8ED8317995C2583B"
             {
             "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\Downloads - MariaDB.url"
@@ -1006,10 +1208,30 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_193B74F05F274358A5CD009A74D8A404"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_18346BDCE14E48ACA162A567149ED986"
             {
-            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\CREATE_TABLE_tbiz.sql"
-            "TargetName" = "8:CREATE_TABLE_tbiz.sql"
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tlogsvr.sql"
+            "TargetName" = "8:tlogsvr.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1A02CE0B665741378D6290F4A06A3EDD"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tbzeval_after_update.sql"
+            "TargetName" = "8:tbzeval_after_update.sql"
             "Tag" = "8:"
             "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
             "Condition" = "8:"
@@ -1086,10 +1308,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1F90F5AD190946F4873C17E58AB4E941"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1DDEED4A47C74B0E86364BC0F2D9763F"
             {
-            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\CREATE_TABLE_t_reqlog.sql"
-            "TargetName" = "8:CREATE_TABLE_t_reqlog.sql"
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\t_reqlog.sql"
+            "TargetName" = "8:t_reqlog.sql"
             "Tag" = "8:"
             "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
             "Condition" = "8:"
@@ -1139,6 +1361,26 @@
             "Hidden" = "11:FALSE"
             "System" = "11:FALSE"
             "Permanent" = "11:TRUE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_266476DE959C4B4CA16EBAFF2EB413B4"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\treview.sql"
+            "TargetName" = "8:treview.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
@@ -1199,6 +1441,26 @@
             "Hidden" = "11:FALSE"
             "System" = "11:FALSE"
             "Permanent" = "11:TRUE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_355D8EF48B064571B22F3963BA0B396B"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\cert\\certificate.pem"
+            "TargetName" = "8:certificate.pem"
+            "Tag" = "8:"
+            "Folder" = "8:_9783A280CBE64551A2F0737762E26FE5"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
@@ -1446,6 +1708,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4E62060F720F49CB91B023733524736A"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\trveval.sql"
+            "TargetName" = "8:trveval.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_534D3EC8BA9A48B6A161240071F7E763"
             {
             "SourcePath" = "8:..\\..\\..\\bin\\x64\\Debug\\Wincatcher.exe"
@@ -1552,6 +1834,26 @@
             "TargetName" = "8:enumval.h"
             "Tag" = "8:"
             "Folder" = "8:_64CE156ABE94423CA9CA116C2CA78014"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_594D0D7E09BE4C75820FCF63E3AA5FB2"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tgdmodify.sql"
+            "TargetName" = "8:tgdmodify.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1712,6 +2014,26 @@
             "TargetName" = "8:pch.h"
             "Tag" = "8:"
             "Folder" = "8:_C9E71462921A40C39AC01761AFAA5A93"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6C2931BA13E14A73AF930BCCF1D3A621"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tscore.sql"
+            "TargetName" = "8:tscore.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1926,12 +2248,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7702F89BA1A542A4B0323A10EE38FC96"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7B8C6C156B6C41CF9883E5BDEB1F3554"
             {
-            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\CREATE_TABLE_tbiz.sql"
-            "TargetName" = "8:CREATE_TABLE_tbiz.sql"
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tbzeval_af_del.sql"
+            "TargetName" = "8:tbzeval_af_del.sql"
             "Tag" = "8:"
-            "Folder" = "8:_1A7E183B8E8A48C4A777B9D6AC4173FE"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1966,12 +2288,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7BF7E4556D14431887DBEF1600D4D029"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7BE80BBB7AF5485BA16FC8C799DA84DE"
             {
-            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\CREATE_TABLE_tbizclass.sql"
-            "TargetName" = "8:CREATE_TABLE_tbizclass.sql"
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\vposition.sql"
+            "TargetName" = "8:vposition.sql"
             "Tag" = "8:"
-            "Folder" = "8:_1A7E183B8E8A48C4A777B9D6AC4173FE"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2006,6 +2328,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7D6B4B9A815C4D1787B4E12D1328CD6C"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tapppolicy.sql"
+            "TargetName" = "8:tapppolicy.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7E43A82B683948CC830E5C075E3D77B7"
             {
             "SourcePath" = "8:..\\MFCLibrary1\\MFCLibrary1.h"
@@ -2032,6 +2374,46 @@
             "TargetName" = "8:Lock.h"
             "Tag" = "8:"
             "Folder" = "8:_64CE156ABE94423CA9CA116C2CA78014"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8029DB3BF8004BD69C375BD56416AAD6"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\timages.sql"
+            "TargetName" = "8:timages.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_809C04FD5DAA454085A48C4EBEAAC5C9"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\trveval_af_del.sql"
+            "TargetName" = "8:trveval_af_del.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2086,6 +2468,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8783A44C344F4235A37D587B8EE17604"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\trveval_af_ins.sql"
+            "TargetName" = "8:trveval_af_ins.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8872F8A7CA08436CA814C027E2BC48F8"
             {
             "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\Downloads - MariaDB.url"
@@ -2119,6 +2521,26 @@
             "Hidden" = "11:FALSE"
             "System" = "11:FALSE"
             "Permanent" = "11:TRUE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_88EFDDD22E5D472BA05968D8F704615E"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tmember.sql"
+            "TargetName" = "8:tmember.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
@@ -2226,6 +2648,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9304731DE0324B31B4F45A1C53B4FD4D"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\trecover.sql"
+            "TargetName" = "8:trecover.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_949F5A53CD6B46D4896566C4638B47B6"
             {
             "SourcePath" = "8:..\\..\\..\\Lib\\KwLib64\\RbBase.h"
@@ -2266,6 +2708,46 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_951D0DBF3B434958BFC23B8D3B2B9C13"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\cert\\dh4096.pem"
+            "TargetName" = "8:dh4096.pem"
+            "Tag" = "8:"
+            "Folder" = "8:_9783A280CBE64551A2F0737762E26FE5"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_966B1D9927BA469F83CCB6383941B9D7"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tbiz_af_ins.sql"
+            "TargetName" = "8:tbiz_af_ins.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_995D673C512C4CE4B9C347285AE9BA0E"
             {
             "SourcePath" = "8:..\\MFCLibrary1\\targetver.h"
@@ -2279,6 +2761,26 @@
             "Hidden" = "11:FALSE"
             "System" = "11:FALSE"
             "Permanent" = "11:TRUE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9BE405BA275A42EA8E47324845B1D455"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tbiz_af_upd.sql"
+            "TargetName" = "8:tbiz_af_upd.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
@@ -2312,6 +2814,26 @@
             "TargetName" = "8:vs_community__1141927769.1601659846.exe"
             "Tag" = "8:"
             "Folder" = "8:_1A7E183B8E8A48C4A777B9D6AC4173FE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9DE72D3922BD417E827A9A41A738AD12"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tuser.sql"
+            "TargetName" = "8:tuser.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2366,12 +2888,52 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A23CEFA320F64705880FF7828F82FFB5"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A386A2DDC3E046FBA24302D963CFB0D3"
             {
-            "SourcePath" = "8:..\\..\\..\\bin\\x64\\Debug\\WinpachePro.exe"
-            "TargetName" = "8:WinpachePro.exe"
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tbzeval.sql"
+            "TargetName" = "8:tbzeval.sql"
             "Tag" = "8:"
-            "Folder" = "8:_CFCDAC76D829408CB6031FF3DAD84AA3"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A3D97227A9B74B8CBBD08C5F8AB6FE0B"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\t_excepsvr.sql"
+            "TargetName" = "8:t_excepsvr.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A48C307439B1435AA69429E0FECC2B48"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tktrace.sql"
+            "TargetName" = "8:tktrace.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2426,6 +2988,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A714D1926327401AA42540C7153071B0"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tposition.sql"
+            "TargetName" = "8:tposition.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A77CB82DB5494FE49B7280AEA37FB246"
             {
             "SourcePath" = "8:..\\..\\..\\Lib\\KwLib64\\framework.h"
@@ -2466,50 +3048,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AC89A54D2C974612AF16FC6D6267B27B"
-            {
-            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\CREATE_TABLE_t_ldblog.sql"
-            "TargetName" = "8:CREATE_TABLE_t_ldblog.sql"
-            "Tag" = "8:"
-            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_ACDAE8E9AC214AAFA9B60B9A237EE599"
             {
             "SourcePath" = "8:..\\..\\..\\bin\\x64\\Release\\Winpache.exe"
             "TargetName" = "8:Winpache.exe"
-            "Tag" = "8:"
-            "Folder" = "8:_2AB767406D40484F8EA87ABE596F5DFF"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AD3C4EC9B2E7460C89950DCB86430F16"
-            {
-            "SourcePath" = "8:..\\..\\..\\bin\\x64\\Release\\WinpachePro.exe"
-            "TargetName" = "8:WinpachePro.exe"
             "Tag" = "8:"
             "Folder" = "8:_2AB767406D40484F8EA87ABE596F5DFF"
             "Condition" = "8:"
@@ -2566,10 +3108,30 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B2D150D246CC4342B48031D7FCC281AB"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B5CF37D7F71A42E29896B3E4059073F0"
             {
-            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\CREATE_TABLE_t_excepsvr.sql"
-            "TargetName" = "8:CREATE_TABLE_t_excepsvr.sql"
+            "SourcePath" = "8:..\\MFCLibrary1\\framework.h"
+            "TargetName" = "8:framework.h"
+            "Tag" = "8:"
+            "Folder" = "8:_C9E71462921A40C39AC01761AFAA5A93"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B5ED61D5684448CE8C6CC020F490C881"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tbizlog.sql"
+            "TargetName" = "8:tbizlog.sql"
             "Tag" = "8:"
             "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
             "Condition" = "8:"
@@ -2586,12 +3148,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B5CF37D7F71A42E29896B3E4059073F0"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B9EAADAD7F3044BE8AD85BA2182C2378"
             {
-            "SourcePath" = "8:..\\MFCLibrary1\\framework.h"
-            "TargetName" = "8:framework.h"
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tdoutput.sql"
+            "TargetName" = "8:tdoutput.sql"
             "Tag" = "8:"
-            "Folder" = "8:_C9E71462921A40C39AC01761AFAA5A93"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2632,6 +3194,26 @@
             "TargetName" = "8:Recordset.h"
             "Tag" = "8:"
             "Folder" = "8:_64CE156ABE94423CA9CA116C2CA78014"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BD36A18394864A0B9B00011518379563"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tpolygon.sql"
+            "TargetName" = "8:tpolygon.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2766,6 +3348,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CFF194C37E3A45A5B3F94F114134A42F"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tlocation_af_ins.sql"
+            "TargetName" = "8:tlocation_af_ins.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D19FB37EEC82407B87055EE16F24D170"
             {
             "SourcePath" = "8:..\\..\\..\\Lib\\KwLib64\\targetver.h"
@@ -2792,6 +3394,26 @@
             "TargetName" = "8:inlinefnc.h"
             "Tag" = "8:"
             "Folder" = "8:_64CE156ABE94423CA9CA116C2CA78014"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D722AA0688214FD48B07869DD09E2B7C"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tstillalive.sql"
+            "TargetName" = "8:tstillalive.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2846,46 +3468,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DE9C59F404C54EE6A4D063F9E187CE15"
-            {
-            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\CREATE_TABLE_t_excepsvr.sql"
-            "TargetName" = "8:CREATE_TABLE_t_excepsvr.sql"
-            "Tag" = "8:"
-            "Folder" = "8:_1A7E183B8E8A48C4A777B9D6AC4173FE"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E06095FC3968442695439958681AEF26"
-            {
-            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\CREATE_TABLE_t_reqlog.sql"
-            "TargetName" = "8:CREATE_TABLE_t_reqlog.sql"
-            "Tag" = "8:"
-            "Folder" = "8:_1A7E183B8E8A48C4A777B9D6AC4173FE"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E30F715C42DF4E43B57B6321F5E07650"
             {
             "SourcePath" = "8:..\\..\\..\\bin\\x64\\Release\\KwLib64.lib"
@@ -2926,12 +3508,52 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E7EF2F85AC084986950E711566B4F279"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\cert\\private.pem"
+            "TargetName" = "8:private.pem"
+            "Tag" = "8:"
+            "Folder" = "8:_9783A280CBE64551A2F0737762E26FE5"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E8A40DC0E4D3475B813E201F1B466B88"
             {
             "SourcePath" = "8:..\\Build_guide.txt"
             "TargetName" = "8:Build_guide.txt"
             "Tag" = "8:"
             "Folder" = "8:_0ACEAEF159DA4D18805903CBE67994F2"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E8B93BD848314C2385F38F50A29D5854"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\test.sql"
+            "TargetName" = "8:test.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2966,19 +3588,59 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F0F137712F0340A9B4915E04E533C6EF"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EA38B1A55B514A459CD7D9EB0312B463"
             {
-            "SourcePath" = "8:..\\..\\..\\bin\\x64\\Release\\WinpachePro.exe"
-            "TargetName" = "8:WinpachePro.exe"
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tbzeval_af_ins.sql"
+            "TargetName" = "8:tbzeval_af_ins.sql"
             "Tag" = "8:"
-            "Folder" = "8:_EA55028DB26E49E2A27CE36F104CA69D"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
             "ReadOnly" = "11:FALSE"
             "Hidden" = "11:FALSE"
             "System" = "11:FALSE"
-            "Permanent" = "11:TRUE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EEEC1E3A22A348DE92417ED6E34903FC"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\t_ldblog.sql"
+            "TargetName" = "8:t_ldblog.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F00BE2E096024E7CA7417A0B902A7212"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\thelp.sql"
+            "TargetName" = "8:thelp.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
@@ -3019,6 +3681,46 @@
             "Hidden" = "11:FALSE"
             "System" = "11:FALSE"
             "Permanent" = "11:TRUE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F477B5CA4CF04FE69F133F5642B501ED"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\vlocation.sql"
+            "TargetName" = "8:vlocation.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FC17DBCD805548E8B20DCD56E55E501B"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tlocation.sql"
+            "TargetName" = "8:tlocation.sql"
+            "Tag" = "8:"
+            "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
@@ -3302,6 +4004,17 @@
                                     }
                                 }
                             }
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_9783A280CBE64551A2F0737762E26FE5"
+                            {
+                            "Name" = "8:cert"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_62CA6A5E0AD14A5A9A8F50DB373917F2"
+                                "Folders"
+                                {
+                                }
+                            }
                             "{9EF0B969-E518-4E46-987F-47570745A589}:_B9BDD8E2C30C4BE6A8DA7DD3A2D19468"
                             {
                             "Name" = "8:bin_Backup"
@@ -3355,15 +4068,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Winpache"
-        "ProductCode" = "8:{C6BBA0AA-AB29-4BE9-9850-D841EDF62870}"
-        "PackageCode" = "8:{AA8611B7-D002-45B1-8030-0877BBF46CF5}"
+        "ProductCode" = "8:{4D6693C3-2ECE-4716-A8DB-F3D35384493C}"
+        "PackageCode" = "8:{20D02B2B-558F-404E-948E-66C639541E71}"
         "UpgradeCode" = "8:{12F6DA17-2387-42A9-90C4-63FC13241552}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.4"
+        "ProductVersion" = "8:21.6.24"
         "Manufacturer" = "8:Keepspeed"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:artisticlectures@gmail.com"
@@ -3372,9 +4085,9 @@
         "ARPCONTACT" = "8:keepspeed"
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:"
-        "ARPURLINFOABOUT" = "8:https://www.parent.co.kr"
-        "ARPPRODUCTICON" = "8:_F0F137712F0340A9B4915E04E533C6EF"
-        "ARPIconIndex" = "3:128"
+        "ARPURLINFOABOUT" = "8:https://github.com/Shuooang/Winpache"
+        "ARPPRODUCTICON" = "8:_890B2CA20A13410493C69CC78F63EF89"
+        "ARPIconIndex" = "3:131"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
         "TargetPlatform" = "3:1"
@@ -3532,6 +4245,20 @@
             "Icon" = "8:"
             "Feature" = "8:"
             }
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_B94EFAD8E05846FAB1E0CF8D34BF11A7"
+            {
+            "Name" = "8:Winpache Server"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:128"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_A23C2543CCE345F68B7527224937C3AD"
+            "Folder" = "8:_19C5C960E2464874A4C7507560711E33"
+            "WorkingFolder" = "8:_EA55028DB26E49E2A27CE36F104CA69D"
+            "Icon" = "8:_A23C2543CCE345F68B7527224937C3AD"
+            "Feature" = "8:"
+            }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_C6CCA28ADAF2423BA6842DD0918DF41E"
             {
             "Name" = "8:Most Popular Programming Languages (1965-2021)"
@@ -3548,7 +4275,7 @@
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_D3F1A1D7C8C34B3C9019FB6677B5F6B6"
             {
-            "Name" = "8:Start Winpache Project"
+            "Name" = "8:Winpache Start Project"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"

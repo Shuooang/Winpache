@@ -31,7 +31,8 @@ public:
 
 // Overrides
 public:
-	virtual BOOL OnNewDocument();
+	BOOL OnNewDocument() override;
+	BOOL OnOpenDocument(LPCTSTR lpszPathName) override;
 	virtual void Serialize(CArchive& ar);
 	virtual BOOL DoFileSave();
 
@@ -47,6 +48,7 @@ public:
 	virtual void AssertValid() const;
 	virtual void Dump(CDumpContext& dc) const;
 #endif
+	void JsonToData(ShJObj& sjobj, bool bToJson) override;
 
 protected:
 
