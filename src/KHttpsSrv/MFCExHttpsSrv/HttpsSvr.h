@@ -488,11 +488,11 @@ public:
 	// 
 	static HTTPResponse& MakeJsonErrorResponse(HTTPResponse& res, std::string_view jerror, int status = 400)
 	{
-		std::wstring wjerror;// error는 영문이 대부분이지만 한글이 있을지 모르니, UTF8로 변경해 보낸다.
-		wjerror.assign(jerror.begin(), jerror.end());
-
-		string utf8 = CppCommon::Encoding::ToUTF8(wjerror);
-		res.MakeErrorResponse(utf8, status);
+// 		std::wstring wjerror;// error는 영문이 대부분이지만 한글이 있을지 모르니, UTF8로 변경해 보낸다.
+// 		wjerror.assign(jerror.begin(), jerror.end());
+// 		string utf8 = CppCommon::Encoding::ToUTF8(wjerror);
+//		string utf8 = jerror.data();/// 이미 utf8로 온다.
+		res.MakeErrorResponse(jerror, status);
 		return res;
 	}
 

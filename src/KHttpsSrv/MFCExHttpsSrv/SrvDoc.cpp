@@ -53,7 +53,7 @@ BOOL SrvDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
 		return FALSE;
-	auto app = (CMFCExHttpsSrvApp*)AfxGetApp();
+	auto app = (CMFCExHttpsSrvApp*)GetMainApp();
 	auto& appd = (app)->_docApp;
 	//_fullPath = GetPathName();
 	if(_GUID.IsEmpty())

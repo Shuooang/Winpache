@@ -63,19 +63,19 @@ inline bool KwAttrOr(int val, int attr)
 #define KwOp(attr) KwAttr(iOp, attr)
 
 
-inline bool KwIsAlpha(WCHAR c)
+inline bool KwIsAlpha(wchar_t c)
 {
 	return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z');
 }
-inline bool KwIsDigit(WCHAR c)
+inline bool KwIsDigit(wchar_t c)
 {
 	return ('0' <= c && c <= '9');
 }
-inline bool KwIsAscii(WCHAR c)
+inline bool KwIsAscii(wchar_t c)
 {
 	return (' ' <= c && c <= '~');// 0x20 ~ 0x7e
 }
-inline bool KwIsAlNum(WCHAR c)
+inline bool KwIsAlNum(wchar_t c)
 {
 	return KwIsAlpha(c)  || KwIsDigit(c);
 }

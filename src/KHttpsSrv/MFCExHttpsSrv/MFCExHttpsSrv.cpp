@@ -195,6 +195,11 @@ CMFCExHttpsSrvApp::CMFCExHttpsSrvApp() noexcept
 
 CMFCExHttpsSrvApp theApp;
 
+// AfxGetApp()는 BACKGROUND에서 에러 난다.
+CWinAppEx* GetMainApp()
+{
+	return &theApp;
+}
 
 // CMFCExHttpsSrvApp initialization
 
@@ -417,6 +422,100 @@ BOOL KAppDoc::OnNewDocument()
 
 	return TRUE;
 }
+
+
+
+/// <summary>
+/// 이건 처음 셋팅할때와 계속 쓸때가 다르다.
+/// </summary>
+/// <param name="bFirst">처음 실행때만 true이고 이 후 사용떄는 항상 
+///		false가 default 값이다.
+/// </param>
+/// <returns>ODBC OpenEx에 연결에 쓰일 DSN문자열</returns>
+CString KAppDoc::MakeDsnString(bool bFirst)//false
+{
+	auto& jOdbc = *_json->O("ODBC");
+	CString dsnLog;
+	dsnLog.Format(L"DSN=%s;UID=%s;PWD=%s"
+		, jOdbc.S("DSN")
+		, jOdbc.S("UID")
+		, jOdbc.S("PWD")
+	);//PWD가 있는거 ODBC에 확인 했으니, DSN만으로 로그인 시도
+
+	if(bFirst)
+	{
+		CString ex;
+		ex.Format(L";database=%s;SERVER=%s;Driver=%s;PORT=%s;TCPIP=%s"
+			, jOdbc.S("DATABASE")
+			, jOdbc.S("SERVER")
+			, jOdbc.S("Driver")
+			, jOdbc.S("PORT")
+			, jOdbc.S("TCPIP"));
+		dsnLog += ex;
+	}
+	return dsnLog;
+}
+void KAppDoc::InitDoc()
+{
+	auto& jobj = *_json;
+	if(!jobj.Len("GUID"))
+		jobj("GUID") = KwGetFormattedGuid(FALSE);//main cfg GUID
+
+	//jobj("_GUID") = L"";
+	jobj("FName") = L"WinpacheMain.cfg";
+	jobj("LoadCount") = 0;// 이거로 bFirst  판별
+	jobj("LastSpeed") = 0.;//분당 처리 횟수: 최근 5초 안에 응답한 요청만 계산
+	jobj("Elapsed") = 0.;//평균 처리 속도: 요청 들어와서 응답한 시간까지 계속 (합산/카운터)
+	jobj("RunningServers") = JObj(); // RunningServers : { GUID1 : { }, GUID2:{} }
+	jobj("StatDB") = L"none";
+	jobj("ODBC") = JObj(); // RunningServers : { GUID1 : { }, GUID2:{} }
+
+	//auto sjo = jobj.O("ODBC");
+	auto& jOdbc = *jobj.O("ODBC");
+	/// 아래는 regitry에 진짜 있는 값인데, ODBC셋팅이 없는 경우 이걸 초기값으로 쓴다.
+#ifdef _DEBUGx
+	jOdbc("DSN") = L"WinpacheFake";
+	jOdbc("UID") = L"rooter";
+	jOdbc("PWD") = L"xxxxx";//있는경우 메인 DB 비번
+	jOdbc("DATABASE") = L"winffffache";
+#else	
+	jOdbc("DSN") = L"Winpache";
+	jOdbc("UID") = L"root";
+	jOdbc("PWD") = L"";//있는경우 메인 DB 비번
+	jOdbc("DATABASE") = L"winpache";
+#endif // _DEBUG
+	jOdbc("SERVER") = L"localhost";
+	jOdbc("Driver") = L"MariaDB ODBC 3.1 Driver";
+	jOdbc("PORT") = L"3306";
+	jOdbc("TCPIP") = L"1";
+
+	/// KDatabase::RegGetODBCMySQL 로 읽어 오면 bnmnnm,
+#ifdef _DEBUGx
+	{
+		"Elapsed":0,
+			"FName" : "WinpacheMain.cfg",
+			"LastSpeed" : 0,
+			"LoadCount" : 1,
+			"ODBC" :
+		{
+			"DATABASE":"winpache",
+				"DSN" : "Winpache",
+				"Driver" : "MariaDB ODBC 3.1 Driver",
+				"PORT" : "3306",
+				"PWD" : "bnmnnm,",
+				"SERVER" : "localhost",
+				"TCPIP" : "1",
+				"UID" : "root"
+		},
+			"RunningServers":{
+				// 여기 Start 중인 서버 정보
+			},
+				"StatDB" : "login",
+				"GUID" : "D4D41002DBB647C79D68EFAA68178C3C"
+	}
+#endif // _DEBUGx
+}
+
 void KAppDoc::LoadData()
 {
 	if(_json->size() == 0)
@@ -565,12 +664,7 @@ bool KAppDoc::PopRecoveringServer(CString& guid)
 void KAppDoc::ReqOccured(string ssid)
 {
 	AUTOLOCK(_csReqs);
-	//auto tik = GetTickCount64();
-	LARGE_INTEGER li{0};
-	auto bnow = QueryPerformanceCounter(&li);
-	auto tik = li.QuadPart;
-	//_lstReqs.push_back(tik);
-	//auto tp = make_tuple(tik, 0, ssid);
+	auto tik = KwGetTickCount100Nano();
 	SHP<KReqRes> sre = make_shared<KReqRes>(tik, ssid);
 	_lstReqs2.push_back(sre);
 	/// 나중에 elapsed time 계산 하기 위해
@@ -589,14 +683,13 @@ double KAppDoc::OnResponse(string ssid)
 	//auto tik = GetTickCount64();
 	const int gap = 5000000; // usec 측정 간격 = 0.5sec
 	const int nsum = 10;//최근거 10개의 평균 간격을 편균 낸다.
-	LARGE_INTEGER li{0};
-	auto bnow = QueryPerformanceCounter(&li);
+	auto tik = KwGetTickCount100Nano();
 	SHP<KReqRes> sre;
 	if(!_mapReq.Lookup(ssid, sre))//시작 들어있고, 끝
 		return 0;
-	sre->_tRes = li.QuadPart;
+	sre->_tRes = tik;
 
-	if(_lastCheckElapsed > (ULONGLONG)(li.QuadPart - gap))//간격
+	if(_lastCheckElapsed > (ULONGLONG)(tik - gap))//간격
 		return -1;//최근것이 1초도 안 지났으면 너무 자주 계산 하니 리턴
 
 	//LONGLONG dfElapesed = sre->_tRes - sre->_tReq;
@@ -626,7 +719,7 @@ double KAppDoc::OnResponse(string ssid)
 				break;
 		}
 	}
-	_lastCheckElapsed = li.QuadPart;
+	_lastCheckElapsed = tik;
 	double dElapesed = szma == 0 ? 0. : (double)tsumElp / szma;// _mapReq[ssid] - tik;
 #ifdef _DEBUGx
 	KTrace(L"OnResponse %I64u/%d = %f, %d : %s\n", tsumElp, szma, dElapesed, sz, sa1);
@@ -647,10 +740,7 @@ double KAppDoc::GetSpeedPerSec()
 	const int nsum = 10;//최근거 10개의 평균 간격을 편균 낸다.
 	const int gap = 5000000; // usec 측정 간격 = 0.5sec
 
-	//auto now = GetTickCount64();
-	LARGE_INTEGER li{0};
-	auto bnow = QueryPerformanceCounter(&li);/// 0.1usec = 100 nano sec
-	auto now = li.QuadPart;
+	auto now = KwGetTickCount100Nano();// 0.1usec = 100 nano sec
 	if(_lastCheckSpeed > (ULONGLONG)(now - gap))//간격
 		return -1;//최근것이 1초도 안 지났으면 너무 자주 계산 하니 리턴
 	_lastCheckSpeed = now;
@@ -727,16 +817,16 @@ void KAppDoc::Serialize(CArchive& ar)
 		//JObj js;
 		auto& jobj = *_json;// ->AsObject();// .get();
 
-		ASSERT(jobj.Len("_GUID"));//		jobj("_GUID") = KwGetFormattedGuid(FALSE);
-		CStringA guidA(jobj.S("_GUID"));
+		ASSERT(jobj.Len("GUID"));//		jobj("GUID") = KwGetFormattedGuid(FALSE);
+		CStringA guidA(jobj.S("GUID"));
 		OSslEncrypt ose((PAS)guidA.Left(24), (PAS)guidA.Right(8));//key, salt
 
 		//jobj("RunningServers") = JObj(); // RunningServers : { GUID1 : { }, GUID2:{} }
-		CString PWD = jobj.S("_PWD");// 러닝 중인 서버가 없는 경우 제외 하기 위해 임시로 받아 둔다.
+		CString PWD = jobj.S("PWD");// 러닝 중인 서버가 없는 경우 제외 하기 위해 임시로 받아 둔다.
 		auto rs = jobj.O("RunningServers");
-		bool bPendingServer = rs && rs->size() > 0;// && jobj.Len("_PWD");
+		bool bPendingServer = rs && rs->size() > 0;// && jobj.Len("PWD");
 		if(!bPendingServer)
-			jobj.DeleteKey("_PWD");
+			jobj.DeleteKey("PWD");
 		/// else 
 		///	pending server가 있는 경우, launch가 자동으로 시스템이 해주는데, 그때 아래 3가지를 하여, 다시 가동 되게 해야 한다.
 		///		문서 오픈
@@ -747,7 +837,7 @@ void KAppDoc::Serialize(CArchive& ar)
 		CFile* fr = ar.GetFile();
 		CStringA sUtf8 = jobj.ToJsonStringUtf8();
 		if(!bPendingServer && PWD.GetLength() > 0)// 물안전 종료된 서버가 없으면 비번은 저장 않는다.
-			jobj("_PWD") = PWD;
+			jobj("PWD") = PWD;
 
 		int descLen = sUtf8.GetLength() * 2 ;
 

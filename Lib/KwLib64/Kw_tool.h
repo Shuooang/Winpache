@@ -397,6 +397,8 @@ DWORD KwGetFullPathName(PWS lpszFileIn, CStringW& path, PWS* pFilePart = NULL);
 
 DWORD EncodeBinary(KBinary& bin, LPCSTR key0, bool bEncode, KBinary* pbinr);
 
+LONGLONG KwGetTickCount100Nano();
+
 #ifdef _DEBUG
 // 이 class는 멤버를 std::map 형태로 바꾸면서, 코딩중 어떤 필드가 있는지 바로 참조 하기 위함
 class Vake

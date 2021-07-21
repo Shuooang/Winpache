@@ -17,6 +17,7 @@
 #include "MFCExHttpsSrv.h"
 
 #include "MainFrm.h"
+#include "ChildFrm.h"
 #include "SrvView.h"
 #include "CmnDoc.h"
 #include "ApiSite1.h"
@@ -26,6 +27,8 @@
 #include "DockOdbc.h"
 #include "mysql.h"
 #include "KwLib64/Lock.h"
+#include "KwLib64/SrvException.h"
+#include "KwLib64/tchtool.h"
 
 #pragma comment(lib, "shell32.lib")
 
@@ -73,9 +76,11 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndExInvokable)
 	ON_COMMAND(ID_InstallMariaODBC, &CMainFrame::OnInstallMariaODBC)
 	ON_COMMAND(ID_OdbcSetting, &CMainFrame::OnOdbcSetting)
 	ON_COMMAND(ID_VisualStudioDownload, &CMainFrame::OnVisualStudioDownload)
-	ON_COMMAND(ID_CreateDatabase, &CMainFrame::OnCreateDatabase)
+
 	ON_COMMAND(ID_InitODBC, &CMainFrame::OnInitodbc)
-	ON_COMMAND(ID_TableBasic, &CMainFrame::OnCreateTableBasic)
+	//ON_COMMAND(ID_CreateDatabase, &CMainFrame::OnCreateDatabase)
+	//ON_COMMAND(ID_TableBasic, &CMainFrame::OnCreateTableBasic)
+
 	ON_COMMAND(ID_DownloadOpenSSL, &CMainFrame::OnDownloadOpenSSL)
 	ON_COMMAND(ID_DockOdbcSetting, &CMainFrame::OnDockOdbcSetting)
 	ON_COMMAND(ID_VIEW_TestAPI, &CMainFrame::OnViewTestAPI)
@@ -108,7 +113,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	if (CMDIFrameWndExInvokable::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
 	auto& jobj = *appd._json;
 	BOOL bFirst = jobj.I("LoadCount") == 0;
 
@@ -222,7 +227,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 }
 void CMainFrame::ExtraTrace(string txt, int idOw)
 {
-	auto ivc = dynamic_cast<KCheckWnd*>(AfxGetApp());//BG에서 불러 지면 오류 난다.
+	auto ivc = dynamic_cast<KCheckWnd*>(GetMainApp());//BG에서 불러 지면 오류 난다.
 //bool bVu = !ivc ? false : ivc->ViewFind(idVu);
 	bool bOutput = !ivc ? false : ivc->ViewFind(idOw);
 	if(bOutput)// && bVu)//?destroy 7 : 여기서 NULL이 나와야 하는데, 0xddddddddddd
@@ -240,7 +245,7 @@ void CMainFrame::TimerCheckServers()
 {
 	// TODO: 1. 여기 채우고
 	// 	  2. CheckRecoverServers 에서 시간 죽은지 10분 이내 꺼만 살려서 새로 보낸다.
-	auto app = (CMFCExHttpsSrvApp*)AfxGetApp();
+	auto app = (CMFCExHttpsSrvApp*)GetMainApp();
 	auto& appd = (app)->_docApp;
 	AUTOLOCK(appd._csRecover);
 	auto& jobj = *appd._json;
@@ -259,7 +264,7 @@ void CMainFrame::TimerCheckServers()
 void CMainFrame::CheckRecoverServers()
 {
 
-	auto app = (CMFCExHttpsSrvApp*)AfxGetApp();
+	auto app = (CMFCExHttpsSrvApp*)GetMainApp();
 	auto& appd = (app)->_docApp;
 	AUTOLOCK(appd._csRecover);
 
@@ -312,97 +317,113 @@ void CMainFrame::CheckRecoverServers()
 }
 void CMainFrame::ConnectMainDB()
 {
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
-	auto& jobj = *appd._json;
+	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
+	//auto& jobj = *appd._json;
+	auto& jOdbc = *appd._json->O("ODBC");
 
-	int cntLoad = jobj.I("LoadCount") + 1;
-	jobj("LoadCount") = cntLoad;
+	int LoadCount = appd._json->I("LoadCount") + 1;
+	(*appd._json)("LoadCount") = LoadCount;
 	auto pappd = &appd;//app전체에서 유일 하니, 포인터 그냥 복사 해도 된다.
 	KAtEnd _sv([&, pappd]() {
 		pappd->SaveData();
 		});
 	KWStrMap kmap1;
 	CString DSN2, UID2, PWD2, database2;
-	bool bRetry = false;
+	//bool bRetry = false;
+	CStringA sError;
 	bool bOkODBC = false;
-	while(1)
+	bool bFirst = false;
+	
+	for(int nTry = 1; nTry > 0;nTry++)
 	{
 		try
 		{
 			int rv = 0;
-			if(kmap1.size() == 0) // loop 이므로 처음엔 무조건 들어 간다.
+			bFirst = appd._json->SameS("StatDB", L"none"); //kmap1.size() == 0 && 
+			if(nTry == 1)//bFirst) // loop 이므로 처음엔 무조건 들어 간다.
 			{
 				/// first loop while
-				rv = KDatabase::RegGetODBCMySQL(jobj.S("_DSN"), kmap1);
+				rv = KDatabase::RegGetODBCMySQL(jOdbc.S("DSN"), kmap1);
 
 				auto Driver0 = kmap1.Get(L"ODBC Data Sources");
 				auto Driver1 = kmap1.Get(L"Driver");
 				if(Driver0.length() == 0 || Driver1.length() == 0 || Driver0 != Driver1)
 				{
-					CString smsg(L"Main DB is not initialized yet.\r\nYou must proceed to step 5 in the Database menu section.");
+					/// RUN 1. 맨처음 ODBC registry설정해 준다.
+					CString smsg(L"Main DB is not initialized yet.\r\nYou must proceed to step 3 in the Database menu section.");
 					CaptionMessage(smsg);
-					CMFCRibbonCategory* pmrc = m_wndRibbonBar.GetCategory(2);
-					if(pmrc)
+#ifdef _not_in_first
+					/// RUN 1.1 PWD를 받는다.
+					DlgOdbcSetting dlg(this);
+					dlg._bFirst = true;
+					dlg._DSN = jOdbc.S("DSN");
+					dlg._UID = jOdbc.S("UID");
+					if(dlg.DoModal() != IDOK)
+						break;
+					jOdbc("PWD") = dlg._PWD;
+
+					KWStrMap kmap;
+					for(auto& [k, v] : jOdbc)
 					{
-						m_wndRibbonBar.ShowCategory(2, TRUE);
-						m_wndRibbonBar.SetActiveCategory(pmrc, TRUE);
+						if(appd._json->SameS("StatDB", L"none") && k == L"DATABASE")
+							continue;
+						kmap[k] = v->AsString();
 					}
-					break;
+					/// RUN 1.2 비번이 틀려도 일단 ODBC는 등록이 된다.
+					int rv = KDatabase::RegODBCMySQL(jOdbc.S("DSN"), kmap);
+					bOkODBC = rv == 0;
+#endif // _not_in_first
 				}
 				else
 					bOkODBC = Driver0.length() > 0 && Driver0 == Driver1;
 		
 				/// cfg에서 읽은것을 하데, 없으면 registry ODBC에서 읽어 온다.
 				if(DSN2.GetLength() == 0)
-				{
-					DSN2 = jobj.S("_DSN");
-					if(!jobj.LenS("_UID", UID2))
-						UID2 = kmap1.Get(L"UID").c_str();
-					if(!jobj.LenS("_PWD", PWD2))
-						PWD2 = kmap1.Get(L"PWD").c_str();
-					if(!jobj.LenS("_database", database2))
-						database2 = kmap1.Get(L"database").c_str();
-				}
-			}
+					DSN2 = jOdbc.S("DSN");
+				if(UID2.GetLength() == 0)
+					UID2 = jOdbc.S("UID");
+				if(PWD2.GetLength() == 0)
+					PWD2 = jOdbc.S("PWD");
+				if(database2.GetLength() == 0)
+					database2 = jOdbc.S("database");/// 아직 DB Init안 했으면 비어 있다.
+			}//nTry == 1
 			
-			if(bOkODBC)				//&& UID1.length() > 0)// && PWD1.length() > 0)// && uid1 == uid0)
+			if(bOkODBC)
 			{
+				jOdbc("DSN") = DSN2;
+				jOdbc("UID") = UID2;
+				jOdbc("PWD") = PWD2;
+
 				/// UID2, PWD2는 아래 DlgOdbcSetting 에서 다시 받을수 있다. while loop 두번쨰
-				CString dsn;
-				dsn.Format(L"DSN=%s;UID=%s;PWD=%s;database=%s", DSN2, UID2, PWD2, database2);//PWD가 있는거 ODBC에 확인 했으니, DSN만으로 로그인 시도
-				
+				CString dsn = appd.MakeDsnString();
 				/// ////////////////////////////////////////////////////////////////////////////////
-				BOOL bOK = appd._dbMain->OpenEx(dsn, CDatabase::noOdbcDialog);
+				/// 2.0 ODBC 연결 : MariaDB 안깔았으면 오류 난다.
+				auto sdb = KDatabase::getDbConnected((PWS)dsn); //OpenEx
 				/// ////////////////////////////////////////////////////////////////////////////////
 				// 연결이 설정 되 면 0이 아닌 값으로 설정 됩니다. 그렇지 않으면 사용자가 추가 연결 정보를 요구 하는 
 				// 대화 상자가 표시 되 면 취소를 선택 하는 경우 0입니다. 
 				// 다른 모든 경우에는 프레임 워크에서 예외를 throw 합니다.
-				if(bOK)
+				if(sdb)
 				{
-// 					try
-// 					{
-						///appd._dbMain->ExecuteSQL(L"use `winpache`"); OpenEx() 에서 database지정
-						jobj("StatDB") = L"login";
-						CString smsg; smsg.Format(L"Main Dababase is connected! (DSN: %s).", DSN2);
-						CaptionMessage(smsg);
-// 					}
-// 					catch(CDBException* e)
-// 					{
-// 						CString smsg; smsg.Format(L"Error! Database `winpache` is not created yet.\n%s, %s.", e->m_strError, e->m_strStateNativeOrigin);
-// 						TRACE(L"%s\n", smsg);
-// 					}
+					///appd._dbMain->ExecuteSQL(L"use `winpache`"); OpenEx() 에서 database지정
+					CString smsg; smsg.Format(L"Main Dababase is connected! (DSN: %s).", DSN2);
+					CaptionMessage(smsg);
 					
-					jobj("_DSN") = DSN2;
-					jobj("_UID") = UID2;
-					jobj("_PWD") = PWD2;
+					jOdbc("DSN") = DSN2;
+					jOdbc("UID") = UID2;
+					jOdbc("PWD") = PWD2;
+					appd._json->OrStr("StatDB", L"login");
+					/// <summary>
+					appd.SaveData();
+					/// </summary>
+					KDatabase::SetKeyODBCMySQL(DSN2, L"PWD", PWD2);
+
 					DockOdbc::s_me->_DSN = DSN2;
 					DockOdbc::s_me->_UID = UID2;
 					KwBeginInvokeNt(this, ([&]()-> void
 						{
 							DockOdbc::s_me->UpdateUI();
 						}), "to DockOdbc");
-				///	jobj("_database") = database2; 초기값이 변경 하는데가 없다.
-					// 만약 statDB가 ODBC 인데, 값이 비어 있으면 도킹창 ODBC로 간다.
 					//DockClientBase::ShowHide(this, *Pane(IDD_DockOdbc), TRUE);
 				}
 				else
@@ -412,30 +433,64 @@ void CMainFrame::ConnectMainDB()
 					break;
 				}
 			}
-			bRetry = false;
-			KwBeginInvoke(this, ([&]()-> void
-				{
-					auto app = (CMFCExHttpsSrvApp*)AfxGetApp();
-					app->NewFile();//?PreventViewFirst 
-				}));
+			//bRetry = false;
 			break;
 		}
 		catch(CDBException* e)
 		{
-			//Access denied for user 'root'@'localhost' (using password: YES)
-			//State:28000, Native : 1045, Origin : [ma - 3.1.12]
-			PWS Access_denied = L"State:28000";
-			if(tchstr((PWS)e->m_strStateNativeOrigin, Access_denied))
-			{
-				//KwMessageBoxError(L"While connecting to main DB.\n%s.\nRetry on 'Connect to DB' docking window'.", e->m_strError);
-				//DockClientBase::ShowHide(this, *Pane(IDD_DockOdbc), TRUE);
-			}
 			CString smsg; smsg.Format(L"Error! %s, %s.", e->m_strError, e->m_strStateNativeOrigin);
 			CaptionMessage(smsg);
-			//m_strError	L"Access denied for user 'winpache'@'localhost' (using password: YES)\n"
-			if(e->m_strError.Find(L"Access denied for user") >= 0)
-				KwMessageBoxError(smsg);
-			bRetry = true;
+
+			if(e->m_strError.Find(L"데이터 원본 ") >= 0
+				|| e->m_strStateNativeOrigin.Find(L"State:IM002") >= 0)
+			{
+				//데이터 원본 이름이 없고 기본 드라이버를 지정하지 않았습니다.
+				//State:IM002, Native : 0, Origin : [Microsoft] [ODBC 드라이버 관리자]
+				///ODBC for MariaDB 안깔려 있을때
+				sError = "ODBC";
+			}
+			else if(e->m_strError.Find(L"Can't connect to") >= 0
+				|| e->m_strStateNativeOrigin.Find(L"State:S1000") >= 0)
+			{
+				///DB 안깔리거나 service stop한경우L"Can't connect to MySQL server on 'localhost' (10061)\n, State:S1000,Native:2002,Origin:[ma-3.1.12]\n."	ATL::CStringT<wchar_t,StrTraitMFC_DLL<wchar_t,ATL::ChTraitsCRT<wchar_t>>>
+				/// ODBC setting은 되었으니, 비번은 예약 하되
+				sError = "connect";
+			}
+			else if(e->m_strError.Find(L"Access denied for user") >= 0)
+			{
+				//비번이 틀린경우
+				//Access denied for user 'root'@'localhost' (using password: YES)
+				//State:28000, Native : 1045, Origin : [ma - 3.1.12]
+				KwMessageBoxError(smsg);/// 2.1 DB 설치가 안되어 있어서 오류 난다.
+				sError = "password";
+			}
+			else if(e->m_strError.Find(L"Unknown database 'winpache'") >= 0
+				|| e->m_strStateNativeOrigin.Find(L"State:37000") >= 0)
+			{
+				if(bFirst)
+				{
+					KWStrMap kmap;
+					for(auto& [k, v] : jOdbc)
+					{
+						if(!appd._json->SameS("StatDB", L"none") || k != L"DATABASE")//제외 처음에는 이거 뺴야
+							kmap[k] = v->AsString();
+					}
+					sError = "database";
+					/// DATABASE만 제거 해야지. 빼고 또 해봐야 그대로 있지.
+					//int rv = KDatabase::RegODBCMySQL(jOdbc.S("DSN"), kmap);
+					int rv = KDatabase::RemoveKeyODBCMySQL(jOdbc.S("DSN"), L"DATABASE");
+				}
+				else
+				{
+					KwMessageBoxError(smsg);
+				}
+			}
+			else
+			{
+				sError = "DbUnknown"; 
+			}
+//		smsg = L"Error! Unknown database 'winpache'\n, State:37000,Native:1049,Origin:[ma-3.1.12]\n."
+			//bRetry = true;
 		}
 		catch(CException* e)
 		{
@@ -447,33 +502,69 @@ void CMainFrame::ConnectMainDB()
 				e->GetErrorMessage(serr.GetBuffer(1024), 1024); serr.ReleaseBuffer();
 			CString smsg; smsg.Format(L"Error: %s.", serr);
 			CaptionMessage(smsg);
-			bRetry = false;
+			//bRetry = false;
+			sError = "unknown";
 			break;
 		}
 
 		/// 비번 수동으로 받고 다시 시도
-		if(bRetry)
+		if(!sError.IsEmpty())//bRetry)
 		{
-			DlgOdbcSetting dlg;
-			dlg._DSN = DSN2;
-			dlg._UID = UID2;
-			dlg._PWD = PWD2;
-			if(dlg.DoModal() != IDOK)
+			KAtEnd end([&sError]() { 
+				sError.Empty(); });
+			if(sError == "password")
 			{
-				CString s(L"Server errors and logs are recorded only when connecting to the main database.");
-				CaptionMessage(s);
-				KwMessageBoxError(s);
-				break;// while break
+				DlgOdbcSetting dlg(this);
+				dlg._DSN = DSN2;
+				dlg._UID = UID2;
+				dlg._PWD = PWD2;
+				if(dlg.DoModal() != IDOK)
+				{
+					CString s(L"Server errors and logs are recorded only when connecting to the main database.");
+					CaptionMessage(s);
+					KwMessageBoxError(s);
+					break;// while break
+				}
+				else
+				{
+					DSN2 = dlg._DSN;					// ^
+					UID2 = dlg._UID;					// |
+					PWD2 = dlg._PWD;					// |
+					continue;// while loop				// .
+				}
 			}
-			else
+			else if(sError == "database")
 			{
-				DSN2 = dlg._DSN;					// ^
-				UID2 = dlg._UID;					// |
-				PWD2 = dlg._PWD;					// |
-				continue;// while loop				// .
+				if(bFirst)
+					continue;
+				else
+				{
+					/// 처음이 아닌데 database 오류가 났다. 어떤 경우지? 
+					continue;
+				}
 			}
+			else if(sError == "ODBC")// ODBC for MariaDB 가 안깔려 있어.
+				break;// error가 없으면 DB가 없어 연결이 안되더라도 끝낸다.
+			else if(sError == "connect")//MariaDB 가 안깔려 있어.
+				break;// error가 없으면 DB가 없어 연결이 안되더라도 끝낸다.
 		}
 	}//while(1)
+
+	if(!appd._json->Find("StatDB", L"tables"))
+	{
+		CMFCRibbonCategory* pmrc = m_wndRibbonBar.GetCategory(2);
+		if(pmrc)
+		{
+			m_wndRibbonBar.ShowCategory(2, TRUE);
+			m_wndRibbonBar.SetActiveCategory(pmrc, TRUE);
+			CaptionMessage(L"Main Dababase need to be set. Follow steps 1 through 3 in the Database menu category.");
+		}
+	}
+	KwBeginInvoke(this, ([&]()-> void
+		{
+			auto app = (CMFCExHttpsSrvApp*)GetMainApp();
+			app->NewFile();//?PreventViewFirst 
+		}));
 }
 
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
@@ -488,7 +579,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 
 BOOL CMainFrame::CreateDockingWindows()
 {
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
 	auto& jobj = *appd._json;
 	bool bFirst = jobj.I("LoadCount") == 0;
 
@@ -726,7 +817,7 @@ void CMainFrame::CaptionMessage(PWS msg)
 			m_wndCaptionBar.ShowWindow(SW_SHOW);
 			RecalcLayout(FALSE);
 			CStringA sa(sw);
-			COutputWnd::s_me->Trace((PAS)sa);
+			COutputWnd::s_me->OTrace((PAS)sa);
 		}));
 
 }
@@ -810,17 +901,17 @@ void CMainFrame::OnSettingChange(UINT uFlags, LPCTSTR lpszSection)
 void CMainFrame::OnClose()
 {
 	// template는 하나.
-	for (POSITION posTemplate = AfxGetApp()->GetFirstDocTemplatePosition(); posTemplate; )
+	for (POSITION posTemplate = GetMainApp()->GetFirstDocTemplatePosition(); posTemplate; )
 	{
 		/// doc은 열고 있는 문서 갯수
-		auto pDocTemplate = AfxGetApp()->GetNextDocTemplate(posTemplate);
+		auto pDocTemplate = GetMainApp()->GetNextDocTemplate(posTemplate);
 		POSITION posDoc = pDocTemplate->GetFirstDocPosition();
 		while (posDoc)
 		{
 			CDocument* pDoc = pDocTemplate->GetNextDoc(posDoc);
 
 			CmnDoc* doc = dynamic_cast<CmnDoc*>(pDoc);
-// 			auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+// 			auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
 // 			appd.UnregisterServerStart(doc->_GUID);
 
 			if(doc->IsStarted())
@@ -864,13 +955,35 @@ CSrvView* CMainFrame::GetActiveCmnView()
 	auto fr = this->GetActiveFrame();
 	if(fr)
 	{
-		auto vu = (CSrvView*)fr->GetActiveView();
-		return vu;
-// 		if(vu)
-// 		{
-// 			auto cvu = dynamic_cast<CSrvView*>(vu);
-// 			return cvu;
-// 		}
+		auto cfr = dynamic_cast<CChildFrame*>(fr);
+		if(cfr)
+		{
+			auto cvu = (CView*)cfr->GetActiveView();
+			if(cvu)
+			{
+				auto svu = dynamic_cast<CSrvView*>(cvu);
+				if(svu && ::IsWindow(svu->GetSafeHwnd()))
+					return svu;
+			}
+		}
+
+		//typeof
+		// rc->m_lpszClassName = "CMainFrame" active childview가 없어도 null이 아니다.
+		auto rc = fr->GetRuntimeClass();
+		if(rc)
+		{
+			if(tchsame("CChildFrame", rc->m_lpszClassName))
+			{
+				//+scn	L"CChildFrame"
+				auto cvu = (CView*)fr->GetActiveView();
+				if(cvu)
+				{
+					auto svu = dynamic_cast<CSrvView*>(cvu);
+					if(svu && ::IsWindow(svu->GetSafeHwnd()))
+						return svu;
+				}
+			}
+		}
 	}
 	return nullptr;
 }
@@ -917,6 +1030,7 @@ void CMainFrame::OnUpdateRestart(CCmdUI* pCmdUI)
 }
 void CMainFrame::OnRibbonStartDB()
 {
+	UpdateData();
 	auto cvu = GetActiveCmnView();
 	if(cvu)
 		cvu->OnBnClickedStartDB();
@@ -1033,56 +1147,44 @@ You can open the '*.sln' file directly from the directory [%s%s]. CurDir:%s", my
 
 void CMainFrame::OnOdbcSetting()
 {
-//#define CSIDL_SYSTEM                    0x0025        // GetSystemDirectory()
-
-	WCHAR my_documents[MAX_PATH]{ 0, };
-	//WCHAR my_documents2[MAX_PATH]{ 0, };
-	//HRESULT result = SHGetFolderPath(NULL, CSIDL_SYSTEM, NULL, SHGFP_TYPE_CURRENT, my_documents);
-	::GetSystemDirectory(my_documents, MAX_PATH);//위랑 결과가 같다.
-	CStringW flPrj = my_documents;
-	flPrj += L"\\odbcad32.exe";
-	::ShellExecute(0, 0, flPrj, 0, 0, SW_SHOW);
-	{
-		CString s; s.Format(L"Step 3. Running [%s] to set up ODBC DSN.", flPrj);
-		CaptionMessage(s);
-	}
+	KDatabase::OpenOdbcSetting();
+	CString s; s.Format(L"Step 3. Running [odbcad32.exe] to set up ODBC DSN.");
+	CaptionMessage(s);
 }
 // https://visualstudio.microsoft.com/{ko/}thank-you-downloading-visual-studio/?sku=Community&rel=16
 void CMainFrame::OnInitodbc()
 {
-	InitOdbc(3);
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
-	auto& jobj = *appd._json;
-
-	jobj("StatDB") = "ODBC";
-	appd.SaveData();
-
-	CaptionMessage(L"Step 3. ODBC has been set up on the newly installed MariaDB..");
+	CWaitCursor wc;
+	int rv = InitOdbc(3);
+// 	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
+// 	auto& jobj = *appd._json;
+	//jobj("StatDB") = "ODBC"; login
+	//appd.SaveData();
+	Sleep(1000);
+	if(rv == 0)
+	{
+		CaptionMessage(L"Step 3.1 ODBC has been set up on the newly installed MariaDB..");
+		rv = InitOdbc(4);
+		if(rv == 0)
+		{
+			CaptionMessage(L"Step 3.2 A database 'winpache' for logs and samples has been created.");
+			rv = InitOdbc(5);
+			if(rv == 0)
+				CaptionMessage(L"Step 3.3 Main tables have been created.");
+		}
+	}
 }
+//?deprecated
 void CMainFrame::OnCreateDatabase()
 {
 	InitOdbc(4);
-// 	DockClientBase::ShowHide(this, *Pane(IDD_DockTestApi), TRUE);
-// 	DockTestApi::s_me->CreateDatabase();
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
-	auto& jobj = *appd._json;
-
-	jobj("StatDB") = "database";
-	appd.SaveData();
-	CaptionMessage(L"Step 4. A database 'winpache' for logs and samples has been created.");
+	CaptionMessage(L"Step 3.2 A database 'winpache' for logs and samples has been created.");
 }
-
-
-
+//?deprecated
 void CMainFrame::OnCreateTableBasic()
 {
 	InitOdbc(5);
-	CaptionMessage(L"Step 5. Main tables have been created.");
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
-	auto& jobj = *appd._json;
-	
-	jobj("StatDB") = "table";
-	appd.SaveData();
+	CaptionMessage(L"Step 3.3 Main tables have been created.");
 }
 
 //?deprecated
@@ -1092,38 +1194,38 @@ void CMainFrame::OnTableSample()
 	CaptionMessage(L"Step 6. A few tables have been created for the sample API...");
 }
 
-void CMainFrame::InitOdbc(int step)
+int CMainFrame::InitOdbc(int step)
 {
 // 	DlgOdbcSetting dlg;
 // 	dlg.DoModal();
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
-	auto& jobj = *appd._json;
+	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
+	auto& jOdbc = *appd._json->O("ODBC");
 
 	try
 	{
-		PWS dsn0 = L"Winpache";
-		PWS uid0 = L"root";//맨처음에만 필요
+		CString dsn0 = jOdbc.S("DSN");// L"Winpache";
+		CString uid0 = jOdbc.S("UID");//L"root";//맨처음에만 필요
 
 		if(step == 4 || step == 5 || step == 6)
 		{
-			if (appd._dbMain->IsOpen())
-				appd._dbMain->Reopen();
-			else
+			CString dsn = appd.MakeDsnString();
+			auto sdb = KDatabase::getDbConnected((PWS)dsn);
+			if(!sdb)//appd._dbMain->IsOpen())
 			{
 				KwMessageBoxError(L"Database is not connected. Select Step 3 to connect DB.");
-				return;
+				return -1;
 			}
 		}
 
-		/// 1. no pwd로 로그인 시도 해보고, 되면 
+		/// InitDB 1. no pwd로 로그인 시도 해보고, 되면 
 		if(step == 3)// Step 3. init ODBC
 		{
 			/// 1단계에서 MariaDB를 설치할때, root 비번을 물을때 비번을 기억 한다.
 			/// 3단계에서 ODBC에 비번이 없는 경우, OpenEx하면 ODBC설정창이 뜨면서 비번을 묻지만 저장은 안된다.
 			///		그래서 그 전에 Dlg로 비번 받아서 ;PWD=%s 에 넣어 OpenEx하면 복잡한 ODBC설정창이 안뜬다.
 			KWStrMap kmap1;
-			ASSERT(tchsame(dsn0, jobj.S("_DSN")));
-			int rv = KDatabase::RegGetODBCMySQL(jobj.S("_DSN"), kmap1);
+			//ASSERT(tchsame(dsn0, jobj.S("DSN")));
+			int rv = KDatabase::RegGetODBCMySQL(jOdbc.S("DSN"), kmap1);
 // +		[L"DSN"]	L"MariaDB ODBC 3.1 Driver"
 // +		[L"Driver"]	L"MariaDB ODBC 3.1 Driver"
 // +		[L"PORT"]	L"3306"
@@ -1135,93 +1237,139 @@ void CMainFrame::InitOdbc(int step)
 			auto Driver1 = kmap1.Get(L"Driver");
 			auto UID1 = kmap1.Get(L"UID");
 			auto PWD1 = kmap1.Get(L"PWD");
-			if(kmap1.size() > 0 && Driver0.length() > 0 && Driver0 == Driver1)// && uid1 == uid0)
-			{//이미 있다.
-				/// 1. PWD가 없는 경우 ODBC Setting창이 뜨고 비번을 입력 하게 한 후 접속 된다. 하지만 여기서 입력한 경우 비번이 저장 되지는 않는다.
-				/// 2. PWD가 틀린 경우 CDBException이나고 비번이 틀린 오류 박스 아래에서 뜬다. ODBC Docking 창이 떠서 비번을 입력 받고 다시 접속 하도록 한다. 역시 입력한 PWD가 저장되지 않는다.
-				jobj("_DSN") = dsn0;// DSN1.c_str();// L"Winpache";
-				jobj("_UID") = UID1.c_str();
-				//if (PWD1.length() > 0) jobj("_PWD") = L"**********";
-				jobj("_PWD") = PWD1.c_str();
-				jobj("_SERVER") = kmap1.Get(L"SERVER").c_str();
-
-#ifdef _DEBUGx
-				if (_PWD.GetLength())
-					DockOdbc::s_me->_PWD = _PWD;
-#endif // _DEBUGx
-				CString UID2 = jobj.S("_UID");
-				CString PWD2 = jobj.S("_PWD");
-				if(PWD2.GetLength() > 0)//jobj.Len("_UID"))
+			bool bOdbcReg = false;
+			
+			bool bLogin = appd._json->Find("StatDB", L"login");
+			
+			if(!jOdbc.Len("PWD"))
+			{
+				DlgOdbcSetting dlg(this);
+				//dlg._bFirst = true;
+				dlg._DSN = jOdbc.S("DSN");//readable
+				dlg._UID = jOdbc.S("UID");  // editable
+				if(dlg.DoModal() == IDOK)
 				{
-					DlgOdbcSetting dlg;
-					dlg._DSN = jobj.S("_DSN");//readable
-					dlg._UID = UID2;  // editable
-					dlg._PWD = L"";   // editable
-					if(dlg.DoModal() == IDOK)
-					{
-						UID2 = dlg._UID;
-						PWD2 = dlg._PWD;
-					}
-				}
-
-				DockOdbc::s_me->UpdateData(0); /// ODBC Setting창에 뿌려 준다.
-
-				CString dsn; 
-				if (UID2.GetLength() > 0)//jobj.Len("_UID"))
-				{
-					if (PWD2.GetLength() == 0)
-						dsn.Format(L"DSN=%s;UID=%s", jobj.S("_DSN"), UID2);//이거는 모든 필수 항목이 다 들어가 있고.
-					else
-						dsn.Format(L"DSN=%s;UID=%s;PWD=%s", jobj.S("_DSN"), UID2, PWD2);// jobj.S("_PWD"));//이거는 모든 필수 항목이 다 들어가 있고.
+					jOdbc("UID") = dlg._UID;
+					jOdbc("PWD") = dlg._PWD;
 				}
 				else
-					dsn.Format(L"DSN=%s", jobj.S("_DSN"));//이거는 모든 필수 항목이 다 들어가 있고.
-				if (appd._dbMain->IsOpen())
-					appd._dbMain->Close();
-				appd._dbMain->OpenEx(dsn);//_T("DSN=UserInfo")); 여기서 비번 오류 난다.
-				/// 아직 database 안만들었을수 있으니. appd._dbMain->ExecuteSQL(L"use `winpache`");
-				
-				// 접속 성공. 저장.
-				jobj("_UID") = UID2;
-				jobj("_PWD") = PWD2;
-				DockOdbc::s_me->_DSN = jobj.S("_DSN");//ODBC 도킹창에도
-				DockOdbc::s_me->_UID = UID2;
+					throw_simple();
+			}
 
-				auto smsg = L"Server default (Winpache) ODBC is already initialized. Now connected.";
+			if(kmap1.size() > 0 && !Driver0.empty() && Driver0 == Driver1)// && uid1 == uid0)
+			{//ODBC 이미 있다. -> 비번만 체크
+				bOdbcReg = true;
+				/// 1. PWD가 없는 경우 ODBC Setting창이 뜨고 비번을 입력 하게 한 후 접속 된다. 하지만 여기서 입력한 경우 비번이 저장 되지는 않는다.
+				/// 2. PWD가 틀린 경우 CDBException이나고 비번이 틀린 오류 박스 아래에서 뜬다. ODBC Docking 창이 떠서 비번을 입력 받고 다시 접속 하도록 한다. 역시 입력한 PWD가 저장되지 않는다.
+				jOdbc("DSN") = dsn0;// DSN1.c_str();// L"Winpache";
+				jOdbc("UID") = UID1.c_str();
+				jOdbc("PWD") = PWD1.c_str();
+				jOdbc("SERVER") = kmap1.Get(L"SERVER").c_str();
+
+				/// 아직 로그인 안되었으면 비번 받는다.
+// 				if(!bLogin)//PWD2.GetLength() > 0)//jobj.Len("UID"))
+// 				{
+// 					DlgOdbcSetting dlg(this);
+// 					dlg._DSN = jOdbc.S("DSN");//readable
+// 					dlg._UID = jOdbc.S("UID");  // editable
+// 					dlg._PWD = jOdbc.S("PWD");   // editable
+// 					if(dlg.DoModal() == IDOK)
+// 					{
+// 						jOdbc("UID") = dlg._UID;
+// 						jOdbc("PWD") = dlg._PWD;
+// 					}
+// 				}
+			}
+			else/// 이거 처음 시작 할때 되는 거라 여기 올일 없을 텐데
+			{/// ODBC registry 가 없을때 미리 비번 받는다.
+
+				/// 1.1 ODBC pwd없으면 입력 받고, DATABASE는 제외 해야 37000오류 안난다.
+				KWStrMap kmap;
+				for(auto& [k, v] : jOdbc)
+				{
+					if(!bLogin && k == L"DATABASE")
+						continue;
+					kmap[k] = v->AsString();
+				}
+				/// RUN 1.2 비번이 틀려도 일단 ODBC는 등록이 된다.
+				/// <summary>
+				int rv = KDatabase::RegODBCMySQL(jOdbc.S("DSN"), kmap);
+				/// </summary>
+				CaptionMessage(L"Main DB ODBC settings are reginsterd.");
+				/// <summary>
+				appd._json->OrStr("StatDB", L"ODBC");
+				appd.SaveData();//DATABASE 포함
+				/// </summary>
+		// 1.2 접속 한다.
+				//CString dsn = appd.MakeDsnString();
+				//auto sdb = KDatabase::getDbConnected((PWS)dsn);
+				//if(sdb)
+				//{				//	appd._json->OrStr("StatDB", L"login");
+				//	appd.SaveData();//DATABASE 포함
+				//	CaptionMessage(L"ODBC connected for root user to the installed DB server.");
+				//	DockOdbc::s_me->_DSN = jOdbc.S("DSN");
+				//	DockOdbc::s_me->_UID = jOdbc.S("UID");
+				//	DockOdbc::s_me->UpdateData(0); /// ODBC Setting창에 뿌려 준다.
+				//}
+			}
+
+			/// 1.2 접속 한다.
+			CString dsn = appd.MakeDsnString();
+			auto sdb = KDatabase::getDbConnected((PWS)dsn);
+			if(sdb)
+			{
+				/// <summary>
+				appd._json->OrStr("StatDB", L"login");
+				appd.SaveData();//DATABASE 포함
+				/// </summary>
+
+				DockOdbc::s_me->_DSN = jOdbc.S("DSN");//ODBC 도킹창에도
+				DockOdbc::s_me->_UID = jOdbc.S("UID"); ;
+				DockOdbc::s_me->UpdateData(0); /// ODBC Setting창에 뿌려 준다.
+
+				auto smsg = L"The main DB connection was tested with ODBC.";
 				CaptionMessage(smsg);
 				KwMessageBox(smsg);
-				///DockClientBase::ShowHide(this, *Pane(IDD_DockOdbc), TRUE);
+				return 0;
 			}
 			else
-			{
-				jobj("_DSN") = dsn0;// L"Winpache";
-				jobj("_UID") = uid0;
-				KWStrMap kmap;
-				kmap[L"UID"] = (PWS)jobj.S("_UID");
-				/// 1.1 ODBC no pwd로 처음 만들고
-				int rv = KDatabase::RegODBCMySQL(jobj.S("_DSN"), kmap);
-				
-				DockOdbc::s_me->_DSN = jobj.S("_DSN");
-				DockOdbc::s_me->_UID = jobj.S("_UID");
-				DockOdbc::s_me->UpdateData(0); /// ODBC Setting창에 뿌려 준다.
-				///DockClientBase::ShowHide(this, *Pane(IDD_DockOdbc), TRUE);
-				
-				/// 1.2 접속 한다.
-				CString dsn; dsn.Format(L"DSN=%s;UID=%s", jobj.S("_DSN"), jobj.S("_UID"));//이거는 모든 필수 항목이 다 들어가 있고.
-				appd._dbMain->OpenEx(dsn);//_T("DSN=UserInfo"));
-				//아직 database도 안만들었다. appd._dbMain->ExecuteSQL(L"use `winpache`");
-
-				CaptionMessage(L"ODBC connected without password as root user to the installed DB server.");
-				KwMessageBox(L"Connected.\nYou can save the password in ODBC Setting.");
-			}
-			appd.SaveData();//running중인 서버가 없으면 PWD는 저장 안한다.
+				KwMessageBoxError(L"Main DB failed.");
 		}
 		else if (step == 4)
 		{
 			/// 3. 첫번째 database를 winpache를 만든다.
-			appd._dbMain->ExecuteSQL(L"CREATE DATABASE `winpache` COLLATE 'utf16_unicode_ci'");
-			appd._dbMain->ExecuteSQL(L"use `winpache`");
-			KwMessageBox(L"Database `winpache` has been created.");
+			CString dsn = appd.MakeDsnString();
+			auto sdb = KDatabase::getDbConnected((PWS)dsn);
+			if(sdb)
+			{
+				try {
+					sdb->ExecuteSQL(L"CREATE DATABASE `winpache` COLLATE 'utf16_unicode_ci'");
+				} catch (CDBException* e) {
+					if(e->m_strError.Find(L"database exists") >= 0 || e->m_strStateNativeOrigin.Find(L"State:S1000") >= 0)
+					{
+						//+m_strError	L"Can't create database 'winpache'; database exists\n"
+						//+m_strStateNativeOrigin	L"State:S1000,Native:1007,Origin:[ma-3.1.12][10.5.10-MariaDB]\n"
+						CString smsg; smsg.Format(L"Error! %s, (%d) %s.", e->m_strError, e->m_nRetCode, e->m_strStateNativeOrigin);
+						CaptionMessage(smsg);
+					}
+					else
+						throw e;
+				}
+				sdb->ExecuteSQL(L"use `winpache`");
+
+				//KWStrMap kmap;
+				//for(auto& [k, v] : jOdbc)
+				//	kmap[k] = v->AsString();
+				/// DATABASE=winpache 저장
+				int rv = KDatabase::SetKeyODBCMySQL(jOdbc.S("DSN"), L"DATABASE", L"winpache");
+
+				appd._json->OrStr("StatDB", L"database");
+				appd.SaveData();//DATABASE 포함
+
+				KwMessageBox(L"Database `winpache` has been created.");
+			}
+			else
+				throw_simple();
 		}
 		else if (step == 5 || step == 6)
 		{
@@ -1230,15 +1378,17 @@ void CMainFrame::InitOdbc(int step)
 			CStringW flPrj = my_documents;
 			PWS tdir = L"\\Winpache\\DB\\";
 
-
-			appd._dbMain->ExecuteSQL(L"use `winpache`");
-			flPrj += tdir;
-			CString sDir = flPrj;
-
-
+			CString dsn = appd.MakeDsnString();
+			auto sdb = KDatabase::getDbConnected((PWS)dsn);
+			if(!sdb)
+				throw_simple();
 			try
 			{
-				appd._dbMain->CreateTablesInFolderLD(flPrj, [&](CString fn, CString sql, CDBException* e) -> void
+				sdb->ExecuteSQL(L"use `winpache`");
+				flPrj += tdir;
+				CString sDir = flPrj;
+				
+				sdb->CreateTablesInFolderLD(flPrj, [&](CString fn, CString sql, CDBException* e) -> void
 					{
 						//tbiz_af_ins.sql: 
 						///This command is not supported in the prepared statement protocol yet
@@ -1250,12 +1400,8 @@ void CMainFrame::InitOdbc(int step)
 							try
 							{
 								MYSQL* con = mysql_init(NULL);
-// 								auto server = jobj.SA("_SERVER");
-// 								auto server = jobj.SA("_DSN");
-// 								auto server = jobj.SA("_SERVER");
-// 								auto server = jobj.SA("_SERVER");
-								if(mysql_real_connect(con, jobj.SA("_SERVER"), jobj.SA("_UID"), jobj.SA("_PWD"),
-														jobj.SA("_database"), 0, NULL, 0) == NULL)
+								if(mysql_real_connect(con, jOdbc.SA("SERVER"), jOdbc.SA("UID"), jOdbc.SA("PWD"),
+									jOdbc.SA("DATABASE"), 0, NULL, 0) == NULL)
 									throw_str(mysql_error(con));
 								//if(mysql_query(con, "DROP TABLE IF EXISTS writers"))
 								//if(mysql_query(con, "CREATE TABLE writers(id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(255))"))
@@ -1285,56 +1431,21 @@ void CMainFrame::InitOdbc(int step)
 							CString smsg; smsg.Format(L"Error! %s: %s, %s.", fn, e->m_strError, e->m_strStateNativeOrigin);
 							CaptionMessage(smsg);
 						}
-// 						if(e->m_strStateNativeOrigin.Find(L"S0001") < 0)//이미 존재 하는 것은 박스 안띄운다.
-// 							KwMessageBoxError(smsg);
 					});
+				appd._json->OrStr("StatDB", L"tables");
+				appd.SaveData();//DATABASE 포함
 			}
 			catch(KException* e)
 			{
 				CString s; s.Format(L"KException:%s - %s\n", e->m_strError, e->m_strStateNativeOrigin);
 				TRACE(L"%s\n", s);
 			}
-// 			catch(CDBException* e)
-// 			{
-// 				CString smsg; smsg.Format(L"Error! %s, %s.", e->m_strError, e->m_strStateNativeOrigin);
-// 				CaptionMessage(smsg);
-// 				if(e->m_strStateNativeOrigin.Find(L"S0001") < 0)//이미 존재 하는 것은 박스 안띄운다.
-// 					KwMessageBoxError(smsg);
-// 			}
 			catch(CException* )
 			{
 				TRACE("CException \n");
 			}
-			/*
-			PWS arfsln[] = { 
-				L"CREATE_TABLE_t_reqlog.sql",
-				L"CREATE_TABLE_t_ldblog.sql",
-				L"CREATE_TABLE_t_excepsvr.sql",
-				/// 아래 두 테이블은 sample 테이블 이다.
- 				L"CREATE_TABLE_tbiz.sql",
- 				L"CREATE_TABLE_tbizclass.sql", 
-			};
-			for (auto fsql : arfsln)
-			{
-				CString fullw = flPrj + fsql;
-				CStringA full(fullw);
-				try
-				{
-					KDatabase::CreateTable(*appd._dbMain, full);
-				}
-				catch(CDBException* e)
-				{
-					CString smsg; smsg.Format(L"Error! %s, %s.", e->m_strError, e->m_strStateNativeOrigin);
-					CaptionMessage(smsg);
-					if(e->m_strStateNativeOrigin.Find(L"S0001") < 0)//이미 존재 하는 것은 박스 안띄운다.
-						KwMessageBoxError(smsg);
-				}
-			}*/
 			/// 4. 첫번째 log table을 만든다.
 // 			KDatabase::CreateTable(*appd._dbMain, "..\\..\\DB\\CREATE_TABLE_t_reqlog.sql");
-// 			KDatabase::CreateTable(*appd._dbMain, "..\\..\\DB\\CREATE_TABLE_t_excepsvr.sql");
-// 			KDatabase::CreateTable(*appd._dbMain, "..\\..\\DB\\CREATE_TABLE_tbiz.sql");
-// 			KDatabase::CreateTable(*appd._dbMain, "..\\..\\DB\\CREATE_TABLE_tbizclass.sql");
 			KwMessageBox(L"Basic tables have been created.");
 		}
 		else if (step == 6)
@@ -1352,6 +1463,7 @@ void CMainFrame::InitOdbc(int step)
 		CaptionMessage(smsg);
 		KwMessageBoxError(smsg);
 		DockClientBase::ShowHide(this, *Pane(IDD_DockOdbc), TRUE);
+		return -100;
 	}
 	catch (CException* e)
 	{
@@ -1364,8 +1476,9 @@ void CMainFrame::InitOdbc(int step)
 		CString smsg; smsg.Format(L"Error: %s.", serr);
 		CaptionMessage(smsg);
 		KwMessageBoxError(smsg);
+		return -101;
 	}
-
+	return 0;
 }
 
 
@@ -1480,7 +1593,7 @@ void CMainFrame::OnDownloadMariaDB()
 		::ShellExecute(0, 0, url, 0, 0, SW_SHOW);
 		CaptionMessage(L"Navigating to download site for MariaDB!");
 		
-		auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+		auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
 		auto& jobj = *appd._json;
 		
 		jobj("StatDB") = "installDB";
@@ -1500,7 +1613,7 @@ void CMainFrame::OnVisualStudioDownload()
 	HRESULT result = SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, appdata);
 
 	PWS fname = L"vs_community__1141927769.1601659846.exe";// L"Visual Studio Download.url";
-	CString fl; fl.Format(L"%s\\Keepspeed\\Winpache\\", appdata);
+	CString fl; fl.Format(L"%s\\Winpache\\", appdata);
 	CString full = fl + fname;
 	CString url = L"https://visualstudio.microsoft.com/ko/thank-you-downloading-visual-studio/?sku=Community&rel=16";
 	if (KwIfFileExist(full))

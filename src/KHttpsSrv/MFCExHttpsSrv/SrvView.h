@@ -74,8 +74,8 @@ public:
 		// 버튼이 있을때만.
 		KwEnableWindow(_vu, idc, bEnable);
 	}
-	void Trace(PAS txt, int iOp = 0);
-	void Trace(PWS txt, int iOp = 0);
+	void OTrace(PAS txt, int iOp = 0);
+	void OTrace(PWS txt, int iOp = 0);
 
 	void CallbackOnStarted(int vuid) override;
 	int CallbackOnStopped(HANDLE hev, int vuid) override;

@@ -15,7 +15,7 @@ public:
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_OdbcSetting };
 #endif
-
+	bool _bFirst{false};
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
@@ -27,4 +27,6 @@ public:
 	CString _PWD;
 	CString _DSN;
 	afx_msg void OnBnClickedOdbcsetting();
+	afx_msg void OnBnClickedCancel();
+	virtual BOOL OnInitDialog();
 };

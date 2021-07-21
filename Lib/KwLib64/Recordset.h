@@ -194,6 +194,11 @@ public:
 					PTR* pData = NULL, SQLLEN* cbRv = NULL, SQLSMALLINT* cType = NULL, SQLSMALLINT* sqlType = NULL, int iOp = 0);
 	void ExecuteSQL(Quat& qs, int iOp = 0);
 
+	static int SetKeyODBCMySQL(LPCWSTR sDSN, CString sval, CString val);
+	static int RemoveKeyODBCMySQL(LPCWSTR sDSN, CString sval);
+
+	static int UpdateKeyODBCMySQL(LPCWSTR sDSN, CString sval, CString val = L"", bool bRemove = true);
+
 	static int RegODBCMySQL(LPCWSTR sDSN, KWStrMap& kmap);
 
 	static int RegGetODBCMySQL(LPCWSTR sDSNA, KWStrMap& kmap);
@@ -220,6 +225,7 @@ public:
 	static CKCriticalSection s_csDbConnect;
 	static SHP<KDatabase> getDbConnected(wstring dsn, int sec = 60);
 
+	static void OpenOdbcSetting();
 };
 /// OpenEx한 tick과 KDatabase를 같이 가지고 있는 객체
 class KDatabaseOdbc
@@ -232,8 +238,8 @@ public:
 	{
 		if(dsn.length() > 0)
 		{
-			CreateDb(dsn);
 			_dsn = dsn;
+			CreateDb(dsn);
 		}
 	}
 	~KDatabaseOdbc()
@@ -247,7 +253,7 @@ public:
 	{
 		ASSERT(!_sdb);
 		_sdb = make_shared<KDatabase>();
-		_sdb->OpenEx(dsn.c_str());
+		//_sdb->OpenEx(dsn.c_str()); 여기서 너무 많은걸 하는거 같아 뺀다.
 	}
 };
 

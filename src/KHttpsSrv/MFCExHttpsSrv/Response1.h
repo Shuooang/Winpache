@@ -170,8 +170,8 @@ public:
 
 
 //2020-12-08 14:35:57 관련 쓰레기 정리
-string JError(PAS msg, int rv = -1, int status = 400); // FAILED 400:Bad request
-void JError(JObj& jres, PAS msg, int rv = -1, int status = 400);
+string JError(CStringA msg, int rv = -1, int status = 400); // FAILED 400:Bad request
+void JError(JObj& jres, CString msg, int rv = -1, int status = 400);
 
 //DB Error. rv = -100;//
 //Unknown Error rv = -1000;

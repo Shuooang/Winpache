@@ -222,6 +222,11 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Lib\KwLib64\DlgTool.h" />
+    <ClInclude Include="..\..\..\Lib\KwLib64\KJson.h" />
+    <ClInclude Include="..\..\..\Lib\KwLib64\Kw_tool.h" />
+    <ClInclude Include="..\..\..\Lib\KwLib64\SrvException.h" />
+    <ClInclude Include="..\..\..\Lib\KwLib64\stdecl.h" />
     <ClInclude Include="CDlgDragImages.h" />
     <ClInclude Include="ChildFrm.h" />
     <ClInclude Include="framework.h" />

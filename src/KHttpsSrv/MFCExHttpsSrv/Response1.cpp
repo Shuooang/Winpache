@@ -37,11 +37,10 @@ void CResponse1::InitReponser(BOOL bDB) {
 	//_api->MapRemoteFunctions();// SHP<ApiBase> 했더니, virtural override call이 안되네.
 	auto api = _api.get();
 	api->MapRemoteFunctions();//이렇게 해도. override call이 안되네.
-	if(bDB)
-		_api->CheckDB();
+	//if(bDB)		_api->CheckDB();
 }
 
-string JError(PAS msg, int rv, int status)
+string JError(CStringA msg, int rv, int status)
 {
 	// S_FALSE = 1  FAILED = -1  S_OK = 0
 	Tas ss;
@@ -49,7 +48,7 @@ string JError(PAS msg, int rv, int status)
 	return ss.str();
 }
 
-void JError(JObj& jres, PWS msg, int rv, int status)
+void JError(JObj& jres, CString msg, int rv, int status)
 {
 	jres("error") = msg;//KException::m_strError
 	jres("return") = rv;//KException::m_nRetCode //return -1; 이 앱애서 의미있는 구분 - 이면 오류. + 이면 상황
@@ -149,7 +148,7 @@ int CResponse1::ResponseForGet(KSessionInfo& sinfo, stringstream& rpost)
 			int iOp = funcItm->_iOp;
 
 			//if((iOp & CFuncItem::eFncNoDB) == 0)//이거 무의미 : logException하려면 DB항상 살아야.
-			_api->CheckDB();
+			//_api->CheckDB();
 
 			if(iOp & eFncPolicy)//정책은 함수 부르기 전에
 			{
@@ -282,7 +281,17 @@ int CResponse1::ResponseForPost(KSessionInfo& sinfo, SHP<KBinData> body, strings
 // 				(*_api->_fncOutput)(rs, 0);
 // 		}
 		CString sDsn = jpa.SameS("database", L"winpache") ? _api->_ODBCDSNlog : _api->_ODBCDSN;
-		SHP<KDatabase> sdb = KDatabase::getDbConnected((PWS)sDsn);
+		SHP<KDatabase> sdb;
+		try
+		{
+			sdb = KDatabase::getDbConnected((PWS)sDsn);
+		}
+		catch (CDBException* )
+		{
+			/// DB연결 실패 해도, 쿼리가 DB 관계 없을수 있고, 있더라도 Select, inset 할때 에러 나겠지.
+			sdb = make_shared<KDatabase>();
+			//throw e; 한글 에러가 깨지길래 봤더니, MakeJsonErrorResponse에서 utf8로 보낸걸 또 utf8로 변환 하더라.
+		}
 
 		CFuncItem* funcItm = nullptr;
 		if(_api->m_mapRFncs.Lookup(fncA, funcItm))//jproc);
@@ -420,7 +429,7 @@ int CResponse1::ResponseImageUpload(KSessionInfo& sinfo, string uuid, PAS data, 
 	JObj jres;
 	CStringW uuidW(uuid.c_str());
 	try {
-		_api->CheckDB();
+		//_api->CheckDB();
 		size_t iq = url.find('?');//, 0Ui64);
 		string url3 = url.substr(iq + 1);
 		CStringW uparams(url3.c_str());

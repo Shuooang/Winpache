@@ -212,6 +212,7 @@
     <ClInclude Include="..\..\..\Lib\KwLib64\KJson.h" />
     <ClInclude Include="..\..\..\Lib\KwLib64\Kw_tool.h" />
     <ClInclude Include="..\..\..\Lib\KwLib64\Recordset.h" />
+    <ClInclude Include="..\..\..\Lib\KwLib64\SrvException.h" />
     <ClInclude Include="..\..\..\Lib\KwLib64\stdecl.h" />
     <ClInclude Include="ApiBase.h" />
     <ClInclude Include="ApiSite1.h" />

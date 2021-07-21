@@ -124,6 +124,9 @@ public:
 		CStringA(_ke->m_strStateNativeOrigin), _ke->_func, _ke->_line ); throw _ke
 
 //GetLastError() 값을 직접 줄때
+#define throw_simple() {auto _ke = new KException("throw_gen", 0, 0, (PAS)NULL, NULL, __FUNCTION__, __LINE__);\
+	throw_common(); }
+
 #define throw_gen(n, s) {auto _ke = new KException("throw_gen", n, 0, s   , NULL, __FUNCTION__, __LINE__);\
 	throw_common(); }
 

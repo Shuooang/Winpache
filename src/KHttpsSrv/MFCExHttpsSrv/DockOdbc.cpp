@@ -148,19 +148,27 @@ void DockOdbc::OnBnClickedConnectDB()
 			KwMessageBoxError(smsg);
 			return;
 		}
-		CString dsn; dsn.Format(L"DSN=%s;UID=%s;PWD=%s", _DSN, _UID, _PWD);//이거는 모든 필수 항목이 다 들어가 있고.
+		//CString dsn; dsn.Format(L"DSN=%s;UID=%s;PWD=%s", _DSN, _UID, _PWD);//이거는 모든 필수 항목이 다 들어가 있고.
 		auto frm = (CMainFrame*)AfxGetMainWnd();
 		auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
-		auto& jobj = *appd._json;
-		if(appd._dbMain->IsOpen())
-			appd._dbMain->Close();
-		appd._dbMain->OpenEx(dsn, CDatabase::noOdbcDialog);
-		jobj("_DSN") = _DSN;
-		jobj("_UID") = _UID;
-		if(_PWD.GetLength())
-			jobj("_PWD") = L"**********";
+		//auto& jobj = *appd._json;
+		auto& jOdbc = *appd._json->O("ODBC");
 
-		appd._dbMain->ExecuteSQL(L"use `winpache`");
+
+
+// 		if(appd._dbMain->IsOpen())
+// 			appd._dbMain->Close();
+// 		appd._dbMain->OpenEx(dsn, CDatabase::noOdbcDialog);
+
+		jOdbc("DSN") = _DSN;
+		jOdbc("UID") = _UID;
+		if(_PWD.GetLength())
+			jOdbc("PWD") = L"**********";
+
+		CString dsn = appd.MakeDsnString();
+		auto sdb = KDatabase::getDbConnected((PWS)dsn);
+
+		//appd._dbMain->ExecuteSQL(L"use `winpache`");
 		appd.SaveData();
 		PWS s = L"Connected to ODBC as the main DB to log transactions..";
 		frm->CaptionMessage(s);

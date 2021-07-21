@@ -123,6 +123,7 @@
 #define IDC_privatekey                  1005
 #define IDC_Output                      1005
 #define IDC_ConnectDB                   1005
+#define IDC_PWD2                        1005
 #define IDC_dhparam                     1006
 #define IDC_BtnPath                     1007
 #define IDC_LinkToGithub                1007
@@ -131,7 +132,9 @@
 #define IDC_OdbcSetting                 1009
 #define IDC_BtnDhparam                  1010
 #define IDC_NPM                         1010
+#define IDC_OdbcSetting2                1010
 #define IDC_port                        1011
+#define IDC_STATIC_PWD                  1011
 #define IDC_MonitorList                 1012
 #define IDC_cachedUrl                   1013
 #define IDC_Elapsed                     1013
@@ -210,7 +213,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        319
 #define _APS_NEXT_COMMAND_VALUE         32815
-#define _APS_NEXT_CONTROL_VALUE         1011
+#define _APS_NEXT_CONTROL_VALUE         1012
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

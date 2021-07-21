@@ -200,7 +200,7 @@ void CSrvView::OnInitialUpdate()
 	SrvDoc* doc = GetDocument();
 	doc->_svr->_api->AddCallbackOutput([&](string msg, int err) -> void
 		{
-			Trace(msg.c_str());
+			OTrace(msg.c_str());
 		});
 
 	int nCol = 0;
@@ -219,14 +219,14 @@ void CSrvView::OnInitialUpdate()
 	RecoverServer();//?server recover 5 contunue running server
 }
 
-void CSrvView::Trace(PAS txt, int iOp)
+void CSrvView::OTrace(PAS txt, int iOp)
 {
 	if(iOp == 0)
 	{
 		string str = txt;
 		_KwBeginInvoke(this, ([&, str]()-> void
 			{ //?beginInvoke 4
-				Trace(str.c_str(), 1);
+				OTrace(str.c_str(), 1);
 			}));
 	}
 	else if(iOp == 1)
@@ -239,10 +239,10 @@ void CSrvView::Trace(PAS txt, int iOp)
 
 }
 
-void CSrvView::Trace(PWS txt, int iOp)
+void CSrvView::OTrace(PWS txt, int iOp)
 {
 	CStringA str(txt);
-	Trace(str, iOp);
+	OTrace(str, iOp);
 // 	auto fm = (CMainFrame*)AfxGetMainWnd();
 // 	CStringA stra(txt);
 // 	if(fm->_fncExtraTrace)
@@ -452,7 +452,7 @@ void CSrvView::RecoverServer()//?server recover 5.1 contunue running server
 	{
 		AUTOLOCK(appd._csRecover);
 		auto& jobj = *appd._json;
-		auto dsnMain = jobj.S("_DSN");
+		auto dsnMain = jobj.S("DSN");
 		auto srsv = jobj.O("RunningServers");
 		if(!srsv || srsv->size() == 0)//펜딩서버 있고
 			return;
@@ -609,40 +609,57 @@ void CSrvView::OnBnClickedBtnSslSetting()
 
 void CSrvView::OnBnClickedStartDB()
 {
-	CWaitCursor _sandClock;
+	CWaitCursor sandClock;
 	UpdateData(); //InitApi(); 포함.
-	SrvDoc* doc = GetDocument();
 
-	CStringW ODBCDSN(doc->_ODBCDSN);
-	if(tchlen((PWS)ODBCDSN) == 0)
-	{
-		PAS pas = "Data Source name is empty.\nEx:DSN=MyDSN;UID=myid;PWD=pypwd;database=sitedb";
-		KwMessageBoxA(pas);
-		Trace(pas);
-		return;
-	}
-	Trace("ODBC Data Source conneting...");
+	SrvDoc* doc = GetDocument();
 	auto frm = (CMainFrame*)AfxGetMainWnd();
 	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
 	auto& jobj = *appd._json;
+
+	if(doc->_ODBCDSN.IsEmpty())
+	{
+		PAS pas = "Data Source name is empty.\nEx:DSN=MyDSN;UID=myid;PWD=pypwd;database=sitedb";
+		KwMessageBoxA(pas);
+		OTrace(pas);
+		return;
+	}
+	OTrace("ODBC Data Source conneting...");
 	try
 	{
 		doc->_svr->_api->_ODBCDSNlog = appd.MakeDsnString();
+		doc->_svr->_api->_ODBCDSN = doc->_ODBCDSN;
 
-//		SHP<KDatabase> db = make_shared<KDatabase>();
-// 		auto rs = doc->_svr->_api->CheckDbThread(ODBCDSN, db);// appd._dbMain);
-// 		if(rs.length() > 0)
-// 			Trace(rs.c_str());
 		SHP<KDatabase> sdb = KDatabase::getDbConnected((PWS)doc->_svr->_api->_ODBCDSN);
-		doc->_svr->_api->InitDbLogProc(sdb.get());
+		if(sdb)
+		{
+			doc->_svr->_api->InitDbLogProc(sdb.get());
 
-		SetDlgItemText(IDC_STATICDB, L" DB Connected.");
-		Trace("Site Database is Tested.");
+			SetDlgItemText(IDC_STATICDB, L" DB Connected.");
+			OTrace("Site Database is Tested.");
+		}
+	}
+	catch(CDBException* e)
+	{
+		CString smsg; //smsg.Format(L"%s\n%s.", e->m_strError, e->m_strStateNativeOrigin);
+		smsg.Format(L"%s\nDo you want to set up ODBC?", e->m_strError, e->m_strStateNativeOrigin);
+//		KwMessageBoxError(smsg);
+		int rv = ::MessageBox(GetSafeHwnd(), smsg, L"Error", MB_OKCANCEL | MB_ICONERROR);
+		if(rv == IDOK)
+		{
+			KDatabase::OpenOdbcSetting();
+		}
 	}
 	catch (KException* e)
 	{
 		CString smsg; smsg.Format(L"%s\n%s.", e->m_strError, e->m_strStateNativeOrigin);
 		KwMessageBoxError(smsg);
+	}
+	catch(CException* e)
+	{
+		CString serr;
+		e->GetErrorMessage(serr.GetBuffer(1024), 1024); serr.ReleaseBuffer();
+		KwMessageBoxError(serr);
 	}
 }
 void CSrvView::OnMigrationImageSizeAdjust()

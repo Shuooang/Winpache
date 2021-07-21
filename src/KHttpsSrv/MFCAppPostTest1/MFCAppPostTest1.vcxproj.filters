@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Pch Dependencies">
+      <UniqueIdentifier>{f0b4bc14-711f-4b26-bc3b-3119918d6631}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MFCAppPostTest1.h">
@@ -44,6 +47,21 @@
     </ClInclude>
     <ClInclude Include="CDlgDragImages.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Lib\KwLib64\DlgTool.h">
+      <Filter>Pch Dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Lib\KwLib64\KJson.h">
+      <Filter>Pch Dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Lib\KwLib64\Kw_tool.h">
+      <Filter>Pch Dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Lib\KwLib64\stdecl.h">
+      <Filter>Pch Dependencies</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Lib\KwLib64\SrvException.h">
+      <Filter>Pch Dependencies</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

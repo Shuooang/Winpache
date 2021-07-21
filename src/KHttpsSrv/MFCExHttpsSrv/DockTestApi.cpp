@@ -147,16 +147,43 @@ void DockTestApi::OnBnClickedRunapi()
 	UpdateData();
 	auto mfm = (CMainFrame*)AfxGetMainWnd();
 	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto avu = mfm->GetActiveCmnView();
+	bool bSerVu = false;
+	CmnView* cvu = NULL;
+	if(avu)
+	{
+		cvu = dynamic_cast<CmnView*>(avu);
+		if(cvu)
+			bSerVu = true;
+	}
+	if(!bSerVu)
+	{
+		KwMessageBoxError(L"You need to open the server document.\nSo a new file will be opened.");
+		auto app = (CMFCExHttpsSrvApp*)AfxGetApp();
+		app->NewFile();
+		return;
+	}
 
-	auto cvu = dynamic_cast<CmnView*>(mfm->GetActiveCmnView());
-	if(!cvu)
-		return;//throw "There is no active Site Server view.";
-	auto doc = cvu->GetDocument();	if(!doc) return;
+	auto doc = cvu->GetDocument();//	if(!doc) return;
+	ASSERT(doc);
 	auto api = doc->_svr->_api;
+	if(api->_ODBCDSNlog.IsEmpty())
+		api->_ODBCDSNlog = appd.MakeDsnString();
 
 	CString smsg;
-	SHP<KDatabase> sdb = KDatabase::getDbConnected((PWS)api->_ODBCDSN);
-	SHP<KDatabase> sdbLog = KDatabase::getDbConnected((PWS)api->_ODBCDSNlog);
+	SHP<KDatabase> sdb;
+	SHP<KDatabase> sdbLog;
+	try	{
+		sdb = KDatabase::getDbConnected((PWS)api->_ODBCDSN);
+	}	catch(CDBException* )	{	
+		sdb = make_shared<KDatabase>();	
+	}
+	try {
+		sdbLog = KDatabase::getDbConnected((PWS)api->_ODBCDSNlog);
+	}
+	catch(CDBException* )	{
+		sdbLog = make_shared<KDatabase>();
+	}
 
 	try
 	{

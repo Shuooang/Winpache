@@ -56,7 +56,7 @@ public:
 // 	void InitDoc()
 // 	{
 // 		auto& jobj = *_json;
-// 		//jobj("_DSN") = L"Winpache";
+// 		//jobj("DSN") = L"Winpache";
 // 	}
 
 

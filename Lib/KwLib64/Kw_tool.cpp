@@ -1614,3 +1614,11 @@ DWORD EncodeBinary(KBinary& bin, LPCSTR key0, bool bEncode, KBinary* pbinr)
 	}
 	return pbinr->m_len;;
 }
+
+LONGLONG KwGetTickCount100Nano()
+{
+	LARGE_INTEGER li{0};
+	auto bnow = QueryPerformanceCounter(&li);
+	//auto tik = GetTickCount64();
+	return li.QuadPart;
+}

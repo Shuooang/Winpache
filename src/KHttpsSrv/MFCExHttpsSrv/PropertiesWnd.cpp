@@ -187,7 +187,7 @@ void CPropertiesWnd::InitPropList()
 	m_wndPropList.AddProperty(pGroup1);
 
 	CMFCPropertyGridProperty* pGroup2 = new CMFCPropertyGridProperty(_T("File"));
-	pGroup2->AddSubItem(new CMFCPropertyGridProperty(_T("Product Version"), (_variant_t)"1.0.0.5", _T("Version number.")));
+	pGroup2->AddSubItem(new CMFCPropertyGridProperty(_T("Product Version"), (_variant_t)"21.7.13", _T("Version number.")));
 	//CMFCPropertyGridProperty* pProp2 = new CMFCPropertyGridProperty(_T("File OS"), _T("Windows 10"), _T("Current Windows OS Version."));
 // 	pProp2->AddOption(_T("Windows 10"));
 // 	pProp2->AddOption(_T("Windows 7"));

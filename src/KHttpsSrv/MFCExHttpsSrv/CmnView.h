@@ -167,8 +167,8 @@ int CmnView::StartServerHttpT(TMyserver* https, TSession* pss)
 	if(rv != 0)
 		return rv;
 
-	auto app = AfxGetApp();
-	auto ivc0 = dynamic_cast<KCheckWnd*>(app);
+// 	auto app = GetMainApp();
+// 	auto ivc0 = dynamic_cast<KCheckWnd*>(app);
 	int vuid = getId();// this 나 windows는 사라질수 있으니 반드시 [&,...]에 전달 해야 한다.
 
 	// 이걸 OnStarted에서 하지 않고 멸령 내리자 마자 해야 중복 Start않지

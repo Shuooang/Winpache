@@ -166,7 +166,7 @@ void KBeginInvoke::freeInvokeFree()
 	int nDeleted = 0;
 	int nNotYet = 0;
 	BOOL bRapped = FALSE;
-	for(LONGLONG i = 0; i < sz; i++)
+	for(ULONGLONG i = 0; i < sz; i++)
 	{
 		KBeginInvoke* pbi = (KBeginInvoke*)pl->front();
 		if(pbi)

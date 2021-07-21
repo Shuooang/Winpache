@@ -69,7 +69,7 @@ public:
 	void TraceQueue(string txt);
 	void TraceFlush();
 	void TraceFlushFore();
-	void Trace(string str)
+	void OTrace(string str)
 	{
 		//string txt = (PAS)CStringA(str);
 		TraceQueue(str);

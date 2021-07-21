@@ -39,6 +39,7 @@ BEGIN_MESSAGE_MAP(DlgOdbcSetting, CDialogEx)
 	ON_BN_CLICKED(IDC_Close, &DlgOdbcSetting::OnBnClickedClose)
 // 	ON_BN_CLICKED(IDC_CreateSimple, &DlgOdbcSetting::OnBnClickedCreatesimple)
 ON_BN_CLICKED(IDC_OdbcSetting, &DlgOdbcSetting::OnBnClickedOdbcsetting)
+ON_BN_CLICKED(IDCANCEL, &DlgOdbcSetting::OnBnClickedCancel)
 END_MESSAGE_MAP()
 
 
@@ -47,6 +48,22 @@ END_MESSAGE_MAP()
 
 void DlgOdbcSetting::OnBnClickedClose()
 {
+	UpdateData();
+	if(_PWD.IsEmpty())
+	{
+		KwMessageBoxError(L"The passwords is empty.");
+		return;
+	}
+	if(_bFirst)
+	{
+		CString pwd2;
+		GetDlgItemText(IDC_PWD2, pwd2);
+		if(_PWD != pwd2)
+		{
+			KwMessageBoxError(L"The passwords are different.");
+			return;
+		}
+	}
 	OnOK();
 }
 
@@ -84,11 +101,28 @@ void DlgOdbcSetting::OnBnClickedCreatesimple()
 
 void DlgOdbcSetting::OnBnClickedOdbcsetting()
 {
-// 	auto frm = (CMainFrame*)AfxGetMainWnd();
-// 	frm->OnOdbcSetting();
-	WCHAR my_documents[MAX_PATH]{0,};
-	::GetSystemDirectory(my_documents, MAX_PATH);//위랑 결과가 같다.
-	CStringW flPrj = my_documents;
-	flPrj += L"\\odbcad32.exe";
-	::ShellExecute(0, 0, flPrj, 0, 0, SW_SHOW);
+	KDatabase::OpenOdbcSetting();
+}
+
+
+void DlgOdbcSetting::OnBnClickedCancel()
+{
+	CDialogEx::OnCancel();
+}
+
+
+BOOL DlgOdbcSetting::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+
+	if(!_bFirst)
+	{
+		GetDlgItem(IDC_STATIC_PWD)->ShowWindow(SW_HIDE);
+		GetDlgItem(IDC_PWD2)->ShowWindow(SW_HIDE);
+	}
+	GetDlgItem(IDC_PWD)->SetFocus();
+
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+				  // EXCEPTION: OCX Property Pages should return FALSE
 }

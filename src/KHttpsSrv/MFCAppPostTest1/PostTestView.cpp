@@ -508,8 +508,9 @@ void CPostTestView::SendOneSyncImage(int i, PWS fname, PWS cntType)
 	hdrs["Content-Length"] = slenA;
 
 	hres hr = cl.RequestPostSSL(surl, &binr, &bin, &hdrs);
-	if(hr != S_OK)
+	if(binr.m_len == 0 && hr != S_OK)
 		return;
+
 	CStringW sWstrR;
 	KwUTF8ToWchar(binr.GetPA(), sWstrR);//utf8을 UNICODE로
 	CStringA sAstrR(sWstrR);//다시 멀티바이트로 해야 저장 하지.

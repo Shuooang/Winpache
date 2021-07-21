@@ -35,58 +35,19 @@ public:
 	virtual BOOL OnNewDocument();
 	virtual void Serialize(CArchive& ar);
 
-	SHP<KDatabase> _dbMain{make_shared<KDatabase>()};//이래야 _dbLog 와 share할수 있음
+	//SHP<KDatabase> _dbMain{make_shared<KDatabase>()};//이래야 _dbLog 와 share할수 있음
 
 	void LoadData();
 	CString GetFilePath();
 	void SaveData();
 
-// 	CString _GUID;
-// 	PWS _fname{ L"Winpache.json" };
-// 	CString _DSN{ L"Winpache" };
-// 	CString _UID{ L"root" };
-// 	CString _PWD;
-// 	CString _database{ L"winpache" };
-// 	CStringA _statDB{ "none" };// "MariaDB", "ODBC", "conected"
-
 	ShJObj _json{make_shared<JObj>()};
 
-	void InitDoc()
-	{
-		auto& jobj = *_json;
-		if(!jobj.Len("_GUID"))
-			jobj("_GUID") = KwGetFormattedGuid(FALSE);//main cfg GUID
+	void InitDoc();
 
-		//jobj("_GUID") = L"";
-		jobj("FName") = L"WinpacheMain.cfg";
-		jobj("LoadCount") = 0;// 이거로 bFirst  판별
-		jobj("LastSpeed") = 0.;//분당 처리 횟수: 최근 5초 안에 응답한 요청만 계산
-		jobj("Elapsed") = 0.;//평균 처리 속도: 요청 들어와서 응답한 시간까지 계속 (합산/카운터)
-		jobj("RunningServers") = JObj(); // RunningServers : { GUID1 : { }, GUID2:{} }
-		jobj("StatDB") = L"none";
-		/// 아래는 regitry에 진짜 있는 값
-		jobj("_DSN") = L"Winpache";
-		jobj("_SERVER") = L"localhost";
-		jobj("_UID") = L"root";
-		jobj("_PWD") = L"";//있는경우 메인 DB 비번
-		jobj("_database") = L"winpache";
+	CString MakeDsnString(bool bFirst = false);
 
-		/// KDatabase::RegGetODBCMySQL 로 읽어 오면
-// +입력		[L"DSN"]	L"Winpache"
-// +		[L"Driver"]	L"MariaDB ODBC 3.1 Driver"
-// +		[L"PORT"]	L"3306"
-// +		[L"PWD"]	L"******"bnmnnm,
-// +		[L"SERVER"]	L"localhost"
-// +		[L"TCPIP"]	L"1"
-// +		[L"UID"]	L"root"
-	}
-	CString MakeDsnString()
-	{
-		auto& jobj = *_json;
-		CString dsnLog;
-		dsnLog.Format(L"DSN=%s;UID=%s;PWD=%s;database=%s", jobj.S("_DSN"), jobj.S("_UID"), jobj.S("_PWD"), jobj.S("_database"));//PWD가 있는거 ODBC에 확인 했으니, DSN만으로 로그인 시도
-		return dsnLog;
-	}
+
 #ifdef _DEBUG
 	Vake FName;
 	Vake LoadCount;
@@ -178,6 +139,7 @@ public:
 	* */
 };
 
+CWinAppEx* GetMainApp();
 
 class CMFCExHttpsSrvApp 
 	: public CWinAppEx

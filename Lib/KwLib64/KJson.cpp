@@ -1,3 +1,4 @@
+#include "KJson.h"
 #include "pch.h"
 #include "KJson.h"
 #include "TimeTool.h"
@@ -671,6 +672,41 @@ namespace Kw
 	{
 		PWS sn = SN(k);
 		return tchbegin(sn, str);
+	}
+
+	BOOL JObj::Find(PAS k, PWS str)
+	{
+		PWS sn = SN(k);
+		return tchstr(sn, str) != NULL;
+	}
+
+	BOOL JObj::Append(PAS k, PWS str)
+	{
+		CString sn = SN(k);
+		BOOL b = !sn.IsEmpty();
+		sn += str;
+		(*this)(k) = sn;
+		return b;
+	}
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="k"></param>
+	/// <param name="str"></param>
+	/// <param name="tok">사이 문자 '|' 또는 ';' 등</param>
+	/// <returns>없어서 들어 갔으면 TRUE </returns>
+	BOOL JObj::OrStr(PAS k, PWS str, char tok)
+	{
+		if(!Find(k, str))
+		{
+			CString sapp;
+			if(LenS(k, sapp))
+				sapp += tok;
+			sapp += str;
+			(*this)(k) = sapp;
+			return TRUE;// Append(k, sapp);
+		}
+		return FALSE;
 	}
 
 

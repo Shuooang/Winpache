@@ -132,6 +132,9 @@
     <ClInclude Include="..\..\..\Lib\KwLib64\stdecl.h">
       <Filter>Pch Dependencies</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Lib\KwLib64\SrvException.h">
+      <Filter>Pch Dependencies</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFCExHttpsSrv.cpp">

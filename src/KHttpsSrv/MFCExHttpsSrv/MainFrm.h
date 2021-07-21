@@ -107,7 +107,7 @@ public:
 	CSrvView* GetActiveCmnView();
 	void OnUpdateCmn(CCmdUI* pCmdUI, int idc);
 	void CaptionMessage(PWS msg);
-	void InitOdbc(int step);
+	int InitOdbc(int step);
 	void GotoTheDirectory(PWS tdir);
 	void ConnectMainDB();
 	void CheckRecoverServers();

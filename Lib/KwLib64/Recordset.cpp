@@ -375,7 +375,11 @@ BOOL KRecordset::OpenSelect(PWS sql)
 	{
 		/// DB가 연결 안되어 있어도 널이니, 그냥 지나 치면 CDBExceptions이 발생 하는데, 
 		/// 굳이 여기서 throw 하는게 좋나?
-		throw_str("Database is not ready.");// ion goon away.");
+		CStringA sqla(sql);
+		CStringA sqll;
+		sqll.Format("Recordset is not ready(SQL_NULL_HSTMT). %s...", sqla.Left(20));
+		/// 여기서 계속 진행 하면 아래 Open에서 [데이터원본선택]창이 떠버린다.
+		throw_str((PAS)sqll);// ion goon away.");
 		if(m_pDatabase == NULL)
 		{
 			//ReopenDb();//KTrace(L"m_pDatabase == NULL try ReopenDb()\n");
@@ -1175,6 +1179,32 @@ bool Quat::AddSetField(PWS kw, JSONValue& jsv, BOOL bLast)
 #endif // _QUAT
 
 
+int KDatabase::SetKeyODBCMySQL(LPCWSTR sDSN, CString sval, CString val)
+{
+	return UpdateKeyODBCMySQL(sDSN, sval, val, false);
+}
+int KDatabase::RemoveKeyODBCMySQL(LPCWSTR sDSN, CString sval)
+{
+	return UpdateKeyODBCMySQL(sDSN, sval);
+}
+int KDatabase::UpdateKeyODBCMySQL(LPCWSTR sDSN, CString sval, CString val, bool bRemove)
+{
+	CString sKey0(_T("Software\\ODBC\\ODBC.INI\\"));
+	CString sKey = sKey0 + sDSN;
+	CRegKey reg;
+	LSTATUS st = reg.Open(HKEY_CURRENT_USER, sKey);
+	if(st != ERROR_SUCCESS)
+		return -1;
+	LSTATUS std = 0;
+	if(bRemove)
+		std = reg.DeleteValue(sval);
+	else
+		std = reg.SetStringValue(sval, val);
+	reg.Flush();
+	reg.Close();
+	return 0;
+}
+
 int KDatabase::RegODBCMySQL(LPCWSTR sDSN, KWStrMap& kmap)// LPCTSTR sServer, LPCTSTR sDriver, LPCTSTR sDatabase, PS sPort)
 {
 	CString sKey0(_T("Software\\ODBC\\ODBC.INI\\"));
@@ -1634,6 +1664,8 @@ SHP<KDatabase> KDatabase::getDbConnected(wstring dsn, int sec)
 	{///1.dns의 것이 없으면 만들어서 리턴
 		pldb = new KList<SHP<KDatabaseOdbc>>();
 		auto sdbo = make_shared<KDatabaseOdbc>(dsn);
+		sdbo->_sdb->OpenEx(sdbo->_dsn.c_str(), CDatabase::noOdbcDialog);
+
 		pldb->push_back(sdbo);
 		s_mapOdbc[dsn] = pldb;//하나의 dsn에 여러개 스레드별로 연결이 List에 넣어 둔다.
 		sdbo->_tick = tick;
@@ -1652,7 +1684,7 @@ SHP<KDatabase> KDatabase::getDbConnected(wstring dsn, int sec)
 				if(trm < (1000L * (LONGLONG)sec))//연결만료 전이면
 				{///2.1 놀고 있는 db가 있으면, 만료 되었나 확인 후 리턴
 					if(!sdbo->_sdb->IsOpen())
-						sdbo->_sdb->OpenEx(dsn.c_str());///never come. open 안된경우만
+						sdbo->_sdb->OpenEx(dsn.c_str(), CDatabase::noOdbcDialog);///never come. open 안된경우만
 					sdbo->_tick = tick;
 					rsdb = sdbo->_sdb;
 				}
@@ -1677,6 +1709,7 @@ SHP<KDatabase> KDatabase::getDbConnected(wstring dsn, int sec)
 			// 아직 리턴이 안되었다면 노는 db가 없다는 건데 그럼 추가 해야지.
 			///3. 없거나 있더라도 사용 중이면 추가.
 			auto sdbo = make_shared<KDatabaseOdbc>(dsn);
+			sdbo->_sdb->OpenEx(dsn.c_str());
 			pldb->push_back(sdbo);
 			sdbo->_tick = tick;
 			rsdb = sdbo->_sdb;
@@ -1684,4 +1717,13 @@ SHP<KDatabase> KDatabase::getDbConnected(wstring dsn, int sec)
 	}
 	//KTrace(L"getDbConnected: %d using: %d (%s)\r\n", ndb, ndbUsing, dsn.c_str());
 	return rsdb;
+}
+
+void KDatabase::OpenOdbcSetting()
+{
+	WCHAR my_documents[MAX_PATH]{0,};
+	::GetSystemDirectory(my_documents, MAX_PATH);//위랑 결과가 같다.
+	CStringW flPrj = my_documents;
+	flPrj += L"\\odbcad32.exe";
+	::ShellExecute(0, 0, flPrj, 0, 0, SW_SHOW);
 }

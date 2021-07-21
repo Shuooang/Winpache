@@ -166,6 +166,9 @@ namespace Kw
 		PWS LenS(PAS k, CStringW& sv);
 		BOOL SameS(PAS k, PWS strk);
 		BOOL BeginS(PAS k, PWS str);
+		BOOL Find(PAS k, PWS str);
+		BOOL Append(PAS k, PWS str);
+		BOOL OrStr(PAS k, PWS str, char tok = '|');
 		CTime T(PAS k);
 
 		void Copy(JObj& src, PAS tarF, PAS srcF = nullptr);

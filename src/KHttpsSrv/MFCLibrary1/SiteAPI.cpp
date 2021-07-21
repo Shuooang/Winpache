@@ -11,64 +11,72 @@ extern "C" {
 
 
 
-int DEXPORT ExSelectUser(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
+#ifdef _DEBUG
+/// <summary>
+/// select test table.
+/// </summary>
+/// <param name="_db">database object</param>
+/// <param name="jpa">request json object</param>
+/// <param name="jrs">response json object</param>
+/// <param name="iOp">option</param>
+/// <returns>0 if sucess. + value logical error. - value is critical eror.</returns>
+int DEXPORT ExSiteSample1(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
+
 	KRecordset rs(&_db);
-		
-	if(!jpa.Has("limit"))
-		throw_BadRequest(-1, "Field 'limit' is missing.");
-	int limit = jpa.I("limit");	//			limit = 10;
-		
-	CString swh;
-	if(jpa.Has("where"))
-		swh.Format(L"where %s ", jpa.S("where"));
-
-	CString sql;
-	sql.Format(L"select * from tuser %s limit %d", swh, limit);
-
-	BOOL bOpen = rs.OpenSelectFetch(sql);//이때 아직 연결 전이면 ODBC선택 창이 발 뜬다.
-
-	rs.MakeRecsetToJson(jrs, L"tuser");
-	jrs("Return") = L"OK";
-	return 0;
-}
-
-int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
-{
-	AFX_MANAGE_STATE(AfxGetStaticModuleState());
-	KRecordset rs(&_db);
-
-	// 수동으로 필두값을 검사 한다.
-	if(!jpa.Has("limit"))// http 400번 오류와 -1 리턴값과 문자열을 동시에 보낸다.
-		throw_BadRequest(-1, "Field 'limit' is missing.");
-
-	/// Quat 객체를 사용 하여 필드체크와 문자열인 경우 '...' 자동으로 따옴표도 붙는다.
 	Quat qs;
-	// 자동으로 필드 검사 한다. 
-	qs.FieldNum(jpa, "limit", TRUE, FALSE);//TRUE:필수, FALSE:''없이
-	// 필수를 TRUE로 했는데, 값이 없으면 자동으로 throw 되어 response 된다.
 
-	CString swh;
-	if(jpa.Has("where"))
-		swh.Format(L"where %s ", jpa.S("where"));
-	qs.InsideSQL("where", swh);// 빈값이라도 일단 넣어줘야 한다.
-	//HeidiSQL과 호환을 위해 \n\ 앞에 '--'를 넣는다.
-	qs.SetSQL(L"SELECT -- \n\
-* from tuser @where limit @limit");
-
+	qs.SetSQL(L"SELECT * from testtable limit 100");
 	BOOL bOpen = rs.OpenSelectFetch(qs);//이때 아직 연결 전이면 ODBC선택 창이 발 뜬다.
+	rs.MakeRecsetToJson(jrs, L"testtable");
 
-	rs.MakeRecsetToJson(jrs, L"tuser");
 	jrs("Return") = L"OK";
 	return 0;
 }
+/*
+
+{"func":"ExSiteSample1", "params": {}}
+
+{
+  "response":{
+	"Return":"OK",
+	"testtable":[
+	  {
+		"fName":"Jason",
+		"fNumber":1,
+		"fTel":"01112345678"
+	  },
+	  {
+		"fName":"Tom",
+		"fNumber":2,
+		"fTel":"01145457878"
+	  }
+	]
+  },
+  "return":0
+}
+*/
+#endif // _DEBUG
 
 
 
 
 
 
+
+
+
+/* gagage
+	static int s_i = 0;
+	s_i++;
+	SHP<KRecordset> srs = make_shared<KRecordset>(&_db);
+	while(!srs->m_hstmt)
+		srs = make_shared<KRecordset>(&_db);
+	KRecordset& rs = *srs;
+	if(rs.m_hstmt == SQL_NULL_HSTMT)
+		TRACE("%2d. KRecordset.m_hstmt is %s\n", s_i, rs.m_hstmt == NULL ? "NULL" : "OK");
+*/
 
 
 
