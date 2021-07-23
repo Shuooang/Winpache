@@ -1,6 +1,5 @@
 # A simplest and high-performance Web Application Server.
 <img align="center" src="rsc/Logo-Winpache HTTP2.png" width="640">
-Visual C++ MFC development.
 
 ## Download
 * [MSI Download : ReleaseWinpache.zip](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
