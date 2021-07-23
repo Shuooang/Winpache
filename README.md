@@ -11,12 +11,17 @@ Visual C++ MFC development.
 <img align="center" src="rsc/20210706_100443.png" width="640">
 
 ## Start `Winpache` Server
-* Any Windows-based web server. (Windows 10, Windows Server, etc)
-* A Simple fixed document website is possible.
-* A DLL project for the site-specific API.
+* Setup in 10 minutes for homepage.
+* Setup in 20 minutes for API.
+
+* Windows-based web server. (Windows 10, Windows Server, etc)
+* VC++ DLL project for the API.
+
+* Simplest server.
+* Minimum setting.
+* Fastest Server.
+* Monitorable Windows Server.
 * HTTPS SSL capable.
-* Using data connection pools for multiple threads.
-* HTTP Project Visual C++ MFC.
 <img align="center" src="rsc/server_client_get_post_api.gif" width="1024">
 
 ### Start for simple a `Web Server`(WS)
