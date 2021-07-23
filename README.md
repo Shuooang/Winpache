@@ -1,5 +1,12 @@
 # A simplest and high-performance Web Application Server.
 <img align="center" src="rsc/Logo-Winpache HTTP2.png" width="640">
+## `Winpache` features
+* Setup in 10 minutes for homepage.
+* [Setup in 20 minutes for API.(Youtube)](https://youtu.be/fTFP-VLUSBY)
+* Simplest server.
+* Minimum setting.
+* Fastest Server.
+
 
 ## Download
 * [MSI Download : ReleaseWinpache.zip](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
@@ -10,13 +17,6 @@
 <img align="center" src="rsc/20210706_100443.png" width="640">
 
 ## Start `Winpache` Server
-* Setup in 10 minutes for homepage.
-* [Setup in 20 minutes for API.(Youtube)](https://youtu.be/fTFP-VLUSBY)
-* Simplest server.
-* Minimum setting.
-* Fastest Server.
-
-## `Winpache` features
 * Windows-based web server. (Windows 10, Windows Server, etc)
 * VC++ DLL project for the API.
 * Monitorable Windows Server.
