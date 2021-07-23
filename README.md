@@ -14,8 +14,10 @@
 * Extract the zip file.
 * Run `WinpacheSetup.msi`
 
+
 # Start `Winpache Project` manager
 <img align="center" src="rsc/20210706_100443.png" width="640">
+
 
 ## Start `Winpache` Server
 * Windows-based web server. (Windows 10, Windows Server, etc)
@@ -25,11 +27,13 @@
 * Using `MariaDB`.
 <img align="center" src="rsc/server_client_get_post_api.gif" width="1024">
 
+
 ### Start for simple a `Web Server`(WS)
 1. Run the `Start Winpache Project` app that is `StartWinpache.exe`
 2. Click the `Start Winpache Server` button, then `Winpache` app will run.
 3. In `Winpache`, set the location of homepage files and etc configuration.
 4. Start the server, then a simple web server will run.
+
 
 ## To setup the `Main DB` for `Winpache`
 * Select the `Database` category in the `ribbon menu`, and complete the `Main DB` setting of `Winpache` by executing up to step 5 in sequence.
