@@ -7,7 +7,7 @@ Visual C++ MFC development.
 * Extract the zip file.
 * Run `WinpacheSetup.msi`
 
-# Start `Winpache
+# Start `Winpache`
 <img align="center" src="rsc/20210706_100443.png" width="640">
 
 ## Start `Winpache` Server
@@ -16,6 +16,8 @@ Visual C++ MFC development.
 * Simplest server.
 * Minimum setting.
 * Fastest Server.
+
+## `Winpache` features
 * Windows-based web server. (Windows 10, Windows Server, etc)
 * VC++ DLL project for the API.
 * Monitorable Windows Server.
