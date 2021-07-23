@@ -7,7 +7,7 @@ Visual C++ MFC development.
 * Extract the zip file.
 * Run `WinpacheSetup.msi`
 
-# Start `Winpache` Project manager
+# Start `Winpache Project` manager
 <img align="center" src="rsc/20210706_100443.png" width="640">
 
 ## Start `Winpache` Server
