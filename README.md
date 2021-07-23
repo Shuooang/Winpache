@@ -1,4 +1,4 @@
-# A high-performance Web Application Server.
+# A simplest and high-performance Web Application Server.
 <img align="center" src="rsc/Logo-Winpache HTTP2.png" width="640">
 Visual C++ MFC development.
 
