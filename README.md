@@ -2,7 +2,7 @@
 <img align="center" src="rsc/Logo-Winpache HTTP2.png" width="640">
 
 ## `Winpache` features
-* Setup in 10 minutes for homepage.
+* [Setup in 10 minutes for homepage. - Youtube](https://youtu.be/gVHs6kF46bI)
 * [Setup in 20 minutes for API - Youtube](https://youtu.be/fTFP-VLUSBY)
 * Simplest server.
 * Minimum setting.
