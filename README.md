@@ -24,7 +24,7 @@
 * Windows-based web server. (Windows 10, Windows Server, etc)
 * VC++ DLL project for the API.
 * Monitorable Windows Server.
-* HTTPS SSL capable.
+* HTTPS SSL capable. (Need .pem key file and .crt file)
 * Using `MariaDB`.
 <img align="center" src="rsc/server_client_get_post_api.gif" width="1024">
 
