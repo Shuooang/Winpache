@@ -13,6 +13,7 @@
 * [MSI Download : ReleaseWinpache.zip](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
 * Extract the zip file.
 * Run `WinpacheSetup.msi`
+* VS Project(.sln) for JSON API will be installed with template source.
 
 
 # Start `Winpache Project` manager
