@@ -3,7 +3,7 @@
 
 ## `Winpache` features
 * [Setup in 10 minutes for homepage. - Youtube](https://youtu.be/gVHs6kF46bI)
-* [Setup in 20 minutes for API - Youtube](https://youtu.be/fTFP-VLUSBY)
+* [Setup in 20 minutes for JSON API - Youtube](https://youtu.be/fTFP-VLUSBY)
 * Simplest server.
 * Minimum setting. (10 items. : port, local dir, etc...)
 * Fastest Server. (Server cache, clustering coming soon.)
