@@ -1,37 +1,46 @@
-# A high-performance Web Application Server.
+# A simplest and high-performance Web Application Server.
 <img align="center" src="rsc/Logo-Winpache HTTP2.png" width="640">
-Visual C++ MFC development.
 
-## Download
-* [MSI Download : ReleaseWinpache.zip](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
-* Extract the zip file.
-* Run `WinpacheSetup.msi`
+## `Winpache` features
+* [Setup in 10 minutes for homepage. (Youtube)](https://youtu.be/gVHs6kF46bI)
+* [Setup in 20 minutes for `JSON API`. (Youtube)](https://youtu.be/fTFP-VLUSBY)
+* Simplest HTTP server. (Window visible)
+* Minimum setting. (10 items. : port, local dir, etc...)
+* Fastest HTTP Server. (Server cache, clustering coming soon.)
 
-# Start `Winpache
+
+## Download and Install
+* [MSI Download : `ReleaseWinpache.zip`](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
+* Extract the zip file and Run `WinpacheSetup.msi`
+* VS Project(.sln) for JSON API will be installed with template source.
+* A HTTP client APP `Wincatcher` for test will be installed.
+
+
+# Start `Winpache Project` manager
 <img align="center" src="rsc/20210706_100443.png" width="640">
 
+
 ## Start `Winpache` Server
-* Any Windows-based web server. (Windows 10, Windows Server, etc)
-* A Simple fixed document website is possible.
-* A DLL project for the site-specific API.
-* HTTPS SSL capable.
-* Using data connection pools for multiple threads.
-* HTTP Project Visual C++ MFC.
+* Windows-based web server. (Windows 10, Windows Server, etc)
+* VC++ DLL project for the API.
+* Monitorable Windows Server.
+* HTTPS SSL capable. (Need .pem key file and .crt file)
+* Using `MariaDB`.
 <img align="center" src="rsc/server_client_get_post_api.gif" width="1024">
 
+
 ### Start for simple a `Web Server`(WS)
-1. Run the "Start Winpache Project" app that is `StartWinpache.exe`
+1. Run the `Start Winpache Project` app that is `StartWinpache.exe`
 2. Click the `Start Winpache Server` button, then `Winpache` app will run.
 3. In `Winpache`, set the location of homepage files and etc configuration.
 4. Start the server, then a simple web server will run.
+
 
 ## To setup the `Main DB` for `Winpache`
 * Select the `Database` category in the `ribbon menu`, and complete the `Main DB` setting of `Winpache` by executing up to step 5 in sequence.
 * 1. Install the `MariaDB`.
 * 2. Install the `ODBC` for `MariaDB`.
-* 3. Init ODBC for `Main DB`.
-* 4. Create main `database`.
-* 5. Create main talbles and sample tables.
+* 3. Init ODBC for `Main DB`, Create main `database`, Create main talbles and sample tables.
 * Once the `main DB` is set, requests, queries and errors that occur in the `Winpache` server are recorded in the DB.
 * The `Main DB` is locally installed as `MariaDB` and accessed by `ODBC` settings, so you can change the `Main DB` by editing the settings.
 * The `Site DB` can be the same as the `Main DB`, and can be separated according to `ODBC` settings.
