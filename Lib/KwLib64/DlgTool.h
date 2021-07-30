@@ -1,14 +1,16 @@
 #pragma once
 
-#include "ktypedef.h"
-#include "stdecl.h"
-#include "Lock.h"
-#include "Kw_tool.h"
-#include <functional>
 #include "afxdialogex.h"
 
 #include "afxmdiframewndex.h"
 #include "afxdockablepane.h"
+
+#include <functional>
+#include "ktypedef.h"
+#include "stdecl.h"
+#include "Lock.h"
+#include "Kw_tool.h"
+
 // C:\Program Files(x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30037\
 // atlmfc\include\afxdockablepane.h
 extern CKTrace std_trace;
@@ -89,23 +91,92 @@ KwBeginInvoke(this, [&]()-> void {	this->UpdateData(0);	});//?beginInvoke 4.2
 #endif // _Use_Sample_
 
 /// 2020-10-12
-#define KDDX_Text(field)  DDX_Text( pDX, IDC##field, doc->field)
+/// auto* doc = 뭔가 있어야 한다.
+// #define KDDX_Text(field)  DDX_Text( pDX, IDC##field, doc->field)
+// #define KDDX_CBBox(field) DDX_CBString(pDX, IDC##field, doc->field)
+// #define KDDX_Radio(field) DDX_Radio(pDX, IDC##field, doc->field)
+// #define KDDX_Check(field) DDX_Check(pDX, IDC##field, doc->field)
 
+///DDX_Check(CDataExchange* pDX, int nIDC, int& value);
+/// 변수명이 반드시 _value처럼 앞에 '_'가 있어야 한다.
+#define KDDX_Text(field)  DDX_Text( pDX, IDC##field, doc->field)
 #define KDDX_CBBox(field) DDX_CBString(pDX, IDC##field, doc->field)
 #define KDDX_Radio(field) DDX_Radio(pDX, IDC##field, doc->field)
 #define KDDX_Check(field) DDX_Check(pDX, IDC##field, doc->field)
-//DDX_Check(CDataExchange* pDX, int nIDC, int& value);
 
 #define KDDX_TextA(field)  { if(pDX->m_bSaveAndValidate) { CString v; \
     DDX_Text(pDX, IDC##field, v); doc->field = CStringA(v);} else { \
     CStringW v(doc->field);\
     DDX_Text(pDX, IDC##field, v); }}
 
-#define KDDX_CBBoxA(field) { if(pDX->m_bSaveAndValidate) {\
-    CString v; DDX_CBString(pDX, IDC##field, v); doc->field = CStringA(v);} else { \
+#define KDDX_CBBoxA(field) { if(pDX->m_bSaveAndValidate) { CString v;\
+	DDX_CBString(pDX, IDC##field, v); doc->field = CStringA(v);} else { \
     CStringW v(doc->field);\
     DDX_CBString(pDX, IDC##field, v); }}
 
+
+/// 변수명이 JSON 키 이므로 _value처럼 앞에 '_'가 안 붙을 수 있으므로 IDC_## 이다. IDC## 가 아님.
+/// JObj& jbj = 뭔가 있어야 한다.
+
+#define KDDXJ_IntTok(field, tok) {int v;\
+	if(!pDX->m_bSaveAndValidate) v = jbj.I(#field); \
+	DDX_Text(pDX, IDC##tok##field, v);\
+	if(pDX->m_bSaveAndValidate) jbj(#field) = v;}
+
+#define KDDXJ_TextTok(field, tok) {CString v;\
+	if(!pDX->m_bSaveAndValidate) v = jbj.S(#field); \
+	DDX_Text(pDX, IDC##tok##field, v);\
+	if(pDX->m_bSaveAndValidate) jbj(#field) = v;}
+//#define KDDXJ_TextATok(field, tok) KDDXJ_TextTok(field, tok)
+
+#define KDDXJ_CBBoxTok(field, tok) {CString v;\
+	if(!pDX->m_bSaveAndValidate) v = jbj.S(#field); \
+	DDX_CBString(pDX, IDC##tok##field, v);\
+	if(pDX->m_bSaveAndValidate) jbj(#field) = v;}
+
+#define KDDXJ_RadioTok(field, tok) {int v; \
+	if(!pDX->m_bSaveAndValidate) v = jbj.I(#field); \
+	DDX_Radio(pDX, IDC##tok##field, v); jbj(#field) = v;\
+	if(pDX->m_bSaveAndValidate) jbj(#field) = v;}
+#define KDDXJ_CheckTok(field, tok) {int v; \
+	if(!pDX->m_bSaveAndValidate) v = jbj.I(#field); \
+	DDX_Check(pDX, IDC##tok##field, v); jbj(#field) = v;\
+	if(pDX->m_bSaveAndValidate) jbj(#field) = v;}
+
+
+#define KDDXJ_Int(field) KDDXJ_IntTok(field, _)
+#define KDDXJ_Text(field) KDDXJ_TextTok(field, _)
+//#define KDDXJ_TextA(field) KDDXJ_Text(field) // 같다. 아니 JObj내부에 sa로 저장 하지 않는다.
+#define KDDXJ_Radio(field) KDDXJ_RadioTok(field, _)
+#define KDDXJ_Check(field) KDDXJ_CheckTok(field, _)
+#define KDDXJ_CBBox(field) KDDXJ_CBBoxTok(field, _)
+
+#ifdef _DEBUGxxx
+#define KDDXJ_Check(field) {int v = -1;\
+	if(!pDX->m_bSaveAndValidate) v = jbj.I(#field); \
+	DDX_Check(pDX, IDC_##field, v); \
+	if(pDX->m_bSaveAndValidate) jbj(#field) = v;}
+
+#define KDDXJ_Int(field) {int v;\
+	if(!pDX->m_bSaveAndValidate) v = jbj.I(#field); \
+	DDX_Text(pDX, IDC_##field, v);\
+	if(pDX->m_bSaveAndValidate) jbj(#field) = v;}
+
+#define KDDXJ_Text(field) {CString v;\
+	if(!pDX->m_bSaveAndValidate) v = jbj.S(#field); \
+	DDX_Text(pDX, IDC_##field, v);\
+	if(pDX->m_bSaveAndValidate) jbj(#field) = v;}
+#define KDDXJ_TextA(field) KDDXJ_Text1(field)
+
+#define KDDXJ_Radio(field) {int v; \
+	if(!pDX->m_bSaveAndValidate) v = jbj.I(#field); \
+	DDX_Radio(pDX, IDC_##field, v); jbj(#field) = v;\
+	if(pDX->m_bSaveAndValidate) jbj(#field) = v;}
+#define KDDXJ_Check(field) {int v; \
+	if(!pDX->m_bSaveAndValidate) v = jbj.I(#field); \
+	DDX_Check(pDX, IDC_##field, v); jbj(#field) = v;\
+	if(pDX->m_bSaveAndValidate) jbj(#field) = v;}
+#endif // _DEBUGxxx
 
 
 #define WM_USER_INVOKE (WM_USER+0x0100)

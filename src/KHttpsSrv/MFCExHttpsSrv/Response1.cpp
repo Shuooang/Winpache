@@ -210,7 +210,7 @@ int CResponse1::ResponseForPost(KSessionInfo& sinfo, SHP<KBinData> body, strings
 	KwUTF8ToWchar(body.get()->m_p, requ);
 	string url = sinfo._url;
 	JObj jres;
-	JSONValue* jdoc = NULL;
+	//JSONValue* jdoc = NULL;
 	CString uuidW;
 	DWORD thID = ::GetCurrentThreadId();//이거가 세션 threadID
 	CStringW func;

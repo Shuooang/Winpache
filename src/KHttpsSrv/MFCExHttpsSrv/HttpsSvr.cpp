@@ -283,7 +283,7 @@ void HTTPSCacheServer::onHandshaked(shared_ptr<SSLSession>& session)
 
 void HTTPSCacheServer::onDisconnected(shared_ptr<SSLSession>& session) 
 {
-	std_coutD << "HTTPCacheServer::onHandshaked " << std_endl;
+	std_coutD << "HTTPCacheServer::onDisconnected " << std_endl;
 	if(_fncOnDisconnected.get())
 		(*_fncOnDisconnected)((HTTPSCacheSession&)*session);
 }
@@ -328,6 +328,31 @@ void HTTPSCacheSession::onReceivedRequest(const HTTPRequest& request)
 	HTTPSCacheServer* svr2 = dynamic_cast<HTTPSCacheServer*>(psvr);
 	HttpCmn::onReceivedRequest(svr2, this, (HTTPRequest&)request);
 }
+#ifdef _DEBUGxxx
+-_sinfo	{_ssid="982ca166-ec98-11eb-8dbb-001a7dda7113" _ip="127.0.0.1" _method="POST" ...}	KSessionInfo
++	_ssid	"982ca166-ec98-11eb-8dbb-001a7dda7113"
++	_ip	"127.0.0.1"
++	_method	"POST"
++	_url	"/api?func=ExSelectUserQS&srl=2"
++	_sparams	"func=ExSelectUserQS&srl=2"
++	_dir	"/api"
++	_stCached	""
+	_status	200	int
+-	_urlparam	{ size=2 }	KStrMap
++		["func"]	"ExSelectUserQS"
++		["srl"]	"2"
+-	_headers	{ size=10 }	KStrMap
++		["Accept"]	"*/*"
++		["Accept-Encoding"]	"gzip, deflate"
++		["Accept-Language"]	"ko"
++		["Cache-Control"]	"no-cache"
++		["Connection"]	"Keep-Alive"
++		["Content-Length"]	"115"
++		["Content-Type"]	"application/json"
++		["Host"]	"localhost"
++		["UA-CPU"]	"AMD64"
++		["User-Agent"]	"Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.2; Win64; x64; Trident/7.0; .NET4.0C; .NET4.0E; .NET CLR 2.0.50727; .NET CLR 3.0.30729; .NET CLR 3.5.30729)"
+#endif // _DEBUGxxx
 
 
 //?kdw virtual이 아닌걸 virtual로 돌려 override한다.
@@ -357,7 +382,8 @@ void HTTPSCacheSession::onSentKw(uint8_t* data, size_t szAll) {
 	std_coutD << "HTTPSCacheSession::onSentKw " << szAll << std_endl;
 	if(_fncOnSentKw.get())
 		(*_fncOnSentKw)(this, data, szAll);
-	//_sinfo.Clear(); no no 여기서 해버리니, onSent Lambda에서 안보이지. 여러번 불리는데, 다 불릴때 까지 나둬야지.
+	//_sinfo.Clear(); no no 여기서 해버리니, onSent Lambda에서 안보이지. 
+	/// 여러번 불리는데, 다 불릴때 까지 나둬야지.
 }
 
 void HTTPSCacheSession::onReceivedRequestError(const HTTPRequest& request, const string& error)

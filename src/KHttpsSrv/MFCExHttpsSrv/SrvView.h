@@ -21,6 +21,8 @@
 #include "HttpsSvr.h"
 #include "HttpSvr.h"
 #include "CmnView.h"
+#include "KwLib64/stdecl.h"
+#include "KwLib64/HTTPS/HttpClient.h"
 
 class SrvDoc;
 
@@ -38,6 +40,7 @@ public:
 #endif
 	CDockablePane* _output{ nullptr };
 
+	SHP<CHttpClient> _httpCl;
 	// Attributes
 public:
 	SrvDoc* GetDocument() const;
@@ -82,6 +85,7 @@ public:
 	int CallbackOnReceived(const void* buffer, size_t size) override;
 	int CallbackOnReceivedRequest(KSessionInfo& inf, int vuid, SHP<KBinData> shbin, HTTPResponse& res) override;
 	int CallbackOnSent(KSessionInfo& inf, int vuid, size_t sent, size_t pending) override;
+	int CallbackCluster(KSessionInfo& inf, shared_ptr<KBinData> shbin) override;
 
 	
 	void RecoverServer();
@@ -127,6 +131,7 @@ public://리본메뉴에서 부른다.
 	afx_msg void OnUpdateSiteRestart(CCmdUI* pCmdUI);
 	afx_msg void OnConnectSiteDB();
 	afx_msg void OnUpdateConnectSiteDB(CCmdUI* pCmdUI);
+	afx_msg void OnBnClickedParallel();
 };
 
 #ifndef _DEBUG  // debug version in SrvView.cpp

@@ -41,6 +41,7 @@ public:
 	CString GetFilePath();
 	void SaveData();
 
+	CKCriticalSection _csAppDoc;
 	ShJObj _json{make_shared<JObj>()};
 
 	void InitDoc();
@@ -139,6 +140,11 @@ public:
 	* */
 };
 
+
+/// <summary>
+/// AfxGetApp()는 background에서 부르면 죽는다. 
+/// </summary>
+/// <returns>theApp를 리턴</returns>
 CWinAppEx* GetMainApp();
 
 class CMFCExHttpsSrvApp 

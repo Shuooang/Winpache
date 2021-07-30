@@ -285,7 +285,7 @@ void HTTPCacheServer::onConnected(shared_ptr<TCPSession>& session)
 /// CMyHttps의 것과 동일
 void HTTPCacheServer::onDisconnected(shared_ptr<TCPSession>& session)
 {
-	std_coutD << "HTTPCacheServer::onHandshaked " << std_endl;
+	std_coutD << "HTTPCacheServer::onDisconnected " << std_endl;
 	if(_fncOnDisconnected.get())
 		(*_fncOnDisconnected.get())(*(HTTPCacheSession*)session.get());
 }
@@ -333,7 +333,8 @@ void HTTPCacheSession::onSentKw(uint8_t* data, size_t szAll)
 {
 	if (_fncOnSentKw.get())
 		(*_fncOnSentKw.get())(this, data, szAll);
-	_sinfo.Clear();
+	//_sinfo.Clear(); no no 여기서 해버리니, onSent Lambda에서 안보이지. 
+	/// 여러번 불리는데, 다 불릴때 까지 나둬야지.
 }
 
 void HTTPCacheSession::onReceivedRequestError(const CppServer::HTTP::HTTPRequest& request, const std::string& error)

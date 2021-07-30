@@ -68,9 +68,12 @@ public:
 
 	int InitServer();
 	void SampleServer();
+	int CheckData();
 	void MakeJsonResponse(HTTPResponse& res, JObj& jres);
 
 	void SelectFolder(CStringA& target);
+
+	CString SelectFolder(PWS folderinit);
 
 
 #ifdef xxxxxxxxxxxxxx
@@ -101,6 +104,7 @@ public:
 	virtual int  CallbackOnStopped(HANDLE hev, int vuid);
 	virtual int CallbackOnSent(KSessionInfo& inf, int vuid, size_t sent, size_t pending);
 	virtual int CallbackOnReceived(const void* buffer, size_t size) { return 0;  }
+	virtual int CallbackCluster(KSessionInfo& inf, shared_ptr<KBinData> shbin) { return 0; }
 	
 	virtual int CallbackOnReceivedRequest(KSessionInfo& inf, int vuid, SHP<KBinData> shbin, HTTPResponse& res)
 	{
@@ -142,7 +146,7 @@ int CmnView::StartServerHttpT(TMyserver* https, TSession* pss)
 			return rv;
 		}
 		ASSERT(https->_server);
-		https->_server->getCache()._maxFresh = doc->_CacheLife;//순서 _server ?
+		https->_server->getCache()._maxFresh = doc->_jdata.I("_CacheLife");//순서 _server ?
 	}
 	catch(std::exception&)
 	{
@@ -224,23 +228,6 @@ int CmnView::StartServerHttpT(TMyserver* https, TSession* pss)
 		{
 			//TRACE("AddCallbackOnError: %d, %s, %s\n", e, c, m);
 			// 2021-06-30 13:08:22 	   잘못된 파일 핸들입니다
-/*
-2021-06-30 13:08:22 	Asio service error code: 10009 error category: 'system' 잘못된 파일 핸들입니다
-2021-06-30 13:08:22 	Asio service error code: 10008 error category: 'system' 각 소켓 주소(프로토콜/네트워크 주소/포트)는 하나만 사용할 수 있습니다
-2021-06-30 13:08:05 	HTTPCacheServer::onConnected 
-2021-06-30 12:35:30 	HTTPCacheServer::onHandshaked 
-;
-;
-2021-06-30 09:32:23 	HTTPCacheServer::onHandshaked 
-2021-06-30 09:18:43 	HTTPCacheServer::onHandshaked 
-2021-06-30 09:17:02 	HTTPCacheServer::onConnected 
-2021-06-30 09:16:46 	HTTPCacheServer::onConnected 
-2021-06-30 09:16:08 	HTTPCacheServer::onConnected 
-2021-06-30 09:15:54 	HTTPCacheServer::onStarted 
-2021-06-30 09:15:54 	Server starting...
-2021-06-30 09:15:51 	Asio service starting...Done!
-2021-06-30 09:15:32 	Main Dababase is connected! (DSN: Winpache).
-*/
 			auto ivc = dynamic_cast<KCheckWnd*>(AfxGetApp());
 			bool bVu = !ivc ? false : ivc->ViewFind(vuid);
 			if(bVu)
@@ -401,6 +388,10 @@ int CmnView::StartServerHttpT(TMyserver* https, TSession* pss)
 			}
 #endif // _DEBUG
 			return 0;//2020-10-11 07:37:46 :보낸후 110초 후 끝어 진다.
+		});
+	https->AddCallbackCluster([&](KSessionInfo& info, shared_ptr<KBinData> shbin) -> int 
+		{
+			return CallbackCluster(info, shbin);
 		});
 
 	return rv;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "KwLib64/Dictionary.h"
-#include "KwLib64/JSON/JSON.h"
+//#include "KwLib64/JSON/JSON.h"
 #include "KwLib64/Recordset.h"
 #include "KwLib64/Lock.h"
 

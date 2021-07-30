@@ -114,6 +114,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
+	AUTOLOCK(appd._csAppDoc);
 	auto& jobj = *appd._json;
 	BOOL bFirst = jobj.I("LoadCount") == 0;
 
@@ -247,7 +248,8 @@ void CMainFrame::TimerCheckServers()
 	// 	  2. CheckRecoverServers 에서 시간 죽은지 10분 이내 꺼만 살려서 새로 보낸다.
 	auto app = (CMFCExHttpsSrvApp*)GetMainApp();
 	auto& appd = (app)->_docApp;
-	AUTOLOCK(appd._csRecover);
+	AUTOLOCK(appd._csAppDoc);
+	//AUTOLOCK(appd._csRecover);
 	auto& jobj = *appd._json;
 
 	auto srsv = jobj.O("RunningServers");
@@ -266,7 +268,8 @@ void CMainFrame::CheckRecoverServers()
 
 	auto app = (CMFCExHttpsSrvApp*)GetMainApp();
 	auto& appd = (app)->_docApp;
-	AUTOLOCK(appd._csRecover);
+	AUTOLOCK(appd._csAppDoc);
+	//AUTOLOCK(appd._csRecover);
 
 	auto& jobj = *appd._json;
 	auto srsv = jobj.O("RunningServers");
@@ -318,8 +321,9 @@ void CMainFrame::CheckRecoverServers()
 void CMainFrame::ConnectMainDB()
 {
 	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
+	AUTOLOCK(appd._csAppDoc);
 	//auto& jobj = *appd._json;
-	auto& jOdbc = *appd._json->O("ODBC");
+	auto& jOdbc = *appd._json->OMake("ODBC");
 
 	int LoadCount = appd._json->I("LoadCount") + 1;
 	(*appd._json)("LoadCount") = LoadCount;
@@ -580,6 +584,7 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 BOOL CMainFrame::CreateDockingWindows()
 {
 	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
+	AUTOLOCK(appd._csAppDoc);
 	auto& jobj = *appd._json;
 	bool bFirst = jobj.I("LoadCount") == 0;
 
@@ -1119,9 +1124,19 @@ void CMainFrame::OnRunClient()
 
 }
 
+
 /// Open the Site Project
 void CMainFrame::OnSiteProject()
 {
+	auto cvu = dynamic_cast<CmnView*>(GetActiveCmnView());
+	if(cvu)
+	{
+		auto doc = cvu->GetDocument();
+		if(doc->FreeDllLibrary() == 0)
+		{
+		}
+	}
+
 	WCHAR my_documents[MAX_PATH];//CSIDL_PERSONAL
 	HRESULT result = SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, my_documents);
 	CStringW flPrj = my_documents;
@@ -1199,7 +1214,8 @@ int CMainFrame::InitOdbc(int step)
 // 	DlgOdbcSetting dlg;
 // 	dlg.DoModal();
 	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
-	auto& jOdbc = *appd._json->O("ODBC");
+	AUTOLOCK(appd._csAppDoc);
+	auto& jOdbc = *appd._json->OMake("ODBC");
 
 	try
 	{
@@ -1594,6 +1610,7 @@ void CMainFrame::OnDownloadMariaDB()
 		CaptionMessage(L"Navigating to download site for MariaDB!");
 		
 		auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
+		AUTOLOCK(appd._csAppDoc);
 		auto& jobj = *appd._json;
 		
 		jobj("StatDB") = "installDB";

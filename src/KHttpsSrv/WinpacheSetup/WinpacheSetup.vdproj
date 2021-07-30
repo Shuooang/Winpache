@@ -81,12 +81,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_14A6F4DB74BB49BB8ED8317995C2583B"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_18129ECB894342BC97F690801052A815"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -147,13 +141,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_267EB8C603E641F289BE4AF6CF527AED"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_2C41766435094C38899E2CCDB815D408"
+        "MsmKey" = "8:_2B29C893ABDB4E199B384E74AAC6AF2B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -172,6 +160,12 @@
         "Entry"
         {
         "MsmKey" = "8:_38586A220B0D49928EC8FC0E32C2E22A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3E8877C4F28F4187BC87D6C7B83DCCBE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -202,12 +196,6 @@
         "Entry"
         {
         "MsmKey" = "8:_441A0A4FDC114FD7A403BBE775DB75F8"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_457B5E3E0EF649BEA85A27FA562C6ABF"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -297,13 +285,13 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_5BF92AD6342E4C4FA4B96D4B4E1A0CB1"
+        "MsmKey" = "8:_5BEA30BE9A4B4DE6A2BDDECF8C4AE4D0"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_617F370DFE764B7C8C49E8E25290018E"
+        "MsmKey" = "8:_5BF92AD6342E4C4FA4B96D4B4E1A0CB1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -316,12 +304,6 @@
         "Entry"
         {
         "MsmKey" = "8:_6665349DDBE643348B422D0D9E4404CB"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_67255A0027F24D829988D5C52D88D980"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -483,12 +465,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_8872F8A7CA08436CA814C027E2BC48F8"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_88A8D54C8A7947849420009B9CF3096E"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -591,12 +567,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_9E9BD97748014605A6F93CEFB3CA7EF7"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_A23C2543CCE345F68B7527224937C3AD"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -652,12 +622,6 @@
         "Entry"
         {
         "MsmKey" = "8:_ACDAE8E9AC214AAFA9B60B9A237EE599"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_B1E150E1B14046A7951E519F2447D3F9"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -735,12 +699,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_CFED46F87FBC479DABD3FEBFD491E8CD"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_CFF194C37E3A45A5B3F94F114134A42F"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -760,12 +718,6 @@
         "Entry"
         {
         "MsmKey" = "8:_D722AA0688214FD48B07869DD09E2B7C"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_DA83B417763049E39D298BC00BDBFE0B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -837,12 +789,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_F446B0F8D20F4E4ABCCE516E0F8BCC52"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_F477B5CA4CF04FE69F133F5642B501ED"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -855,7 +801,7 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_FEBE7FF6B252499CA59CDAAC923109A1"
+        "MsmKey" = "8:_FD0F9D20098642D3BFE7EE8615554564"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1174,26 +1120,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_14A6F4DB74BB49BB8ED8317995C2583B"
-            {
-            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\Downloads - MariaDB.url"
-            "TargetName" = "8:Downloads - MariaDB.url"
-            "Tag" = "8:"
-            "Folder" = "8:_CFCDAC76D829408CB6031FF3DAD84AA3"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_18129ECB894342BC97F690801052A815"
             {
             "SourcePath" = "8:..\\..\\..\\Lib\\KwLib64\\HTTPS\\HttpClient.h"
@@ -1394,30 +1320,10 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_267EB8C603E641F289BE4AF6CF527AED"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2B29C893ABDB4E199B384E74AAC6AF2B"
             {
-            "SourcePath" = "8:..\\..\\..\\bin\\x64\\Release\\MariaDB Connector-ODBC - MariaDB.url"
-            "TargetName" = "8:MariaDB Connector-ODBC - MariaDB.url"
-            "Tag" = "8:"
-            "Folder" = "8:_2AB767406D40484F8EA87ABE596F5DFF"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2C41766435094C38899E2CCDB815D408"
-            {
-            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\Visual Studio Download.url"
-            "TargetName" = "8:Visual Studio Download.url"
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\Link\\(17) Most Popular Programming Languages (1965-2021) - YouTube.url"
+            "TargetName" = "8:(17) Most Popular Programming Languages (1965-2021) - YouTube.url"
             "Tag" = "8:"
             "Folder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
             "Condition" = "8:"
@@ -1480,6 +1386,26 @@
             "TargetName" = "8:tchtool.h"
             "Tag" = "8:"
             "Folder" = "8:_64CE156ABE94423CA9CA116C2CA78014"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3E8877C4F28F4187BC87D6C7B83DCCBE"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\Link\\Visual Studio Download.url"
+            "TargetName" = "8:Visual Studio Download.url"
+            "Tag" = "8:"
+            "Folder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1587,26 +1513,6 @@
             "Hidden" = "11:FALSE"
             "System" = "11:FALSE"
             "Permanent" = "11:TRUE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_457B5E3E0EF649BEA85A27FA562C6ABF"
-            {
-            "SourcePath" = "8:..\\..\\..\\bin\\x64\\Release\\Visual Studio Download.url"
-            "TargetName" = "8:Visual Studio Download.url"
-            "Tag" = "8:"
-            "Folder" = "8:_2AB767406D40484F8EA87ABE596F5DFF"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
@@ -1894,12 +1800,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5BF92AD6342E4C4FA4B96D4B4E1A0CB1"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5BEA30BE9A4B4DE6A2BDDECF8C4AE4D0"
             {
-            "SourcePath" = "8:..\\..\\..\\Lib\\KwLib64\\ktypedef.h"
-            "TargetName" = "8:ktypedef.h"
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\Link\\MariaDB Connector-ODBC - MariaDB.url"
+            "TargetName" = "8:MariaDB Connector-ODBC - MariaDB.url"
             "Tag" = "8:"
-            "Folder" = "8:_64CE156ABE94423CA9CA116C2CA78014"
+            "Folder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1914,12 +1820,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_617F370DFE764B7C8C49E8E25290018E"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5BF92AD6342E4C4FA4B96D4B4E1A0CB1"
             {
-            "SourcePath" = "8:..\\..\\..\\Lib\\KwLib64\\JSON\\JSONValue.h"
-            "TargetName" = "8:JSONValue.h"
+            "SourcePath" = "8:..\\..\\..\\Lib\\KwLib64\\ktypedef.h"
+            "TargetName" = "8:ktypedef.h"
             "Tag" = "8:"
-            "Folder" = "8:_86D3B8676F4047319D70BFB97C67F93A"
+            "Folder" = "8:_64CE156ABE94423CA9CA116C2CA78014"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1960,26 +1866,6 @@
             "TargetName" = "8:KTemple.h"
             "Tag" = "8:"
             "Folder" = "8:_64CE156ABE94423CA9CA116C2CA78014"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_67255A0027F24D829988D5C52D88D980"
-            {
-            "SourcePath" = "8:..\\..\\..\\Lib\\KwLib64\\JSON\\JSON.h"
-            "TargetName" = "8:JSON.h"
-            "Tag" = "8:"
-            "Folder" = "8:_86D3B8676F4047319D70BFB97C67F93A"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2514,26 +2400,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8872F8A7CA08436CA814C027E2BC48F8"
-            {
-            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\Downloads - MariaDB.url"
-            "TargetName" = "8:Downloads - MariaDB.url"
-            "Tag" = "8:"
-            "Folder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_88A8D54C8A7947849420009B9CF3096E"
             {
             "SourcePath" = "8:..\\MFCLibrary1\\MFCLibrary1.vcxproj"
@@ -2874,26 +2740,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9E9BD97748014605A6F93CEFB3CA7EF7"
-            {
-            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\Downloads - MariaDB.url"
-            "TargetName" = "8:Downloads - MariaDB.url"
-            "Tag" = "8:"
-            "Folder" = "8:_EA55028DB26E49E2A27CE36F104CA69D"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:TRUE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_A23C2543CCE345F68B7527224937C3AD"
             {
             "SourcePath" = "8:..\\..\\..\\bin\\x64\\Release\\Winpache.exe"
@@ -3078,26 +2924,6 @@
             {
             "SourcePath" = "8:..\\..\\..\\bin\\x64\\Release\\Winpache.exe"
             "TargetName" = "8:Winpache.exe"
-            "Tag" = "8:"
-            "Folder" = "8:_2AB767406D40484F8EA87ABE596F5DFF"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B1E150E1B14046A7951E519F2447D3F9"
-            {
-            "SourcePath" = "8:..\\..\\..\\bin\\x64\\Release\\Downloads - MariaDB.url"
-            "TargetName" = "8:Downloads - MariaDB.url"
             "Tag" = "8:"
             "Folder" = "8:_2AB767406D40484F8EA87ABE596F5DFF"
             "Condition" = "8:"
@@ -3354,26 +3180,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CFED46F87FBC479DABD3FEBFD491E8CD"
-            {
-            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\MariaDB Connector-ODBC - MariaDB.url"
-            "TargetName" = "8:MariaDB Connector-ODBC - MariaDB.url"
-            "Tag" = "8:"
-            "Folder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_CFF194C37E3A45A5B3F94F114134A42F"
             {
             "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\tlocation_af_ins.sql"
@@ -3440,26 +3246,6 @@
             "TargetName" = "8:tstillalive.sql"
             "Tag" = "8:"
             "Folder" = "8:_1D921328FB5348AC91402A979A713C34"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_DA83B417763049E39D298BC00BDBFE0B"
-            {
-            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\(17) Most Popular Programming Languages (1965-2021) - YouTube.url"
-            "TargetName" = "8:(17) Most Popular Programming Languages (1965-2021) - YouTube.url"
-            "Tag" = "8:"
-            "Folder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -3694,26 +3480,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F446B0F8D20F4E4ABCCE516E0F8BCC52"
-            {
-            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\MariaDB Connector-ODBC - MariaDB.url"
-            "TargetName" = "8:MariaDB Connector-ODBC - MariaDB.url"
-            "Tag" = "8:"
-            "Folder" = "8:_EA55028DB26E49E2A27CE36F104CA69D"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:TRUE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F477B5CA4CF04FE69F133F5642B501ED"
             {
             "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\DB\\vlocation.sql"
@@ -3754,12 +3520,12 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FEBE7FF6B252499CA59CDAAC923109A1"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FD0F9D20098642D3BFE7EE8615554564"
             {
-            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\MariaDB Connector-ODBC - MariaDB.url"
-            "TargetName" = "8:MariaDB Connector-ODBC - MariaDB.url"
+            "SourcePath" = "8:..\\..\\..\\..\\KHttpData\\Link\\Downloads - MariaDB.url"
+            "TargetName" = "8:Downloads - MariaDB.url"
             "Tag" = "8:"
-            "Folder" = "8:_CFCDAC76D829408CB6031FF3DAD84AA3"
+            "Folder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -3916,17 +3682,6 @@
                                     "Property" = "8:_AE0D2144A3754A5CAC8129D70D90FAC9"
                                         "Folders"
                                         {
-                                            "{9EF0B969-E518-4E46-987F-47570745A589}:_86D3B8676F4047319D70BFB97C67F93A"
-                                            {
-                                            "Name" = "8:JSON"
-                                            "AlwaysCreate" = "11:FALSE"
-                                            "Condition" = "8:"
-                                            "Transitive" = "11:FALSE"
-                                            "Property" = "8:_802363E4824947B7B3F6403C3D87D5D1"
-                                                "Folders"
-                                                {
-                                                }
-                                            }
                                             "{9EF0B969-E518-4E46-987F-47570745A589}:_BE2478DFFAD5447B937388E299F87570"
                                             {
                                             "Name" = "8:HTTPS"
@@ -4094,15 +3849,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Winpache"
-        "ProductCode" = "8:{513FC5F4-7A58-446F-AA51-AF978B72DF96}"
-        "PackageCode" = "8:{1442090F-A17C-4C7C-BF7B-4A1D6E35AAF9}"
+        "ProductCode" = "8:{E8ECE34D-1DB4-41C4-B1EF-72D1B3AAFA80}"
+        "PackageCode" = "8:{F4332060-96FF-4043-AC90-43B1059DFA02}"
         "UpgradeCode" = "8:{12F6DA17-2387-42A9-90C4-63FC13241552}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:FALSE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:21.7.13"
+        "ProductVersion" = "8:21.7.30"
         "Manufacturer" = "8:Keepspeed"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:artisticlectures@gmail.com"
@@ -4243,34 +3998,6 @@
             "Icon" = "8:_35037514C232451E87590CF79249B415"
             "Feature" = "8:"
             }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_61EB3980D31043428B41D5AFDDF574E4"
-            {
-            "Name" = "8:Download - MariaDB ODBC"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_CFED46F87FBC479DABD3FEBFD491E8CD"
-            "Folder" = "8:_19C5C960E2464874A4C7507560711E33"
-            "WorkingFolder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
-            "Icon" = "8:"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_6F94996CB7424B6B893FAF3EB825E957"
-            {
-            "Name" = "8:Download - MariaDB"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_8872F8A7CA08436CA814C027E2BC48F8"
-            "Folder" = "8:_19C5C960E2464874A4C7507560711E33"
-            "WorkingFolder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
-            "Icon" = "8:"
-            "Feature" = "8:"
-            }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_B94EFAD8E05846FAB1E0CF8D34BF11A7"
             {
             "Name" = "8:Winpache Server"
@@ -4285,20 +4012,6 @@
             "Icon" = "8:_A23C2543CCE345F68B7527224937C3AD"
             "Feature" = "8:"
             }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_C6CCA28ADAF2423BA6842DD0918DF41E"
-            {
-            "Name" = "8:Most Popular Programming Languages (1965-2021)"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_DA83B417763049E39D298BC00BDBFE0B"
-            "Folder" = "8:_19C5C960E2464874A4C7507560711E33"
-            "WorkingFolder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
-            "Icon" = "8:"
-            "Feature" = "8:"
-            }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_D3F1A1D7C8C34B3C9019FB6677B5F6B6"
             {
             "Name" = "8:Winpache Start Project"
@@ -4311,20 +4024,6 @@
             "Folder" = "8:_19C5C960E2464874A4C7507560711E33"
             "WorkingFolder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
             "Icon" = "8:_890B2CA20A13410493C69CC78F63EF89"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_D524CC765D074F518F4F00AA6AF0E7FC"
-            {
-            "Name" = "8:Visual Studio Download.url"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_2C41766435094C38899E2CCDB815D408"
-            "Folder" = "8:_19C5C960E2464874A4C7507560711E33"
-            "WorkingFolder" = "8:_8D5947E3D16F49C1A7E312A72F211B5F"
-            "Icon" = "8:"
             "Feature" = "8:"
             }
         }

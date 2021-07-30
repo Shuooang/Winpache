@@ -31,14 +31,15 @@
 #ifndef SHARED_HANDLERS
 #include "MFCExHttpsSrv.h"
 #endif
-#include "CmnDoc.h"
+#include "MainFrm.h"
 
+#include "CmnDoc.h"
 #include "SrvDoc.h"
 #include "SrvView.h"
 #include "DlgSizeAdjust.h"
 #include "DlgSslSetting.h"
+#include "DlgParallel.h"
 #include "OutputWnd.h"
-#include "MainFrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -85,6 +86,7 @@ BEGIN_MESSAGE_MAP(CSrvView, CFormInvokable)
 	
 	ON_COMMAND(ID_ConnectSiteDB, &CSrvView::OnConnectSiteDB)
 	ON_UPDATE_COMMAND_UI(ID_ConnectSiteDB, &CSrvView::OnUpdateConnectSiteDB)
+	ON_BN_CLICKED(IDC_Parallel, &CSrvView::OnBnClickedParallel)
 END_MESSAGE_MAP()
 
 // CSrvView construction/destruction
@@ -93,7 +95,7 @@ CSrvView::CSrvView() noexcept
 	: CFormInvokable(IDD_MFCEXHTTPSSRV_FORM)
 	, CmnView(this)
 {
-	auto ivc = dynamic_cast<KCheckWnd*>(AfxGetApp());
+	auto ivc = dynamic_cast<KCheckWnd*>(GetMainApp());
 	_id = ivc->ViewRegister(this);
 	// 이 뷰가 생성됨을 여기서 app에 등록 한다.
 		
@@ -114,24 +116,29 @@ void CSrvView::DoDataExchange(CDataExchange* pDX)
 	CmnDoc* doc = GetDocument();
 	if(doc == NULL)
 		return;
-	KDDX_Check(_bSSL);
-	KDDX_Check(_bStaticCache);
-	KDDX_Text(_CacheLife);
-	KDDX_TextA(_rootLocal);
-	KDDX_TextA(_defFile);
-	KDDX_TextA(_uploadLocal);
-	KDDX_TextA(_ApiURL);
-	KDDX_Text(_port);
-	KDDX_TextA(_ODBCDSN);
-	KDDX_Text(_note);
+	JObj& jbj = doc->_jdata;
+	AUTOLOCK(doc->_csJdata);
 
-	DDX_Control(pDX, IDC_CacheLife, c_CacheLife);
-	DDX_Control(pDX, IDC_rootLocal, c_rootLocal);
-	DDX_Control(pDX, IDC_defFile, c_defFile);
-	DDX_Control(pDX, IDC_ApiURL, c_ApiURL);
-	DDX_Control(pDX, IDC_port, c_port);
-	DDX_Control(pDX, IDC_ODBCDSN, c_ODBCDSN);
-	DDX_Control(pDX, IDC_note, c_note);
+	KDDXJ_Check(_bSSL);
+	KDDXJ_Check(_bStaticCache);
+	
+	KDDXJ_Int(_CacheLife);
+	KDDXJ_Int(_port);
+
+	KDDXJ_Text(_rootLocal);
+	KDDXJ_Text(_defFile);
+	KDDXJ_Text(_uploadLocal);
+	KDDXJ_Text(_ApiURL);
+	KDDXJ_Text(_ODBCDSN);
+	KDDXJ_Text(_note);
+
+	DDX_Control(pDX, IDC__CacheLife, c_CacheLife);
+	DDX_Control(pDX, IDC__rootLocal, c_rootLocal);
+	DDX_Control(pDX, IDC__defFile, c_defFile);
+	DDX_Control(pDX, IDC__ApiURL, c_ApiURL);
+	DDX_Control(pDX, IDC__port, c_port);
+	DDX_Control(pDX, IDC__ODBCDSN, c_ODBCDSN);
+	DDX_Control(pDX, IDC__note, c_note);
 
 	if(!pDX->m_bSaveAndValidate) //읽어 들이면 UpdateData(); 
 		doc->InitApi();
@@ -175,7 +182,7 @@ void CSrvView::OnInitialUpdate()
 	AddCallbackExtraTrace([&, this, idVu, idOw](string txt) -> void //?ExTrace 1 실제 루틴을 정의 한다.람다
 		{
 			// 람다 불리기전에 받은 vuid가 아직 살아 있는지 확인 한다.
-			auto ivc = dynamic_cast<KCheckWnd*>(AfxGetApp());
+			auto ivc = dynamic_cast<KCheckWnd*>(GetMainApp());
 			bool bVu = !ivc ? false : ivc->ViewFind(idVu);
 			bool bOutput = !ivc ? false : ivc->ViewFind(idOw);
 			if(bOutput && bVu)//?destroy 7 : 여기서 NULL이 나와야 하는데, 0xddddddddddd
@@ -198,6 +205,7 @@ void CSrvView::OnInitialUpdate()
 #endif // __MovedToMainFrame
 
 	SrvDoc* doc = GetDocument();
+	AUTOLOCK(doc->_csJdata);
 	doc->_svr->_api->AddCallbackOutput([&](string msg, int err) -> void
 		{
 			OTrace(msg.c_str());
@@ -208,7 +216,7 @@ void CSrvView::OnInitialUpdate()
 	KwSetListReportStyle(&_cMonitor);
 	KwSetListColumn(&_cMonitor, arLC, nCol); // _countof(GetArListConf()));
 
-	if(doc->_port == 0)
+	if(doc->_jdata.I("_port") == 0)
 	{
 		SampleServer();
 		UpdateData(0);
@@ -253,9 +261,10 @@ void CSrvView::OTrace(PWS txt, int iOp)
 void CSrvView::CallbackOnStarted(int vuid)//?server recover 1 펜딩 서버 저장 OnStarted에서
 {
 	BACKGROUND(1);
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
+	AUTOLOCK(appd._csAppDoc);
 	auto& jobj = *appd._json;
-	//auto ivc = dynamic_cast<KCheckWnd*>(AfxGetApp());
+	//auto ivc = dynamic_cast<KCheckWnd*>(GetMainApp());
 	//bool bVu = !ivc ? false : ivc->ViewFind(vuid);
 	//if(bVu)//_vu && ::IsWindow(_vu->GetSafeHwnd()))
 	auto doc = GetDocument();
@@ -271,10 +280,11 @@ int CSrvView::CallbackOnStopped(HANDLE hev, int vuid)//?server recover 2 펜딩 서
 {
 	BACKGROUND(1);
 	/// Stop한 서버를 제거 한다.
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
 	auto doc = GetDocument();
+	AUTOLOCK(doc->_csJdata);
 
-	auto guid = doc->_GUID;//키는 GUID
+	CStringA guid = doc->_jdata.SA("_GUID");//키는 GUID
 	appd.UnregisterServerStart(guid);
 
 	return __super::CallbackOnStopped(hev, vuid);
@@ -286,7 +296,8 @@ int CSrvView::CallbackOnReceived(const void* buffer, size_t size)
 }
 int CSrvView::CallbackOnReceivedRequest(KSessionInfo& inf, int vuid, SHP<KBinData> shbin, HTTPResponse& res)
 {
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
+	AUTOLOCK(appd._csAppDoc);
 	auto& jobj = *appd._json;
 
 	appd.ReqOccured(inf._ssid);
@@ -306,7 +317,7 @@ int CSrvView::CallbackOnReceivedRequest(KSessionInfo& inf, int vuid, SHP<KBinDat
 
 int CSrvView::CallbackOnSent(KSessionInfo& inf, int vuid, size_t sent, size_t pending)
 {
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
 	if(pending == 0)
 	{
 		double npm = appd.OnResponse(inf._ssid);
@@ -381,10 +392,10 @@ void CSrvView::UpdateControlFore(CStringA stat, int iOp)
 
 	if(stat == "starting")
 	{
-		EnableCommand(IDC_bSSL, FALSE);
-		EnableCommand(IDC_bStaticCache, FALSE);
-		EnableCommand(IDC_CacheLife, FALSE);
-		EnableCommand(IDC_port, FALSE);
+		EnableCommand(IDC__bSSL, FALSE);
+		EnableCommand(IDC__bStaticCache, FALSE);
+		EnableCommand(IDC__CacheLife, FALSE);
+		EnableCommand(IDC__port, FALSE);
 
 		EnableCommand(ID_Start, FALSE);
 		EnableCommand(ID_Stop, FALSE);
@@ -398,15 +409,19 @@ void CSrvView::UpdateControlFore(CStringA stat, int iOp)
 	}
 	else if(stat == "started")
 	{
-		EnableCommand(IDC_bSSL, FALSE);
-		EnableCommand(IDC_bStaticCache, FALSE);
-		EnableCommand(IDC_CacheLife, FALSE);
-		EnableCommand(IDC_port, FALSE);
-		EnableCommand(IDC_defFile, FALSE);
-		EnableCommand(IDC_ApiURL, FALSE);
-		EnableCommand(IDC_ODBCDSN, FALSE);
-		EnableCommand(IDC_rootLocal, FALSE);
-		EnableCommand(IDC_uploadLocal, FALSE);
+		EnableCommand(IDC__bSSL, FALSE);
+		EnableCommand(IDC__bStaticCache, FALSE);
+		EnableCommand(IDC__CacheLife, FALSE);
+		EnableCommand(IDC__port, FALSE);
+		EnableCommand(IDC__defFile, FALSE);
+		EnableCommand(IDC__ApiURL, FALSE);
+		EnableCommand(IDC__ODBCDSN, FALSE);
+		EnableCommand(IDC__rootLocal, FALSE);
+		EnableCommand(IDC__uploadLocal, FALSE);
+		EnableCommand(IDC_BtnRootLocal, FALSE);
+		EnableCommand(IDC_BtnUploadLocal, FALSE);
+		EnableCommand(IDC_BtnSslSetting, FALSE);
+		EnableCommand(IDC_Parallel, FALSE);
 
 		EnableCommand(ID_Start, FALSE);
 		EnableCommand(ID_Stop, 1);
@@ -420,15 +435,19 @@ void CSrvView::UpdateControlFore(CStringA stat, int iOp)
 	}
 	else if(stat == "stopped")
 	{//iOp not used
-		EnableCommand(IDC_bSSL, 1, iOp);
-		EnableCommand(IDC_bStaticCache, 1, iOp);//?destroy 4.5
-		EnableCommand(IDC_CacheLife, 1, iOp);//?destroy 4.5
-		EnableCommand(IDC_port, 1);
-		EnableCommand(IDC_defFile, 1);
-		EnableCommand(IDC_ApiURL, 1);
-		EnableCommand(IDC_ODBCDSN, 1);
-		EnableCommand(IDC_rootLocal, 1);
-		EnableCommand(IDC_uploadLocal, 1);
+		EnableCommand(IDC__bSSL, 1, iOp);
+		EnableCommand(IDC__bStaticCache, 1, iOp);//?destroy 4.5
+		EnableCommand(IDC__CacheLife, 1, iOp);//?destroy 4.5
+		EnableCommand(IDC__port, 1);
+		EnableCommand(IDC__defFile, 1);
+		EnableCommand(IDC__ApiURL, 1);
+		EnableCommand(IDC__ODBCDSN, 1);
+		EnableCommand(IDC__rootLocal, 1);
+		EnableCommand(IDC__uploadLocal, 1);
+		EnableCommand(IDC_BtnRootLocal, 1);
+		EnableCommand(IDC_BtnUploadLocal, 1);
+		EnableCommand(IDC_BtnSslSetting, 1);
+		EnableCommand(IDC_Parallel, 1);
 
 		EnableCommand(ID_Start, 1, iOp);
 		EnableCommand(ID_Stop, FALSE, iOp);
@@ -442,22 +461,24 @@ void CSrvView::UpdateControlFore(CStringA stat, int iOp)
 
 
 // CSrvView message handlers
-
+/// StartServer랑 비슷 하니 고칠때 비교 하면서 고쳐야
 void CSrvView::RecoverServer()//?server recover 5.1 contunue running server
 {
 	//("_bRecover") = TRUE; 이미 OnStart에서 등록 하면서 한다.
-	auto app = (CMFCExHttpsSrvApp*)AfxGetApp();
+	auto app = (CMFCExHttpsSrvApp*)GetMainApp();
 	auto& appd = app->_docApp;
 	auto doc = GetDocument();
 	{
-		AUTOLOCK(appd._csRecover);
+		//AUTOLOCK(appd._csRecover);
+		AUTOLOCK(appd._csAppDoc);
 		auto& jobj = *appd._json;
 		auto dsnMain = jobj.S("DSN");
 		auto srsv = jobj.O("RunningServers");
 		if(!srsv || srsv->size() == 0)//펜딩서버 있고
 			return;
 
-		auto sjo = srsv->O(doc->_GUID);//내 아디가 있으면 나는 펜딩서버나 보다
+		CStringA guid = doc->GetStrA("_GUID");
+		auto sjo = srsv->O(guid);//내 아디가 있으면 나는 펜딩서버나 보다
 		if(!sjo)
 			return;
 
@@ -466,24 +487,20 @@ void CSrvView::RecoverServer()//?server recover 5.1 contunue running server
 		//원래 파일데이터 보다 RunningServers가 new일수 있다. 저장 안했으면. 그래서 덮어 쓴다.
 		doc->JsonToData(sjo, false); //이제 멤버값과 sjo값이 같아 졌다. 덮어 썻으니
 	}
+
 	UpdateData(0);
 
+	AUTOLOCK(doc->_csJdata);
 	/// 이게 무의미 하게 되었다.
-	//if(doc->_bDbConnected)//당시 런닝중에 DB가 연결된 상태 였으면 다시 연결 해야지.
-	{
-//		ASSERT(appd._dbMain->IsOpen());
-		CString ODBCDSN(doc->_ODBCDSN);
-		//auto rs = doc->_svr->_api->CheckDB(ODBCDSN, appd._dbMain);
-		doc->_svr->_api->_ODBCDSN= doc->_ODBCDSN;
-		doc->_svr->_api->_ODBCDSNlog = appd.MakeDsnString();
-	}
+	doc->_svr->_api->_ODBCDSN = doc->_jdata.S("_ODBCDSN");
+	doc->_svr->_api->_ODBCDSNlog = appd.MakeDsnString();
 
 	auto fm = (CMainFrame*)AfxGetMainWnd();
 	if(fm->_fncExtraTrace)
 		doc->AddCallbackOnTrace(fm->_fncExtraTrace);//?ExTrace 3 CmnView -> MyHttps + std_cout(KTrace)
 
 	//SSL쓰면 비번도 RunningServers에는 저장 되므로 
-	ASSERT(!doc->_bSSL || doc->_prvpwd.GetLength() > 0);
+	ASSERT(!doc->_jdata.I("_bSSL") || doc->_jdata.Len("_prvpwd"));
 	StartServer();
 }
 
@@ -492,7 +509,8 @@ void CSrvView::OnBnClickedStart()
 	FOREGROUND();
 	UpdateData();
 
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
+	AUTOLOCK(appd._csAppDoc);
 	auto& jobj = *appd._json;
 
 	CmnDoc* doc = GetDocument();
@@ -502,16 +520,19 @@ void CSrvView::OnBnClickedStart()
 	if(fm->_fncExtraTrace)
 		doc->AddCallbackOnTrace(fm->_fncExtraTrace);//?ExTrace 3 CmnView -> MyHttps + std_cout(KTrace)
 
-	if(doc->_bSSL && doc->_prvpwd.GetLength() == 0)
-	{
-		OnBnClickedBtnSslSetting();//비번을 받는다.
-		if(doc->_prvpwd.GetLength() == 0)
-			return;
+	{//?synchronized
+		AUTOLOCK(doc->_csJdata);
+		if(doc->_jdata.I("_bSSL") && !doc->_jdata.Len("_prvpwd"))
+		{
+			OnBnClickedBtnSslSetting();//비번을 받는다.
+			if(!doc->_jdata.Len("_prvpwd"))//doc->_prvpwd.GetLength() == 0)
+				return;
+		}
 	}
 
 	///moveto CallbackOnStarted
 	//[ server start하자 마자 메인에 등록하고, 스톱 하면 제거 한다. 중간에 끊긴것이 다음 로운지때 바로 시작 한다.
-	//auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	//auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
 	//ShJObj sjobjSvr;// = std::make_shared<JObj>();
 	//doc->JsonToData(sjobjSvr, TRUE);
 	//appd.RegisterServerStart(sjobjSvr);
@@ -523,7 +544,7 @@ void CSrvView::OnBnClickedStart()
 void CSrvView::OnBnClickedStop()
 {
 	CmnDoc* doc = GetDocument();
-// 	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+// 	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
 // 	appd.UnregisterServerStart(doc->_GUID);
 
 	StopServer();
@@ -534,25 +555,34 @@ void CSrvView::OnBnClickedRestart()
 	RestartServer();
 }
 
-
+//?deprecated
 void CSrvView::OnBnClickedBtnpath()
 {
 	SrvDoc* doc = GetDocument();
-	SelectFolder(doc->_cachedPath);
+	CString spth = doc->GetStr("_cachedPath");
+	CString cpth = SelectFolder(spth);
+	doc->SetStr("_cachedPath", cpth);
+
+	//SetDlgItemText(IDC_cachedPath, cpth);
 }
-
-
 
 void CSrvView::OnBnClickedBtnimalocal()
 {
 	SrvDoc* doc = GetDocument();
-	//CmnDoc* doc = dynamic_cast<CmnDoc*>(GetDocument());
-	SelectFolder(doc->_rootLocal);
+	CString spth = doc->GetStr("_rootLocal");
+	CString cpth = SelectFolder(spth);
+	doc->SetStr("_rootLocal", cpth);
+	
+	SetDlgItemText(IDC__rootLocal, cpth);
 }
 void CSrvView::OnBnClickedBtnUploadLocal()
 {
 	SrvDoc* doc = GetDocument();
-	SelectFolder(doc->_uploadLocal);
+	CString spth = doc->GetStr("_uploadLocal");
+	CString cpth = SelectFolder(spth);
+	doc->SetStr("_uploadLocal", cpth);
+
+	SetDlgItemText(IDC__uploadLocal, cpth);
 }
 
 
@@ -568,7 +598,7 @@ void CSrvView::OnDestroy()
 
 // int CSrvView::ViewCount()
 // {
-// 	auto app = (CMFCExHttpsSrvApp*)AfxGetApp();
+// 	auto app = (CMFCExHttpsSrvApp*)GetMainApp();
 // 	return app->_mapWnd.size();
 // }
 void CSrvView::OnClose()
@@ -586,9 +616,9 @@ void CSrvView::OnSize(UINT nType, int cx, int cy)
 	int idc[] = {
 		//IDC_cachedPath,
 		//IDC_ODBCDSN,
-		IDC_rootLocal,
-		IDC_uploadLocal,
-		IDC_note,
+		IDC__rootLocal,
+		IDC__uploadLocal,
+		IDC__note,
 		IDC_MonitorList, 
 	};//IDC_vpath,   
 
@@ -601,10 +631,13 @@ void CSrvView::OnSize(UINT nType, int cx, int cy)
 
 void CSrvView::OnBnClickedBtnSslSetting()
 {
-	DlgSslSetting dlg;
+	DlgSslSetting dlg(this);
 	SrvDoc* doc = GetDocument();
+	dlg._jobj = doc->GetJData();
 	dlg._doc = doc;
-	if(dlg.DoModal() == IDOK) {}
+	if(dlg.DoModal() == IDOK) {
+		doc->_jdata.Clone(dlg._jobj, true);
+	}
 }
 
 void CSrvView::OnBnClickedStartDB()
@@ -614,10 +647,11 @@ void CSrvView::OnBnClickedStartDB()
 
 	SrvDoc* doc = GetDocument();
 	auto frm = (CMainFrame*)AfxGetMainWnd();
-	auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
+	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
+	AUTOLOCK(appd._csAppDoc);
 	auto& jobj = *appd._json;
 
-	if(doc->_ODBCDSN.IsEmpty())
+	if(doc->_jdata.IsEmpty("_ODBCDSN"))
 	{
 		PAS pas = "Data Source name is empty.\nEx:DSN=MyDSN;UID=myid;PWD=pypwd;database=sitedb";
 		KwMessageBoxA(pas);
@@ -628,7 +662,7 @@ void CSrvView::OnBnClickedStartDB()
 	try
 	{
 		doc->_svr->_api->_ODBCDSNlog = appd.MakeDsnString();
-		doc->_svr->_api->_ODBCDSN = doc->_ODBCDSN;
+		doc->_svr->_api->_ODBCDSN = doc->_jdata.S("_ODBCDSN");
 
 		SHP<KDatabase> sdb = KDatabase::getDbConnected((PWS)doc->_svr->_api->_ODBCDSN);
 		if(sdb)
@@ -675,13 +709,13 @@ void CSrvView::OnBnClickedTestapi()
 {
 	SrvDoc* doc = GetDocument();
 	CString smsg;
-	//auto app = (CMFCExHttpsSrvApp*)AfxGetApp();
+	//auto app = (CMFCExHttpsSrvApp*)GetMainApp();
 	auto api = (ApiSite1*)&doc->_svr->_api;
 	try
 	{
 		UpdateData(); //InitApi(); 포함.
 
-		CStringW ODBCDSN(doc->_ODBCDSN);
+		//CStringW ODBCDSN(doc->_jdata.S("_ODBCDSN"));
 	}
 	catch(CDBException* e)
 	{
@@ -711,18 +745,18 @@ void CSrvView::OnBnClickedTestapi()
 		TErrCode ec = ex.code();
 		smsg.Format(L"catch boost::systemerror %s  - %s %d\n", ec.message().c_str(), __FUNCTIONW__, __LINE__); \
 	}
-	catch(std::exception& e)\
-	{	smsg.Format(L"catch std::exception %s  - %s %d\n", e.what(), __FUNCTIONW__, __LINE__); \
+	catch(std::exception& e)
+	{	smsg.Format(L"catch std::exception %s  - %s %d\n", e.what(), __FUNCTIONW__, __LINE__); 
 	}
-	catch(PWS e)\
-	{	smsg.Format(L"catch LPCWSTR %s  - %s %d\n", e, __FUNCTIONW__, __LINE__); \
+	catch(PWS e)
+	{	smsg.Format(L"catch LPCWSTR %s  - %s %d\n", e, __FUNCTIONW__, __LINE__); 
 	}
-	catch(PAS e)\
+	catch(PAS e)
 	{	CString sw(e);
-	smsg.Format(L"catch LPCSTR %s  - %s %d\n", sw, __FUNCTIONW__, __LINE__); \
+	smsg.Format(L"catch LPCSTR %s  - %s %d\n", sw, __FUNCTIONW__, __LINE__); 
 	}
-	catch(...)\
-	{	smsg.Format(L"catch ...  - %s %d\n", __FUNCTIONW__, __LINE__); \
+	catch(...)
+	{	smsg.Format(L"catch ...  - %s %d\n", __FUNCTIONW__, __LINE__); 
 	}
 	if(smsg.GetLength())
 		AfxMessageBox(smsg);
@@ -876,4 +910,212 @@ void CSrvView::OnConnectSiteDB()
 void CSrvView::OnUpdateConnectSiteDB(CCmdUI* pCmdUI)
 {
 	OnUpdateCmn(pCmdUI, ID_StartDB);
+}
+
+#include "KwLib64/HTTPS/HttpClient.h"
+
+/// <summary>
+/// 현재 처리가 적체 되면 등록된 주소로 병렬처리 
+/// 다른 서버로 다시 보내서 가져 와서 리턴 한다.
+/// </summary>
+/// <param name="inf">세션 정보: url, dir, parameter</param>
+/// <param name="shbin">INOUT binary data</param>
+/// <returns>0이면 리턴 안하고 직접처리 한다.</returns>
+int CSrvView::CallbackCluster(KSessionInfo& inf, shared_ptr<KBinData> shbin)
+{
+	///TODO: "https://192.168.35.177:1234" 
+	//  처럼 http(s), 주소, port, bUse 4가지 정보 지만
+	//  2 항목 URL 과 iOp 면 된다. iOp: 0:미사용, 1:사용, 2:바쁠때만 사용, -1:error
+
+	/// appdoc에서 "Clustering" array를 가져 와서.
+	/// for로 돌리면서, option이 1 또는 2가 있으면 그쪽으로 요청/응답 받아 리턴 한다.
+	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
+// 	{
+// 		AUTOLOCK(appd._csAppDoc);//여기서 시간이 많이 걸리므로 복사해 와서 써야 한다.
+// 		auto sclt0 = appd._json->O("Clustering");
+// 		arSvr->Clone(sclt0, true);
+// 	}
+	CmnDoc* doc = GetDocument();
+	if(doc == NULL)
+		return 0;
+//	JObj& jbj = doc->_jdata;
+
+// 	ShJArr arSvr = make_shared<JArr>();
+// 	{
+// 		AUTOLOCK(doc->_csJdata);
+// 		auto sclt0 = jbj.Array("Clustering");
+// 		arSvr->Clone(sclt0, true);/// 다중작업이라 복사해서 쓴다.
+// 	}
+	auto sjdata = doc->GetJData();/// 다중작업이라 복사해서 쓴다.
+	ShJArr arSvr = sjdata->Array("Clustering");
+
+	if(!arSvr || arSvr->size() == 0)//펜딩서버 있고
+		return 0;
+#ifdef _DEBUG12
+	KStdMap<__int64, ShJVal> msclt;
+	for(auto& [kurl, shval] : *arSvr)
+	{
+		auto shsvr = shval->AsObject();
+		auto cnt = shsvr->I("count");// shval->AsInt64();
+		msclt[cnt] = shval;// count로 정렬. 가장 작은걸 쓸 려고
+	}
+#endif // _DEBUG12
+
+	/// <summary>
+	InterlockedIncrement(&doc->_cntReq);
+	/// </summary>
+
+	KArray<ShJObj> arSvrAct;
+	for(int i=0;i<arSvr->size();i++)
+	{
+		auto sitm = arSvr->GetAt(i); if(!sitm->IsObject()) 	continue;
+		auto svr = sitm->AsObject(); if(!svr) continue;
+		if(svr->SameS("action", L"open")) // 사용중인거만 배열에 다시 담는다.
+		{
+			string surlA = svr->SA("url");
+			int cntErr = 0;
+			doc->_mpCntError.Lookup(surlA, cntErr);
+			if(cntErr < 3) /// 3번 나면 분산처리 서버 후보에서 탈락
+				arSvrAct.push_back(svr);
+			else
+			{
+				TRACE("error > 3 : %s\n", surlA.c_str());
+				/// 서버 원본에 "action":"error" 로 바꿔야
+				doc->SetClusteringServer(surlA.c_str(), "action", L"closed");
+
+// 				AUTOLOCK(doc->_csJdata);
+// 				ShJArr arSvr1 = doc->_jdata.Array("Clustering");
+// 				for(int c = 0; c < arSvr1->size(); c++)
+// 				{
+// 					auto sitm1 = arSvr1->GetAt(i); if(!sitm1->IsObject()) continue;
+// 					auto svr1 = sitm1->AsObject(); if(!svr1) continue;
+// 					if(svr1->SameSA("url", surlA.c_str()))
+// 					{
+// 						(*svr1)("action") = L"closed";
+// 						break;
+// 					}
+// 				}
+			}
+		}
+	}
+
+	auto nSvrs = arSvrAct.size();//최소한 로컬이 들어 있다.
+	if(nSvrs == 0)/// 다 에러가 나서 불통 되면 여기 메인이 closed 여도 처리 하도록 2를 리턴.
+		return 2;///여기서 돌아 가면 부른쪽, svr->_fncCluster)...) HttpCmn::onReceivedRequest
+	auto chns = doc->_cntReq % nSvrs; // 응답할 첸스
+	int nTry = 3;
+	while(nTry--)
+	{
+		ShJObj svrChns = arSvrAct.GetAt((int)chns);
+		if(svrChns->SameS("mode", L"main")) // main 이면 지금 서버에서 처리 하므로 리턴 2
+			return 2;// 2:는 자신이 처리 하는 거다. 1: 이면 여기서 다시 호출 한다.
+
+		hres hr = S_OK;
+// 		if(!_httpCl)
+// 		{	_httpCl = make_shared<CHttpClient>();
+// 			_httpCl->m_nMilSecTimeoutResolve = 500; // DOMAIN => IP
+// 			_httpCl->m_nMilSecTimeoutConnect = 1000;// 이건 파일 다운 로드 받을떄도 있으니. 안쓴다.
+// 		}
+//		CHttpClient& cl = *_httpCl;
+		CHttpClient cl;
+		cl.m_nMilSecTimeoutResolve = 500; // DOMAIN => IP
+		cl.m_nMilSecTimeoutConnect = 1000;// 이건 파일 다운 로드 받을떄도 있으니. 안쓴다.
+		KBinary binr, bin;
+		string surlA = svrChns->SA("url");// http://192.168.33.155:4343
+
+		CString surl(surlA.c_str()); // http://192.168.33.155:4343
+		surl += CString(inf._url.c_str()); // 이 _url 은 주소:포트 뒤에 부분이다. 붙이면 완성
+
+		/// POST 데이터 복사 하고
+		bin.SetPtr((PAS)shbin->m_p, shbin->m_len);
+
+		/// 헤더를 복사 하고
+		KStdMap<string, string> hdrs;
+		for(auto& [k, v] : inf._headers)
+			hdrs[k] = v;
+
+		/// <summary>
+		hr = cl.RequestPostSSL(surl, &binr, &bin, &hdrs);
+		/// </summary>
+		/// <param name="surl">보낼 병렬서버 주소의 URL(ex: http://192.168.1.30:8080/api?func=ExFunc1</param>
+		/// <param name="binr">out JSON data</param>
+		/// <param name="bin">in JSON data</param>
+		/// <param name="hdrs">먼저 받은 헤더값들</param>
+		/// <returns>0이면 성공</returns>
+		if(hr == 0)
+		{
+			shbin->Attach(binr.m_p, binr.m_len);/// responded data
+			return 1;
+		}
+		else //error 나면 error 횟수 증가 시켜야
+		{
+			// 		AUTOLOCK(doc->_csJdata);
+			// 		auto sclt0 = jbj.Array("Clustering");
+			int cntErr = 0;
+			doc->_mpCntError.Lookup(surlA, cntErr);
+			cntErr++;
+			doc->_mpCntError[surlA] = cntErr;
+			if(nSvrs > 2)
+			{
+				chns++;
+				if(chns == nSvrs)//서버 갯수 오바 하면 0번으로
+					chns = 0;
+				continue; // chns가 다음 서버로 넘어 갔으니 다음 서로에서 다시 시도
+			}
+			return -1;
+		}
+	}
+
+
+//	ShJObj minsvr = doc->_mpClst.begin()->second;
+// 	for(auto& [cnt, shval] : doc->_mpClst)
+// 	{
+// 		minsvr = shval;
+// 		break;
+// 	}
+	// url vs jobj{option:, ..}
+#ifdef _old_gabage
+	for(auto& [kurl, shval] : *arSvr)
+	{
+		if(!shval->IsObject())
+			continue;
+		auto& sjbj = shval->AsObject();
+		int iOp = sjbj->I("option");
+		/// 1비트: 가동여부, 2비트:초당처리 속도 40넘어 갈때. CPU는 남지만, DB쪽 작업은 밀릴때
+		if(iOp & (1|2|4))//KwAttr(iOp, 1) || KwAttr(iOp, 2))
+		{
+			if(iOp & 4)//자기 자신
+				return 4;
+
+			hres hr = S_OK;
+			CHttpClient cl;
+			CString surl(kurl.c_str());// sjbj->S("url"); // http://192.168.33.155:4343
+			KBinary binr, bin;
+			surl += CString(inf._url.c_str());
+			bin.SetPtr((PAS)shbin->m_p, shbin->m_len);
+			KStdMap<string, string> hdrs;
+			for(auto& [k,v] : inf._headers)
+				hdrs[k] = v;
+			hr = cl.RequestPostSSL(surl, &binr, &bin, &hdrs);
+			if(hr == 0)
+			{
+				shbin->Attach(binr.m_p, binr.m_len);// returned data
+				return 1;
+			}
+			else
+				return -1;
+		}
+	}
+#endif // _old_gabage
+	return 0;///svr->_fncCluster)...) HttpCmn::onReceivedRequest
+}
+
+void CSrvView::OnBnClickedParallel()
+{
+	DlgParallel dlg(this);
+	SrvDoc* doc = GetDocument();
+	if(doc == NULL)
+		return;
+	dlg._doc = dynamic_cast<CDocument*>(doc);
+	dlg.DoModal();
 }

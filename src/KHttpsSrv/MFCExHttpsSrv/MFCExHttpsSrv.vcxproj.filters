@@ -135,6 +135,9 @@
     <ClInclude Include="..\..\..\Lib\KwLib64\SrvException.h">
       <Filter>Pch Dependencies</Filter>
     </ClInclude>
+    <ClInclude Include="DlgParallel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MFCExHttpsSrv.cpp">
@@ -223,6 +226,9 @@
     </ClCompile>
     <ClCompile Include="HttpSvr.cpp">
       <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="DlgParallel.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,3 @@
-#include "KJson.h"
 #include "pch.h"
 #include "KJson.h"
 #include "TimeTool.h"
@@ -297,7 +296,6 @@ namespace Kw
 	{
 		ShJVal sjv = make_shared<JVal>(sja, bClone);
 		Set(name, sjv);
-		//(*this)[name] = sjv;
 	}
 
 	bool JObj::DeleteKey(PWS name)
@@ -391,11 +389,9 @@ namespace Kw
 	{
 		if(bClone)
 		{
+			tar.clear();
 			for(auto& sjv1 : src)
-			{
-				//auto sjv2 = ShJVal(new JVal(*sjv1, bClone));
 				tar.push_back(make_shared<JVal>(*sjv1, bClone));
-			}
 		}
 		else
 			(std::vector<ShJVal>&)tar = src;
@@ -466,7 +462,12 @@ namespace Kw
 		}
 		return FALSE;
 	}
-
+	ShJVal JObj::Get(PWS k)
+	{
+		ShJVal sjv;
+		Lookup(k, sjv);//can be FALSE
+		return sjv;
+	}
 	/// 길이가 있고 내용이 같은 경우만 true 이다.
 	int JObj::IsUpdated(JObj& src, JObj& tar, PAS tarF, PAS srcF)
 	{
@@ -596,7 +597,7 @@ namespace Kw
 	PWS JVal::SN()
 	{
 		if(IsString())
-			return string_value.c_str();
+			return string_.c_str();
 		else if(IsNull())
 			return NULL;
 		throw_str("Not a string type.");
@@ -644,7 +645,7 @@ namespace Kw
 		}
 		return NULL;
 	}
-	BOOL JObj::Len(PAS k)
+	size_t JObj::Length(PAS k)
 	{
 		ShJVal sjv;
 		CStringW kw(k);
@@ -653,12 +654,29 @@ namespace Kw
 			if(sjv->IsString())
 			{
 				wstring ws = sjv->AsString();
-				return ws.size() > 0;
+				return ws.size();
 			}
 			else
 				throw_str("Not a string type for Len().");
 		}
-		return FALSE;
+		return 0;
+	}
+	BOOL JObj::Len(PAS k)
+	{
+		return Length(k) > 0;
+// 		ShJVal sjv;
+// 		CStringW kw(k);
+// 		if(Lookup((PWS)kw, sjv))
+// 		{
+// 			if(sjv->IsString())
+// 			{
+// 				wstring ws = sjv->AsString();
+// 				return ws.size() > 0;
+// 			}
+// 			else
+// 				throw_str("Not a string type for Len().");
+// 		}
+// 		return FALSE;
 	}
 	BOOL JObj::SameS(PAS k, PWS str)
 	{
@@ -734,7 +752,7 @@ namespace Kw
 	PWS JVal::S() const
 	{
 		if(IsString())
-			return string_value.c_str();
+			return string_.c_str();
 		else if(IsNull())
 			return L"";
 		throw_str("Not a string type.");
@@ -764,7 +782,7 @@ namespace Kw
 		CStringW kw(k);
 		if(Lookup((PWS)kw, sjv))
 			return sjv->Str(point);
-		return NULL;
+		return L"";
 		//auto buf = sbuf.GetBuffer(lenBuf);
 		//if(Has(k))//this->find(k) != this->end())
 		//{
@@ -979,16 +997,40 @@ namespace Kw
 		return L"NULL";
 	}
 
-	const ShJArr JObj::Array(PWS k)
+	/// 내부 배열을 리턴 없으면 NULL
+	ShJArr JObj::Array(PWS k)
 	{
 		ShJVal sjv;
 		if(Lookup(k, sjv))
 		{
 			if(sjv->IsArray())
 				return sjv->AsArray();
+			else
+				throw_str("IsArray() false.");
 		}
 		return NULL;
 	}
+	/// 내부 배열을 없으면 만들어서 라도 리턴
+	ShJArr JObj::AMake(PWS k)
+	{
+		ShJVal sjv;
+		if(Lookup(k, sjv))
+		{
+			if(sjv->IsArray())
+				return sjv->AsArray();// shared_ptr 내부가 그대로 노출 된다.
+			else
+				throw_str("IsObject() false.");
+		}
+		ShJArr sjo = make_shared<JArr>();
+		SetArray(k, sjo, false);
+		return sjo;
+	}
+
+
+
+
+
+
 	ShJObj JObj::OO(PAS k1, PAS k2)
 	{
 		CStringW kw1(k1);
@@ -1027,9 +1069,24 @@ namespace Kw
 			if(sjv->IsObject())
 				return sjv->AsObject();// shared_ptr 내부가 그대로 노출 된다.
 			else
-				throw_str("IsObject() returns false.");
+				throw_str("IsObject() false.");
 		}
 		return ShJObj();
+	}
+	/// make_shared<JObj>() 로 만들어 넣어서 빈객체라도 넣는다.
+	ShJObj JObj::OMake(PWS k)
+	{
+		ShJVal sjv;
+		if(Lookup(k, sjv))
+		{
+			if(sjv->IsObject())
+				return sjv->AsObject();// shared_ptr 내부가 그대로 노출 된다.
+			else
+				throw_str("IsObject() false.");
+		}
+		ShJObj sjo = make_shared<JObj>();
+		SetObj(k, sjo, false);
+		return sjo;
 	}
 
 	CStringW JVal::SLeft(int len)
@@ -1127,6 +1184,15 @@ namespace Kw
 			//}
 		}
 		return 0.;
+	}
+	__int64 JObj::I64(PWS k)
+	{
+		if(this == NULL)
+			throw (L"JObj.this == NULL");
+		ShJVal sjv;
+		if(Lookup(k, sjv))
+			return sjv->AsInt64();
+		return 0;
 	}
 
 
@@ -1255,15 +1321,11 @@ namespace Kw
 
 
 
-
+	///?error 이게 bool로 들어 가더니만, 그냥 재빌드 하니 된다. 빌드 꼬이면 bool type으로 들어 갈 수도 있다.
 	void JUnit::operator=(const char* v)
 	{
-		auto& pjo = *m_pCJobj;
-		CStringW vw(v);
-		if(v)
-			pjo.Set(m_k, ShJVal(new JVal(vw)));
-		else
-			pjo.Set(m_k, ShJVal(new JVal()));
+		ShJVal sjv = v ? make_shared<JVal>(v) : sjv = make_shared<JVal>();
+		m_pCJobj->Set(m_k, sjv);
 	}
 
 	void JUnit::operator=(const CStringW& v)
@@ -1277,29 +1339,30 @@ namespace Kw
 	}
 	void JUnit::operator=(const wchar_t* v)
 	{
-		auto& pjo = *m_pCJobj;
-		if(v)
-			pjo.Set(m_k, ShJVal(new JVal(v)));
-		else
-			pjo.Set(m_k, ShJVal(new JVal()));
+		ShJVal sjv = v ? make_shared<JVal>(v) : sjv = make_shared<JVal>();
+		m_pCJobj->Set(m_k, sjv);
 	}
 	//error C2593: 'operator ='이(가) 모호합니다.
 	void JUnit::operator=(__int64 v)
 	{
-		m_pCJobj->Set(m_k, ShJVal(new JVal((__int64)v)));
+		ShJVal sjv = make_shared<JVal>(v);
+		m_pCJobj->Set(m_k, sjv);//ShJVal(new JVal((__int64)v)));
 	}
 	void JUnit::operator=(int v)
 	{
-		m_pCJobj->Set(m_k, ShJVal(new JVal((int)v)));
+		ShJVal sjv = make_shared<JVal>(v);
+		m_pCJobj->Set(m_k, sjv);//ShJVal(new JVal((int)v)));
 		//(*m_pCJobj)[m_k] = ShJVal(new JVal((int)v));
 	}
 	void JUnit::operator=(unsigned __int64 v)
 	{
-		m_pCJobj->Set(m_k, ShJVal(new JVal((unsigned __int64)v)));
+		ShJVal sjv = make_shared<JVal>(v);
+		m_pCJobj->Set(m_k, sjv);//ShJVal(new JVal((unsigned __int64)v)));
 	}
 	void JUnit::operator=(unsigned int v)
 	{
-		m_pCJobj->Set(m_k, ShJVal(new JVal((unsigned int)v)));
+		ShJVal sjv = make_shared<JVal>(v);
+		m_pCJobj->Set(m_k, sjv);//ShJVal(new JVal((unsigned int)v)));
 	}
 
 	void JUnit::operator=(CTime v)
@@ -1311,41 +1374,48 @@ namespace Kw
 
 	void JUnit::operator=(double v)
 	{
-		m_pCJobj->Set(m_k, ShJVal(new JVal(v)));
+		ShJVal sjv = make_shared<JVal>(v);
+		m_pCJobj->Set(m_k, sjv);//ShJVal(new JVal(v)));
 		//(*m_pCJobj)[m_k] = ShJVal(new JVal(v));
 	}
 	
 	/// Sh??? 를 줄때는 그냥 share이지만
 	void JUnit::operator=(ShJObj sv)
 	{
-		m_pCJobj->Set(m_k, ShJVal(new JVal(sv)));
+		ShJVal sjv = make_shared<JVal>(sv);
+		m_pCJobj->Set(m_k, sjv);//ShJVal(new JVal(sv)));
 		//(*m_pCJobj)[m_k] = ShJVal(new JVal(sv));
 	}
 	void JUnit::operator=(ShJArr sv)
 	{
-		m_pCJobj->Set(m_k, ShJVal(new JVal(sv)));
+		ShJVal sjv = make_shared<JVal>(sv);
+		m_pCJobj->Set(m_k, sjv);// ShJVal(new JVal(sv)));
 		//(*m_pCJobj)[m_k] = ShJVal(new JVal(sv));
 	}
 	void JUnit::operator=(ShJVal sv)
 	{
-		m_pCJobj->Set(m_k, sv);
+		ShJVal sjv = make_shared<JVal>(sv);
+		m_pCJobj->Set(m_k, sjv);//ShJVal(new JVal(sv)));
 		//(*m_pCJobj)[m_k] = sv;// ShJVal(new JVal(sv));
 	}
 	void JUnit::operator=(JVal& jv)
 	{
-		m_pCJobj->Set(m_k, ShJVal(new JVal(jv)));
+		ShJVal sjv = make_shared<JVal>(jv);
+		m_pCJobj->Set(m_k, sjv);//ShJVal(new JVal(jv)));
 		//(*m_pCJobj)[m_k] = ShJVal(new JVal(jv));
 	}
 
 	/// 아래 처럼 객체를 직접 주는 경우는 clone한다.
 	void JUnit::operator=(JObj& v)
 	{
-		m_pCJobj->Set(m_k, ShJVal(new JVal(v, true)));
+		ShJVal sjv = make_shared<JVal>(v);
+		m_pCJobj->Set(m_k, sjv);//ShJVal(new JVal(v, true)));
 		//(*m_pCJobj)[m_k] = ShJVal(new JVal(v, true)); // v가 로컬 변수 이면 clone하지 않으면 스택에서 날라 간다.
 	}
 	void JUnit::operator=(JArr& v)
 	{
-		m_pCJobj->Set(m_k, ShJVal(new JVal(v, true)));
+		ShJVal sjv = make_shared<JVal>(v);
+		m_pCJobj->Set(m_k, sjv);// ShJVal(new JVal(v, true)));
 		//(*m_pCJobj)[m_k] = ShJVal(new JVal(v, true));
 	}
 
@@ -1406,13 +1476,14 @@ namespace Kw
 					return ShJVal(new JVal(str));
 				}
 			}
-			else if((simplejson_wcsnlen(*data, 4) && wcsncasecmp(*data, L"true", 4) == 0) || (simplejson_wcsnlen(*data, 5) && wcsncasecmp(*data, L"false", 5) == 0))
+			else if((simplejson_wcsnlen(*data, 4) && _wcsnicmp(*data, L"true", 4) == 0) || 
+					(simplejson_wcsnlen(*data, 5) && _wcsnicmp(*data, L"false", 5) == 0))
 			{// Is it a boolean?
-				bool value = wcsncasecmp(*data, L"true", 4) == 0;
+				bool value = _wcsnicmp(*data, L"true", 4) == 0;
 				(*data) += value ? 4 : 5;
 				return ShJVal(new JVal(value));
 			}
-			else if(simplejson_wcsnlen(*data, 4) && wcsncasecmp(*data, L"null", 4) == 0)
+			else if(simplejson_wcsnlen(*data, 4) && _wcsnicmp(*data, L"null", 4) == 0)
 			{// Is it a null?
 				(*data) += 4;
 				return ShJVal(new JVal());
@@ -1637,54 +1708,61 @@ namespace Kw
 	JVal::JVal(const wchar_t* char_value1)
 	{
 		type = JsonType_String;
-		string_value = JSonKey(char_value1);
+		string_ = JSonKey(char_value1);
+		toString();
+	}
+	JVal::JVal(const char* char_value1)
+	{
+		type = JsonType_String;
+		CStringW wch(char_value1);
+		string_ = JSonKey((PWS)wch);
 		toString();
 	}
 
 	JVal::JVal(const JSonKey& string_value1)
 	{
 		type = JsonType_String;
-		string_value = string_value1;
+		string_ = string_value1;
 		toString();
 	}
 
 	JVal::JVal(bool mbool_value)
 	{
 		type = JsonType_Bool;
-		bool_value = mbool_value;
+		int64_ = mbool_value ? 1 : 0;
 		toString();
 	}
 
 	JVal::JVal(double value1)
 	{
 		type = JsonType_Double;
-		double_value = value1;
+		double_ = value1;
 		toString();
 	}
 	JVal::JVal(int value1)
 	{
 		type = JsonType_Int;
-		int_value = value1;
+		int64_ = value1;
 		toString();
 	}
 	JVal::JVal(__int64 value1)
 	{
 		type = JsonType_Int64;
-		int64_value = value1;
+		int64_ = value1;
 		toString();
 	}
 	JVal::JVal(unsigned int value1)
 	{
 		ASSERT(value1 <= 0x7fffffff);
 		type = JsonType_Int;
-		int_value = (int)value1;
+		int64_ = (__int64)value1;
 		toString();
 	}
 	JVal::JVal(unsigned __int64 value1)
 	{
 		ASSERT(value1 <= 0x7fffffffffffffff);
 		type = JsonType_Int64;
-		int64_value = (__int64)value1;
+		int64_ = (__int64)value1;
 		toString();
 	}
 
@@ -1695,10 +1773,10 @@ namespace Kw
 		if(bClone)
 		{
 			InitArray();
-			JArr::CloneArray(*sja, *array_value, bClone);
+			JArr::CloneArray(*sja, *array_, bClone);
 		}
 		else
-			array_value = sja;
+			array_ = sja;
 		toString();
 	}
 
@@ -1709,11 +1787,11 @@ namespace Kw
 		if(bClone)
 		{
 			InitObject();
-			JObj::CloneObject(*sjo, *object_value, bClone);
+			JObj::CloneObject(*sjo, *object_, bClone);
 		}
 		else
 		{
-			object_value = sjo;
+			object_ = sjo;
 		}
 		toString();
 	}
@@ -1724,10 +1802,10 @@ namespace Kw
 		if(bClone)
 		{
 			InitArray();
-			JArr::CloneArray(ja, *array_value, bClone);
+			JArr::CloneArray(ja, *array_, bClone);
 		}
 		else
-			array_value = ShJArr(&ja, TNotFree());
+			array_ = ShJArr(&ja, TNotFree());
 		toString();
 	}
 
@@ -1739,10 +1817,10 @@ namespace Kw
 		if(bClone)
 		{
 			InitObject();
-			JObj::CloneObject(jo, *object_value, bClone);
+			JObj::CloneObject(jo, *object_, bClone);
 		}
 		else
-			object_value = ShJObj(&jo, TNotFree());// jo의 최초 태색이 스택변수 이면 이렇게 가면 안되지.
+			object_ = ShJObj(&jo, TNotFree());// jo의 최초 태색이 스택변수 이면 이렇게 가면 안되지.
 		toString();
 	}
 
@@ -1776,7 +1854,7 @@ namespace Kw
 	void JVal::ShareObj(JObj& obj1)//, JStrArray& array_key1)
 	{
 		type = JsonType_Object;
-		object_value = ShJObj(&obj1, TNotFree());
+		object_ = ShJObj(&obj1, TNotFree());
 		/// ShJObj인 object_value는 어미인 this가 사라질때 TNotFree가 불려 져서 
 		/// reference를 줄이거나 삭제 되지 않는다. 임시로 싸고 있다가 껍질만 사라진다.
 	}
@@ -1942,35 +2020,31 @@ namespace Kw
 	*/
 	void JVal::Clone(const JVal& msource, bool bClone)
 	{
-		parent = msource.parent;
+		//parent = msource.parent;
 		type = msource.type;
 
 		switch(type)
 		{
 		case JsonType_String:
-			string_value = msource.string_value;
-			break;
-		case JsonType_Bool:
-			bool_value = msource.bool_value;
+			string_ = msource.string_;
 			break;
 		case JsonType_Double:
-			double_value = msource.double_value;
+			double_ = msource.double_;
 			break;
-		case JsonType_Int64:
-			int64_value = msource.int64_value;
-			break;
+		case JsonType_Bool:
 		case JsonType_Int:
-			int_value = msource.int_value;
+		case JsonType_Int64:
+			int64_ = msource.int64_;
 			break;
 		case JsonType_Array:
 		{
 			if(bClone)
 			{
 				InitArray();
-				JArr::CloneArray(*msource.array_value, *array_value, bClone);
+				JArr::CloneArray(*msource.array_, *array_, bClone);
 			}
 			else
-				array_value = msource.array_value;// ShJArr(&ja, TNotFree());
+				array_ = msource.array_;// ShJArr(&ja, TNotFree());
 			break;
 		}
 		case JsonType_Object:
@@ -1978,10 +2052,10 @@ namespace Kw
 			if(bClone)
 			{
 				InitObject();
-				JObj::CloneObject(*msource.object_value, *object_value, bClone);
+				JObj::CloneObject(*msource.object_, *object_, bClone);
 			}
 			else
-				object_value = msource.object_value;
+				object_ = msource.object_;
 			break;
 		}
 		case JsonType_Null:		// Nothing to do.
@@ -1995,9 +2069,9 @@ namespace Kw
 		switch(type)
 		{
 		case JsonType_Array:
-			return array_value->size();
+			return array_->size();
 		case JsonType_Object:
-			return object_value->size();
+			return object_->size();
 		default:
 			return 0;
 		}
@@ -2007,7 +2081,7 @@ namespace Kw
 	{
 		if(type == JsonType_Array)
 		{
-			return index < array_value->size();
+			return index < array_->size();
 		}
 		else
 		{
@@ -2017,9 +2091,9 @@ namespace Kw
 
 	ShJVal JVal::Child(std::size_t index)
 	{
-		if(index < array_value->size())
+		if(index < array_->size())
 		{
-			return array_value->GetAt((int)index);
+			return array_->GetAt((int)index);
 			//return (*array_value)[index];
 		}
 		else
@@ -2029,12 +2103,12 @@ namespace Kw
 	}
 	bool JVal::HasChild(const wchar_t* name) const
 	{
-		return object_value->Has(name);
+		return object_->Has(name);
 	}
 	ShJVal JVal::Child(const wchar_t* name)
 	{
 		ShJVal sjv;
-		object_value->Lookup(name, sjv);
+		object_->Lookup(name, sjv);
 		return sjv;
 	}
 
@@ -2059,22 +2133,22 @@ namespace Kw
 			break;
 
 		case JsonType_String:
-			ret_string = StringifyString(bUnicode, string_value, key, pinf);
+			ret_string = StringifyString(bUnicode, string_, key, pinf);
 			break;
 
 		case JsonType_Bool:
-			ret_string = bool_value ? L"true" : L"false";
+			ret_string = int64_ == 1 ? L"true" : L"false";
 			break;
 
 		case JsonType_Double:
 		{
-			if(isinf(double_value) || isnan(double_value))
+			if(isinf(double_) || isnan(double_))
 				ret_string = L"null";
 			else
 			{
 				std::wstringstream ss;
 				ss.precision(15);
-				ss << double_value;
+				ss << double_;
 				ret_string = ss.str();
 			}
 			break;
@@ -2082,13 +2156,13 @@ namespace Kw
 
 		case JsonType_Int64:
 		{
-			if(isinf((double)int64_value) || isnan((double)int64_value))
+			if(isinf((double)int64_) || isnan((double)int64_))
 				ret_string = L"null";
 			else
 			{
 				std::wstringstream ss;
 				ss.precision(15);
-				ss << int64_value;
+				ss << int64_;
 				ret_string = ss.str();
 			}
 			break;
@@ -2096,13 +2170,13 @@ namespace Kw
 
 		case JsonType_Int:
 		{
-			if(isinf((double)int_value) || isnan((double)int_value))
+			if(isinf((double)int64_) || isnan((double)int64_))
 				ret_string = L"null";
 			else
 			{
 				std::wstringstream ss;
 				ss.precision(15);
-				ss << int_value;
+				ss << (int)int64_;
 				ret_string = ss.str();
 			}
 			break;
@@ -2114,9 +2188,9 @@ namespace Kw
 			//ShJArr::const_iterator iter = array_value.begin();
 			WCHAR wbuf[20] = { 0, };
 			//for(int i = 0; iter != array_value.end(); i++)
-			int szArray = (int)array_value->size();
+			int szArray = (int)array_->size();
 			int i = 0;
-			for(auto& sjv : *array_value)
+			for(auto& sjv : *array_)
 			{
 				//_itow_s((int)i, wbuf, 19, 10); //KwItoaW(i, wbuf, 19)
 				///?todo wbuf는 특정문자에 대해서 임의로 변경 하려 할때 IStrConvert::CharToString 를 override한 interface를 제공 받아 한다.
@@ -2143,9 +2217,9 @@ namespace Kw
 		{
 			ret_string = indentDepth ? L"{\n" + indentStr1 : L"{";
 
-			int szObj = (int)object_value->size();
+			int szObj = (int)object_->size();
 			int i = 0;
-			for(auto& [key, sjv] : *object_value)
+			for(auto& [key, sjv] : *object_)
 			{
 				ret_string += StringifyString(bUnicode, key, NULL);
 				ret_string += L":";
@@ -2447,18 +2521,18 @@ namespace Kw
 
 	void JVal::InitArray()
 	{
-		if(!array_value)
-			array_value = ShJArr(new JArr());//instance 만들어야
+		if(!array_)
+			array_ = ShJArr(new JArr());//instance 만들어야
 		else
-			array_value->clear();
+			array_->clear();
 	}
 
 	void JVal::InitObject()
 	{
-		if(!object_value)
-			object_value = ShJObj(new JObj());//instance 만들어야
+		if(!object_)
+			object_ = ShJObj(new JObj());//instance 만들어야
 		else
-			object_value->clear();
+			object_->clear();
 	}
 
 	void JVal::operator=(JVal& jv)
@@ -2469,11 +2543,11 @@ namespace Kw
 		//_aaa = (PWS)_txt;
 #endif // _DEBUG
 		//_uiData = jv._uiData;
-		parent = jv.parent;
+		//parent = jv.parent;
 		type = jv.type;
-		string_value = jv.string_value;
-		bool_value = jv.bool_value;
-		double_value = jv.double_value;
+		string_ = jv.string_;
+		int64_ = jv.int64_;
+		double_ = jv.double_;
 	}
 
 

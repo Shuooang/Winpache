@@ -4,9 +4,6 @@
 
 #include "pch.h"
 #include "framework.h"
-
-
-#include <direct.h> //_getcwd
 #include "KwLib64/DlgTool.h"
 #include "KwLib64/tchtool.h"
 #include "KwLib64/TimeTool.h"
@@ -19,16 +16,16 @@
 
 
 #ifndef SHARED_HANDLERS
-//#include "MFCExHttpsSrv.h"
+#include "MFCExHttpsSrv.h"
 #endif
-
 //#include "MFCAppServerEx2Doc.h"
+#include "CmnView.h"
 #include "SrvView.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-#include "CmnView.h"
 
 
 CmnDoc* CmnView::GetDocument() const
@@ -82,50 +79,70 @@ void CmnView::DoDataExchange(CDataExchange* pDX)
 void CmnView::SampleServer()
 {
 	CmnDoc* doc = GetDocument();
-	if(doc == NULL)
-		return;
+	if(doc)
+		doc->SampleServer();
+}
+int CmnView::CheckData()
+{
+	CmnDoc* doc = GetDocument();
+	if(!doc)
+		return -1;
+	ShJObj sjd = doc->GetJData(); //동기화 때문에 복사해 온다.
+	if(sjd->I("_port") < 4000 && sjd->I("_port") != 80 && sjd->I("_port") != 443)
+	{
+		KwMessageBox(L"port is invalid!\nTry again!");
+		throw 11;
+	}
+	if(sjd->IsEmpty("_cachedPath"))
+	{
+		KwMessageBox(L"Cached path is invalid!\nFile cache won't run.");
+		//throw 12;
+	}
+	if(sjd->IsEmpty("_cachedUrl"))
+	{
+		KwMessageBox(L"Cached URL path is invalid!\nFile cache won't run");
+		//throw 13;
+	}
+	if(sjd->IsEmpty("_rootLocal"))
+	{
+		KwMessageBox(L"Root local path is invalid!\nFile request will be denied.");
+		//throw 13;
+	}
+	if(sjd->IsEmpty("_defFile"))
+	{
+		KwMessageBox(L"Default file is invalid!\n\"index.html\" will be default value.");
+		//doc->_jdata("_defFile") = "index.html";
+	}
+	if(sjd->IsEmpty("_uploadLocal"))
+	{
+		KwMessageBox(L"Upload local path is invalid!\nTry again!");
+		throw 13;
+	}
 
-	char curDir[1000];
-	_getcwd(curDir, 1000);
-	TRACE("Cur dir is %s\n", curDir);
-	//Cur dir is C:\Dropbox\Proj\STUDY\boostEx\CppServer\MFCAppServerEx1
-	// At debugging time, curdir is project folder.
-	//https->main_https(0, NULL);
-	doc->_ApiURL = "/api";
-	CStringA svrkeyIIS = "certificate.pem";//server certificate 
-	CStringA prikeyIIS = "private.pem";
-	//	CStringA chainIIS = "ca_bundle.pem";//Error key values mismatch
-	CStringA dhparam = "dh4096.pem";
-
-	WCHAR my_documents[MAX_PATH];//CSIDL_PERSONAL
-	HRESULT result = SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, my_documents);
-	CStringW flPrj = my_documents;
-	PWS tdir = L"\\Winpache\\cert\\";
-	doc->_SrcImagePath = "C:\\svr\\upload";
-	doc->_port = 80;
-
-#ifdef _DEBUGx
-	doc->_ODBCDSN = "DSN=FatUs";
-	doc->_cachedPath = "C:\\Dropbox\\Proj\\ODISO\\Src\\IIS";
- 	doc->_rootLocal = "C:\\Dropbox\\Proj\\ODISO\\Src\\IIS";
-
-	CStringA fldDhparam    = "C:\\Dropbox\\Proj\\KHttpData\\cert";
-	CStringA fldKey = "C:\\Dropbox\\Proj\\KHttpData\\cert";
-#else
-	doc->_ODBCDSN = "DSN=MyOdbcDsn";
-	doc->_cachedPath = "C:\\svr";
-	doc->_rootLocal = "C:\\svr";
-
-	/// for dhparam
-	CStringA fldDhparam(flPrj + tdir);// = "C:\\svr\\certi\\";// 혼자 크지 잘커라
-	/// for key
-	CStringA fldKey(flPrj + tdir);
-#endif
-
-	doc->_certificate = fldKey + svrkeyIIS;
-	doc->_privatekey  = fldKey + prikeyIIS;
-	doc->_dhparam     = fldDhparam + dhparam;
-	doc->_prvpwd      = "";   
+	if(sjd->I("_bSSL"))
+	{
+		if(sjd->IsEmpty("_certificate"))
+		{
+			KwMessageBox(L"Certificate is invalid!");
+			throw 21;
+		}
+		if(sjd->IsEmpty("_privatekey"))
+		{
+			KwMessageBox(L"Private key is invalid!");
+			throw 22;
+		}
+		if(sjd->IsEmpty("_dhparam"))
+		{
+			KwMessageBox(L"DHparam key is invalid!");
+			throw 23;
+		}
+		if(sjd->IsEmpty("_prvpwd"))
+		{
+			KwMessageBox(L"Password is invalid!");
+			throw 24;
+		}
+	}
+	return 0;
 }
 
 int CmnView::InitServer()
@@ -137,78 +154,16 @@ int CmnView::InitServer()
 		if(doc == NULL)
 			throw 1;
 		//UpdateData(); BACKGROUND에서 쓰면 죽어.
-		if(doc->_port < 4000 && doc->_port != 80 && doc->_port != 443)
-		{
-			KwMessageBox(L"port is invalid!\nTry again!");
-			throw 11;
-		}
-		if(doc->_cachedPath.GetLength() == 0)
-		{
-			KwMessageBox(L"Cached path is invalid!\nFile cache won't run.");
-			//throw 12;
-		}
-		if(doc->_cachedUrl.GetLength() == 0)
-		{
-			KwMessageBox(L"Cached URL path is invalid!\nFile cache won't run");
-			//throw 13;
-		}
-		if(doc->_rootLocal.GetLength() == 0)
-		{
-			KwMessageBox(L"Root local path is invalid!\nFile request will be denied.");
-			//throw 13;
-		}
-		if(doc->_defFile.GetLength() == 0)
-		{
-			KwMessageBox(L"Default file is invalid!\n\"index.html\" will be default value.");
-			doc->_defFile = "index.html";
-		}
-		if(doc->_uploadLocal.GetLength() == 0)
-		{
-			KwMessageBox(L"Upload local path is invalid!\nTry again!");
-			throw 13;
-		}
-
-		if(doc->_bSSL)
-		{
-			if(doc->_certificate.GetLength() == 0)
-			{
-				KwMessageBox(L"Certificate is invalid!");
-				throw 21;
-			}
-			if(doc->_privatekey.GetLength() == 0)
-			{
-				KwMessageBox(L"Private key is invalid!");
-				throw 22;
-			}
-			if(doc->_dhparam.GetLength() == 0)
-			{
-				KwMessageBox(L"DHparam key is invalid!");
-				throw 23;
-			}
-			if(doc->_prvpwd.GetLength() == 0)
-			{
-				KwMessageBox(L"Password is invalid!");
-				throw 24;
-			}
-		}
+		int rv = CheckData();
+		if(rv != 0)
+			return -1;
 
 		doc->InitServerValue();
 
 		doc->InitApi();
-
-		BACKGROUND(1);
-
-		/*KwBeginInvoke(_vu, ([&]()-> void
-			{ //?beginInvoke 4
-				OnBnClickedbssl();
-			}));*/
 	}
 	catch(int ierr)
 	{
-// 		KwBeginInvoke(_vu, ([&]()-> void
-// 			{ //?beginInvoke 4
-// 				KwEnableWindow(_vu, IDC_Start, TRUE);
-// 			}));
 		return ierr;
 	}
 	return 0;
@@ -228,8 +183,6 @@ void CmnView::MakeJsonResponse(HTTPResponse& res, JObj& jres)
 //}
 
 
-
-
 void CmnView::StartServer()
 {
 	FOREGROUND();
@@ -240,12 +193,13 @@ void CmnView::StartServer()
 	{
 		BACKGROUND(1);
 		CmnDoc* doc = GetDocument();
+		ShJObj sjd = doc->GetJData(); //동기화 때문에 복사해 온다.
 		CMyHttps* https = nullptr;
 		CMyHttp* http = nullptr;
 		
 		doc->StartServer();
 		int rv = 0;
-		if(doc->_bSSL)
+		if(doc->GetSSL())
 		{
 			HTTPSCacheSession* pss = nullptr;
 			https = doc->GetServer();
@@ -301,7 +255,7 @@ void CmnView::Shutdown(PAS from)//?Shutdown
 {
 	FOREGROUND();
 	/// 이 뷰가 닫히는걸 app에 기록에서 제외 시킨다.
-	auto ivc = dynamic_cast<KCheckWnd*>(AfxGetApp());
+	auto ivc = dynamic_cast<KCheckWnd*>(GetMainApp());
 	TRACE("1. called from: %s. ivc->ViewRemove(_id:%d); %s\n", from ? from:"", _id,  __FUNCTION__);//서버 시작 안했을때는 1.에서 끝난다.
 	ivc->ViewRemove(_id);
 
@@ -364,6 +318,23 @@ void CmnView::SelectFolder(CStringA& target)
 		_vu->UpdateData(0);
 	}
 }
+CString CmnView::SelectFolder(PWS folderinit)
+{
+	CString target;
+	CFolderPickerDialog folderPickerDialog(folderinit, OFN_FILEMUSTEXIST | OFN_ENABLESIZING, _vu, sizeof(OPENFILENAME));
+	CString folderPath;
+	if(folderPickerDialog.DoModal() == IDOK)
+	{
+		POSITION pos = folderPickerDialog.GetStartPosition();
+		while(pos)
+			folderPath = folderPickerDialog.GetNextPathName(pos);
+		target = folderPath;
+		if(target.Right(1) != L"\\")
+			target += L"\\";
+		//_vu->UpdateData(0);
+	}
+	return target;
+}
 
 // xxxxxxxxxxxxxx
 
@@ -387,7 +358,7 @@ void CmnView::UpdateControl(CStringA stat, int iOp)
 
 void CmnView::CallbackOnStarted(int vuid)
 {
-	auto ivc = dynamic_cast<KCheckWnd*>(AfxGetApp());
+	auto ivc = dynamic_cast<KCheckWnd*>(GetMainApp());
 	bool bVu = !ivc ? false : ivc->ViewFind(vuid);
 	//TRACE("AddCallbackOnStarted\n");
 	if(bVu)//_vu && ::IsWindow(_vu->GetSafeHwnd()))
@@ -407,7 +378,7 @@ int CmnView::CallbackOnStopped(HANDLE hev, int vuid)
 {
 	TRACE("4. https->AddCallbackOnStopped({...}); %s\n", __FUNCTION__);
 
-	auto ivc = dynamic_cast<KCheckWnd*>(AfxGetApp());
+	auto ivc = dynamic_cast<KCheckWnd*>(GetMainApp());
 	bool bVu = !ivc ? false : ivc->ViewFind(vuid);
 	TRACE("5. %d = ivc->ViewFind(vuid); %s\n", bVu ? 1 : 0, __FUNCTION__);
 	if(bVu)
@@ -438,7 +409,7 @@ int CmnView::CallbackOnStopped(HANDLE hev, int vuid)
 int CmnView::CallbackOnSent(KSessionInfo& inf, int vuid, size_t sent, size_t pending)
 {
 	//	//TRACE(L"AddCallbackOnSent(sent:%ld, pending:%ld) %s\n", sent, pending, now);
-	auto ivc = dynamic_cast<KCheckWnd*>(AfxGetApp());
+	auto ivc = dynamic_cast<KCheckWnd*>(GetMainApp());
 	bool bVu = !ivc ? false : ivc->ViewFind(vuid);
 	if(bVu)
 	{
@@ -469,14 +440,15 @@ int CmnView::CallbackOnGET(KSessionInfo& inf, int vuid, SHP<KBinData> shbin, HTT
 	BACKGROUND(1);//여기는 백그라운드 이다.
 	//TRACE("AddCallbackOnGET\n");
 	CmnDoc* doc = GetDocument();
+	auto sjd = doc->GetJData();
 	//if (inf._sparams.size() == 0) 
-	auto chkApi = inf._dir.find(doc->_ApiURL);
+	auto chkApi = inf._dir.find(sjd->SA("_ApiURL"));
 	if(chkApi == string::npos)// '/api' 를 포함 하고 있으면 파일이 아니다.
 	{// '?'가 없으면 파일로 인정
 		KBinary fbuf;
 		string dirFile = inf._dir;
 		if(dirFile == "/")
-			dirFile += (PAS)doc->_defFile;
+			dirFile += sjd->SA("_defFile");
 		int rv = doc->_svr->ResponseFileForGet(dirFile, fbuf);
 		if(rv == 0)
 		{
@@ -504,12 +476,12 @@ int CmnView::CallbackOnGET(KSessionInfo& inf, int vuid, SHP<KBinData> shbin, HTT
 		// 				return 1;//여기 안온다. 파라미터가 없으면
 		// 			}
 	}
-	if(inf._dir.size() != doc->_cachedUrl.GetLength())
+	if(inf._dir.size() != sjd->Length("_cachedUrl"))
 	{// '?'위치가 _cachedUrl 보다 더 있으면
 		HttpCmn::MakeStrErrorToJsonResponse(res, "Bad URL.");
 		return 2;//여기 안온다. 파일이면
 	}
-	if(!tchbegin(inf._dir.c_str(), (PAS)doc->_cachedUrl))
+	if(!tchbegin(inf._dir.c_str(), sjd->SA("_cachedUrl")))
 	{
 		HttpCmn::MakeStrErrorToJsonResponse(res, "Bad directory.");
 		// /api 아니면 리턴. 예: url	"/favicon.ico" 처럼 파일인 경우 그냥 return 
@@ -536,6 +508,7 @@ int CmnView::CallbackOnPOST(KSessionInfo& inf, int vuid, SHP<KBinData> shbin, HT
 {
 	BACKGROUND(1);
 	CmnDoc* doc = GetDocument();
+	auto sjd = doc->GetJData();
 
 	JObj jres;
 
@@ -565,11 +538,11 @@ int CmnView::CallbackOnPOST(KSessionInfo& inf, int vuid, SHP<KBinData> shbin, HT
 
 	int rv = 0;
 	int status = eHttp_OK;
-	/// image라면 10byte는 되야지.
+	// image라면 10byte는 되야지.
 	if(imgContType.size() > 0)
 	{
-		auto body = shbin.get()->m_p;// req.body();
-		auto len = shbin.get()->m_len;//body.size();
+		auto body = shbin->m_p;// req.body();
+		auto len = shbin->m_len;//body.size();
 		ilen = KwAtoi(contLeng.c_str());
 		string uuid = inf._urlparam["uuid"]; //Image Upload때만 URL에 넣어줘야 한다.
 
@@ -586,9 +559,9 @@ int CmnView::CallbackOnPOST(KSessionInfo& inf, int vuid, SHP<KBinData> shbin, HT
 		}
 		//rv = app->_svr->ResponseImageUpload(inf._url, uuid, body.data(), body.size(), filename, imgContType, contLeng, jstrm);
 	}
-	else if(tchbegin(inf._url.c_str(), (PAS)doc->_ApiURL))
+	else if(tchbegin(inf._url.c_str(), sjd->SA("_ApiURL")))
 	{
-		auto chkApi = inf._dir.find(doc->_ApiURL);
+		auto chkApi = inf._dir.find(sjd->SA("_ApiURL"));
 		if(chkApi == string::npos)// '/api' 를 포함 하고 있으면 파일이 아니다.
 		{
 			//	rv = doc->_svr->ResponseForPost(inf, shbin, jstrm);
@@ -638,6 +611,9 @@ int CmnView::CallbackOnErrorAsio(int e, string c, string m)
 	return 0;
 }
 
+
+
+
 void CmnView::StoptAndStart(string step)//?stop&start 
 {
 	CmnDoc* doc = GetDocument();
@@ -683,3 +659,5 @@ void CmnView::StoptAndStart(string step)//?stop&start
 		}
 	}
 }
+
+

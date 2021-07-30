@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "Kw_tool.h"
 #include "DlgTool.h"
 
 

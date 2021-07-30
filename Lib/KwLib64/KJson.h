@@ -10,6 +10,10 @@
 namespace Kw
 {
 
+	typedef std::wstring JSonKey;
+	typedef std::wstring JStr;
+	typedef std::vector<std::wstring> JStrArray;
+
 	enum JsonType
 	{
 		JsonType_Null,
@@ -33,6 +37,19 @@ namespace Kw
 
 
 
+	// Simple function to check a string 's' has at least 'n' characters
+	inline bool simplejson_wcsnlen(PWS s, size_t n) 
+	{
+		if(s == 0)
+			return false;
+		PWS save = s;
+		while(n-- > 0)
+		{
+			if(*(save++) == 0) 
+				return false;
+		}
+		return true;
+	}
 
 
 	class JUnit
@@ -109,6 +126,18 @@ namespace Kw
 		{
 			SetAt(name, val);
 		}
+
+		void CopyAt(PWS k, ShJVal val)
+		{
+			ShJVal nv = make_shared<JVal>(val);
+			SetAt(k, nv);
+		}
+		void CopyAt(PAS k, ShJVal val)
+		{
+			CStringW kw(k);
+			CopyAt(kw, val);
+		}
+
 		void SetObj(PWS name, ShJObj sjo, BOOL bClone = FALSE);
 		void SetObj(PAS name, ShJObj sjo, BOOL bClone = FALSE)
 		{
@@ -143,6 +172,11 @@ namespace Kw
 
 		static void CloneObject(const JObj& source, JObj& tar, bool bClone = true);
 
+		ShJVal Get(PWS k);
+		ShJVal Get(PAS k) {
+			CStringW sw(k);
+			return Get(sw);
+		}
 
 		PWS Ptr(PWS k);
 		wstring String(PWS k);
@@ -161,10 +195,13 @@ namespace Kw
 		/// 항목이 있고 IsString 이면 리턴. 아니면 널
 		PWS S(PAS k) { CStringW sw(k);		return S((PWS)sw); }
 		/// 길이가 1이상 이면 리턴. 아니면 널
+		size_t Length(PAS k);
 		BOOL Len(PAS k);
+		BOOL IsEmpty(PAS k) { return !Len(k); }
 		PWS S(PAS k, CStringW& sv);
 		PWS LenS(PAS k, CStringW& sv);
 		BOOL SameS(PAS k, PWS strk);
+		BOOL SameSA(PAS k, PAS strk) { CStringW sw(strk); return SameS(k, sw); }
 		BOOL BeginS(PAS k, PWS str);
 		BOOL Find(PAS k, PWS str);
 		BOOL Append(PAS k, PWS str);
@@ -222,12 +259,18 @@ namespace Kw
 		PWS QN(PWS k, int underDot = 0);
 		PWS QN(PAS k, int underDot = 0)	{CStringW sw(k);return QN(sw, underDot);}
 		//double이 기본이지만 정수인지 확신할때
-		int I(PAS k)					{CStringW sw(k);return (int)N((PWS)sw);}
-		const ShJArr Array(PWS k);
-		const ShJArr Array(PAS k)		{CStringW sw(k);return Array((PWS)sw);}
+		int I(PAS k) { CStringW sw(k); return (int)N((PWS)sw); }
+		__int64 I64(PWS k);
+		__int64 I64(PAS k) { CStringW sw(k); return (__int64)I64((PWS)sw); }
+		ShJArr Array(PWS k);
+		ShJArr Array(PAS k) { CStringW sw(k); return Array((PWS)sw); }
+		ShJArr AMake(PWS k);
+		ShJArr AMake(PAS k) { CStringW sw(k); return AMake((PWS)sw); }
 
 		/// 복사 되는게 아니고, 내부 객체가 그대로 가르킨것이 포인터로 리턴된다.
 		ShJObj Obj(PWS k);
+		ShJObj OMake(PWS k);// make_shared<JObj>() 로 만들어 넣어서 빈객체라도 넣는다.
+		ShJObj OMake(PAS k) { CStringW sw(k); return OMake((PWS)sw); }
 		ShJObj O(PAS k)					{CStringW sw(k);return Obj((PWS)sw);}
 		ShJObj O(string k)				{CStringW sw(k.c_str());return Obj((PWS)sw);}
 		ShJObj OO(PAS k1, PAS k2);
@@ -384,6 +427,7 @@ namespace Kw
 		/// 그래서 필요 없다.
 		JVal();
 		JVal(const wchar_t* char_value1);
+		JVal(const char* char_value1);
 		JVal(const wstring& string_value1);
 		JVal(bool bool_value1);
 		JVal(double number_value1);
@@ -401,10 +445,20 @@ namespace Kw
 		//JVal(const ShJVal jv);
 #ifdef _DEBUG
 		CStringW _txt;
-		string __{"                                                                                                    "};
-		//wstring _text;// ui에 보여지는 text로 디버깅용으로만 사용
-
+		string _________________________________________________;
 #endif // _DEBUG
+		JsonType type{JsonType_Null};
+		ShJObj object_;
+		//ShJVal parent{nullptr};
+
+		wstring string_;
+		__int64 int64_{-1};// 32bit 에서는 int와 같이 4byte 이지만, 64bit 에서는 8byte이다.
+		double  double_{-1.};
+		ShJArr array_;//실제로 데이터가 [,,,] array 인 경우
+// 		int     int_value{-1};
+// 		bool    bool_value{false};
+// 		unsigned int     uint_value{ -1 };
+// 		unsigned __int64 uint64_value{ -1 };// 32bit 에서는 int와 같이 4byte 이지만, 64bit 에서는 8byte이다.
 		void toString();
 
 // 		void DebugValue()
@@ -447,13 +501,13 @@ namespace Kw
 		bool IsArray() const		{		return type == JsonType_Array;		}
 		bool IsObject() const		{		return type == JsonType_Object;		}
 
-		const wstring& AsString() const	{	return string_value;		}
-		bool AsBool() const			{		return bool_value;		}
-		double AsDouble() const		{		return double_value;		}	//double AsNumber() const;
-		int AsInt() const			{		return int_value;		}
-		__int64 AsInt64() const		{		return int64_value;		}
-		ShJArr AsArray()			{		return array_value;		} //앞에 const 없앰. array편집 하려고
-		ShJObj AsObject()			{		return object_value;		}
+		const wstring& AsString() const	{	return string_;		}
+		bool AsBool() const			{		return int64_ == 1;		}
+		double AsDouble() const		{		return double_;		}	//double AsNumber() const;
+		int AsInt() const			{		return (int)int64_;		}
+		__int64 AsInt64() const		{		return int64_;		}
+		ShJArr AsArray()			{		return array_;		} //앞에 const 없앰. array편집 하려고
+		ShJObj AsObject()			{		return object_;		}
 
 		PWS S() const;
 		PWS Str(int point = 2);
@@ -505,19 +559,7 @@ namespace Kw
 					  //std::vector<std::wstring> _keyOrder;// isObject인 경우 key는 처음 읽을때 어떤 순서로 들어 갔다.
 		//DWORD_PTR _uiData{ 0 }; // HTREEITEM
 
-		ShJVal parent{ nullptr };
-		JsonType type{ JsonType_Null };
 
-		wstring string_value;
-		bool    bool_value{ false };
-		double  double_value{ -1. };
-		int     int_value{ -1 };
-		__int64 int64_value{ -1 };// 32bit 에서는 int와 같이 4byte 이지만, 64bit 에서는 8byte이다.
-// 		unsigned int     uint_value{ -1 };
-// 		unsigned __int64 uint64_value{ -1 };// 32bit 에서는 int와 같이 4byte 이지만, 64bit 에서는 8byte이다.
-
-		ShJArr array_value;//실제로 데이터가 [,,,] array 인 경우
-		ShJObj object_value;
 		void InitArray();
 		void InitObject();
 		//JStrArray array_key;//map 인 경우 원래 소스의 순서를 기억 하기 위해. 삭제 하거나 추가 할경우 고려 해야. 또한 순서를 바꿀수도 있다.
@@ -533,27 +575,27 @@ namespace Kw
 		void setString(const wchar_t* v)
 		{
 			ASSERT(IsString());
-			string_value = v;
+			string_ = v;
 		}
 		void setDouble(double v)
 		{
 			ASSERT(IsNumber());
-			double_value = v;
+			double_ = v;
 		}
 		void setInt(int v)
 		{
 			ASSERT(IsInt());
-			int_value = v;
+			int64_ = v;
 		}
 		void setLong64(long v)
 		{
 			ASSERT(IsInt64());
-			int64_value = v;
+			int64_ = v;
 		}
 		void setBool(bool v)
 		{
 			ASSERT(IsBool());
-			bool_value = v;
+			int64_ = v ? 1 : 0;
 		}
 		int setValue(ShJVal snd1);
 		double CompareValue(ShJVal snd1);

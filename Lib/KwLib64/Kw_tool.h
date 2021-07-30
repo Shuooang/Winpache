@@ -4,7 +4,8 @@
 #include "enumval.h"
 #include "Dictionary.h"
 #include "stdecl.h"
-#include "JSON/JSONValue.h"
+#include "KJson.h"
+//#include "JSON/JSONValue.h"
 
 
 
@@ -310,7 +311,7 @@ int KwUrlParamToJsonT(string& src, TJSON& jmp)
 	return (int)jmp.size();
 }
 
-int KwUrlParamToJson(string& src, CJsonPbj& jmp);
+int KwUrlParamToJson(string& src, Kw::JObj& jmp);
 inline int KwUrlParamToMap(PAS psrc, std::map<std::string, std::string>& mp) {
 	std::string src = psrc;
 	return KwUrlParamToMap(src, mp);
@@ -327,7 +328,7 @@ int KwSaveImageMultiSize(LPVOID idata, size_t isize, CStringArray& arPath, CSize
 //"sAlign hcenter vcenter"
 
 // bToEnd가 FALSE이면 맨 마지막 것은 FILE NAME 이므로 만들 필요 없다는 뜻.
-int KwCheckTargetDir(PS sFull, BOOL bToEnd=TRUE, BOOL bCreate = TRUE);
+int KwCheckTargetDir(PWS sFull, BOOL bToEnd=TRUE, BOOL bCreate = TRUE);
 
 CStringA KwContentType(PAS extension);
 
@@ -386,23 +387,23 @@ int KwCutStrByCharT(TChar c, TString s, TArray& ar, bool bIgnorFirst = false, bo
 		ar.Add(s.Mid(i0));
 	return (int)ar.GetCount();
 }
+#ifdef _DEBUG
+// 이 class는 멤버를 std::map 형태로 바꾸면서, 코딩중 어떤 필드가 있는지 바로 참조 하기 위함
+class Vake { };
+#endif // _DEBUG
 
 BOOL KwTextToVar(COleVariant& m_varValue, const CString& strText);
 BOOL KwNullToVar(COleVariant& m_varValue);
 
 BOOL KwCopyTextClipboad(CWnd* pWnd, LPCWSTR text);
 
-LPCSTR KwReadSmallTextFileA(PS fileName, CStringA& str);
+LPCSTR KwReadSmallTextFileA(PWS fileName, CStringA& str);
 DWORD KwGetFullPathName(PWS lpszFileIn, CStringW& path, PWS* pFilePart = NULL);
 
 DWORD EncodeBinary(KBinary& bin, LPCSTR key0, bool bEncode, KBinary* pbinr);
 
 LONGLONG KwGetTickCount100Nano();
 
-#ifdef _DEBUG
-// 이 class는 멤버를 std::map 형태로 바꾸면서, 코딩중 어떤 필드가 있는지 바로 참조 하기 위함
-class Vake
-{
-};
 
-#endif // _DEBUG
+
+hres KwGetMacInfo(CString& localIP, CString& macAddr);

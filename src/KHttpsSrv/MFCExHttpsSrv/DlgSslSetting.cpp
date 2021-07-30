@@ -25,17 +25,17 @@ DlgSslSetting::~DlgSslSetting()
 
 void DlgSslSetting::DoDataExchange(CDataExchange* pDX)
 {
-	auto doc = (SrvDoc*)_doc;
-	ASSERT(doc);
+	ASSERT(_jobj);
+	JObj& jbj = *_jobj;
 	CDialogEx::DoDataExchange(pDX);
-	KDDX_TextA(_certificate);
-	KDDX_TextA(_privatekey);
-	KDDX_TextA(_dhparam);
-	KDDX_TextA(_prvpwd);
-	DDX_Control(pDX, IDC_certificate, c_certificate);
-	DDX_Control(pDX, IDC_privatekey, c_privatekey);
-	DDX_Control(pDX, IDC_dhparam, c_dhparam);
-	DDX_Control(pDX, IDC_prvpwd, c_prvpwd);
+	KDDXJ_Text(_certificate);
+	KDDXJ_Text(_privatekey);
+	KDDXJ_Text(_dhparam);
+	KDDXJ_Text(_prvpwd);
+	DDX_Control(pDX, IDC__certificate, c_certificate);
+	DDX_Control(pDX, IDC__privatekey, c_privatekey);
+	DDX_Control(pDX, IDC__dhparam, c_dhparam);
+	DDX_Control(pDX, IDC__prvpwd, c_prvpwd);
 }
 
 
@@ -65,11 +65,10 @@ BOOL DlgSslSetting::OnInitDialog()
 
 void DlgSslSetting::OnBnClickedBtncertificate()
 {
-	auto doc = (SrvDoc*)_doc;
 	CString fname;
 	if(KwOpenFileOpenDlg(GetSafeHwnd(), fname, L"*.pem"))
 	{
-		doc->_certificate = fname;
+		(*_jobj)("_certificate") = fname;
 		UpdateData(0);
 	}
 }
@@ -77,11 +76,11 @@ void DlgSslSetting::OnBnClickedBtncertificate()
 
 void DlgSslSetting::OnBnClickedBtnprivate()
 {
-	auto doc = (SrvDoc*)_doc;
+	//auto doc = (SrvDoc*)_doc;
 	CString fname;
 	if(KwOpenFileOpenDlg(GetSafeHwnd(), fname, L"*.pem"))
 	{
-		doc->_privatekey = fname;
+		(*_jobj)("_privatekey") = fname;
 		UpdateData(0);
 	}
 }
@@ -89,11 +88,10 @@ void DlgSslSetting::OnBnClickedBtnprivate()
 
 void DlgSslSetting::OnBnClickedBtndhparam()
 {
-	auto doc = (SrvDoc*)_doc;
 	CString fname;
 	if(KwOpenFileOpenDlg(GetSafeHwnd(), fname, L"*.pem"))
 	{
-		doc->_dhparam = fname;
+		(*_jobj)("_dhparam") = fname;
 		UpdateData(0);
 	}
 }
@@ -105,7 +103,7 @@ void DlgSslSetting::OnBnClickedOk()
 // 	KDDX_TextA(_privatekey);
 // 	KDDX_TextA(_dhparam);
 // 	KDDX_TextA(_prvpwd);
-#define GETDLGTEXT1(key)	{CString s##key;	GetDlgItemText(IDC##key, s##key);\
+#define GETDLGTEXT1(key)	{CString s##key;	GetDlgItemText(IDC_##key, s##key);\
 if(!KwIfFileExist(s##key))\
 	{KwMessageBox(L"File \"%s\" is not found!", s##key);\
 	return;}\

@@ -34,7 +34,7 @@ public:
 	CStrBufferT<CString, LPCTSTR> _buf;
 	int _afterPoint{ 9 };//위에 class초기화가 있으므로 아예 안한다.
 
-	PS Qs(PS val, BOOL bQuat = TRUE, BOOL bNullIfEmpty = TRUE)
+	PWS Qs(PWS val, BOOL bQuat = TRUE, BOOL bNullIfEmpty = TRUE)
 	{
 		CString& sbuf = _buf.GetBuf();
 		if(val != nullptr)
@@ -56,7 +56,7 @@ public:
 		else
 			return nullptr;
 	}
-	PS Qs(int k, BOOL bNullIfMinusOne = TRUE)
+	PWS Qs(int k, BOOL bNullIfMinusOne = TRUE)
 	{
 		CString& sbuf = _buf.GetBuf();
 		CString fmt;
@@ -68,7 +68,7 @@ public:
 		sbuf.Format(L"%d", k);
 		return sbuf;
 	}
-	PS Qs(double k, BOOL bNullIfMinusOne = TRUE, int afterPoint = -1)
+	PWS Qs(double k, BOOL bNullIfMinusOne = TRUE, int afterPoint = -1)
 	{
 		CString& sbuf = _buf.GetBuf();
 		CString fmt;
@@ -97,7 +97,7 @@ public:
 		_bApplied = false;
 #endif
 	}
-	PS GetSQL()
+	PWS GetSQL()
 	{
 		if(!_bApplied)
 			Apply(); // 결과가 _sqlv 로.
@@ -319,5 +319,5 @@ public:
 
 
 
-typedef class QuatT<CJsonPbj, JSONValue> QuatJ;
+//typedef class QuatT<CJsonPbj, JSONValue> QuatJ;
 typedef class QuatT<Kw::JObj, Kw::JVal> Quat;

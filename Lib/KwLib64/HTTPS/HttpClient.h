@@ -2,6 +2,7 @@
 #include <afxinet.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <msxml6.h>
 
 #include "..\Kw_tool.h"
 #include "..\Dictionary.h"
@@ -122,7 +123,8 @@ public:
 
 	bool m_bEncode;
 
-
+	CComPtr<IServerXMLHTTPRequest> _sxrq;
+	CAutoCoInit _coInit;
 // 	static CHttpClient* CreateHostApp(CHttpClient* pht, PWS func, LPARAM lp = NULL);
 // 	static void FillHostInfo_(CString& svr, CString& sUri, int& port);
 // 
@@ -134,15 +136,15 @@ public:
 
 	void HttpLog(PWS sLog, int iOp = 0);
 	void Test();
-	int m_nMilSecTimeout;// connect
+	int m_nMilSecTimeoutResolve;// connect
 	int m_nMilSecTimeoutSend;// send
 	int m_nMilSecTimeoutRcv;//rcv : 이게 실제 타임아웃 역할을 한다.
-	int m_nMilSecTimeoutDataRcv;// connect
+	int m_nMilSecTimeoutConnect;// connect
 protected:
 public:
 	void SetTimeout(int timeout)
 	{
-		m_nMilSecTimeout = timeout;
+		m_nMilSecTimeoutResolve = timeout;
 	}
 
 	enum 

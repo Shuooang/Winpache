@@ -152,7 +152,8 @@ void DockOdbc::OnBnClickedConnectDB()
 		auto frm = (CMainFrame*)AfxGetMainWnd();
 		auto& appd = ((CMFCExHttpsSrvApp*)AfxGetApp())->_docApp;
 		//auto& jobj = *appd._json;
-		auto& jOdbc = *appd._json->O("ODBC");
+		AUTOLOCK(appd._csAppDoc);
+		auto& jOdbc = *appd._json->OMake("ODBC");
 
 
 

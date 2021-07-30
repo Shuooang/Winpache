@@ -908,7 +908,7 @@ int KRecordset::ExtractTable(CStringW sql0, CStringW& tblS)
 
 // row가 여러개인것을 전제 하고 array 를 hsr(key) = 에 넣는다.
 
-void KRecordset::MakeRecsetToJson(JObj& hsr, PS keyRecset)
+void KRecordset::MakeRecsetToJson(JObj& hsr, PWS keyRecset)
 {
 	KRecordset& rs = *this;
 	//try		{
@@ -937,7 +937,7 @@ void KRecordset::MakeRecsetToJson(JObj& hsr, PS keyRecset)
 
 // row 0번 하나만 object 로서 hsr에 넣는다.
 
-void KRecordset::MakeRecsetOneRowToJson(JObj& hsr, PS keyRecset)
+void KRecordset::MakeRecsetOneRowToJson(JObj& hsr, PWS keyRecset)
 {
 	KRecordset& rs = *this;
 	//try	{
@@ -984,7 +984,7 @@ CString KwQuat(PWS content)
 }
 #ifdef _QUAT
 
-PS Quat::Qs(PS val, BOOL bQuat, BOOL bNullIfEmpty)
+PWS Quat::Qs(PWS val, BOOL bQuat, BOOL bNullIfEmpty)
 {
 	CString& sbuf = _buf.GetBuf();
 	if (val != nullptr)
@@ -1020,7 +1020,7 @@ else if (v->IsBool())
 		return nullptr;
 }
 
-PS Quat::Qs(int k, BOOL bNullIfMinusOne)
+PWS Quat::Qs(int k, BOOL bNullIfMinusOne)
 {
 	CString& sbuf = _buf.GetBuf();
 	CString fmt;
@@ -1033,7 +1033,7 @@ PS Quat::Qs(int k, BOOL bNullIfMinusOne)
 	return sbuf;
 }
 
-PS Quat::Qs(double k, BOOL bNullIfMinusOne, int afterPoint)
+PWS Quat::Qs(double k, BOOL bNullIfMinusOne, int afterPoint)
 {
 	CString& sbuf = _buf.GetBuf();
 	CString fmt;
@@ -1059,7 +1059,7 @@ void Quat::SetSQL(PWS sql)
 #endif
 }
 
-PS Quat::GetSQL()
+PWS Quat::GetSQL()
 {
 	if(!_bApplied)
 		Apply(); // 결과가 _sqlv 로.
@@ -1205,7 +1205,7 @@ int KDatabase::UpdateKeyODBCMySQL(LPCWSTR sDSN, CString sval, CString val, bool 
 	return 0;
 }
 
-int KDatabase::RegODBCMySQL(LPCWSTR sDSN, KWStrMap& kmap)// LPCTSTR sServer, LPCTSTR sDriver, LPCTSTR sDatabase, PS sPort)
+int KDatabase::RegODBCMySQL(LPCWSTR sDSN, KWStrMap& kmap)// LPCTSTR sServer, LPCTSTR sDriver, LPCTSTR sDatabase, PWS sPort)
 {
 	CString sKey0(_T("Software\\ODBC\\ODBC.INI\\"));
 	CString sKey = sKey0 + sDSN;
@@ -1354,7 +1354,7 @@ void  KwEnumurateKey(HKEY hkey, PWS key, KWStrMap& kmap)
 	RegCloseKey(hTestKey);
 }
 
-int KDatabase::RegGetODBCMySQL(LPCWSTR sDSN, KWStrMap& kmap)// LPCTSTR sServer, LPCTSTR sDriver, LPCTSTR sDatabase, PS sPort)
+int KDatabase::RegGetODBCMySQL(LPCWSTR sDSN, KWStrMap& kmap)// LPCTSTR sServer, LPCTSTR sDriver, LPCTSTR sDatabase, PWS sPort)
 {
 	CString sKey0(L"SOFTWARE\\ODBC\\ODBC.INI\\");
 	CString sKey = sKey0 + sDSN; //SOFTWARE\\ODBC\\ODBC.INI\\Winpache

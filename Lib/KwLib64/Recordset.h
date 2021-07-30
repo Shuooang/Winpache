@@ -9,7 +9,7 @@
 #include "ktypedef.h"
 #include "KBinary.h"
 #include "tchtool.h"
-#include "JSON/JSONValue.h"//?deprecated
+//#include "JSON/JSONValue.h"//?deprecated
 #include "Dictionary.h"
 #include "KVal.h"
 #include "KTemple.h"
@@ -489,6 +489,7 @@ public:
 
 
 
+#ifdef _DEBUGxxx
 
 #define SetJsonTYPE(TYPE) \
 	if(!SetJsonNull(jso, r, c, key))\
@@ -576,6 +577,7 @@ public:
 	float* PCellF(int r, int c);
 	int* PCellI(int r, int c);
 	*/
+#endif // _DEBUGxxx
 
 
 	bool NoData() { return this->RowSize() == 0; }//m_rcQuery == SQL_NO_DATA_FOUND || 
@@ -748,13 +750,13 @@ public:
 	}
 
 	// row가 여러개인것을 전제 하고 array 를 hsr(key) = 에 넣는다.
-	void MakeRecsetToJson(JObj& hsr, PS keyRecset);
+	void MakeRecsetToJson(JObj& hsr, PWS keyRecset);
 
 	// row 0번 하나만 object 로서 hsr에 넣는다.
-	void MakeRecsetOneRowToJson(JObj& hsr, PS keyRecset);
+	void MakeRecsetOneRowToJson(JObj& hsr, PWS keyRecset);
 
 	template<typename Func>
-	void MakeRecsetToJson(JObj& hsr, PS keyRecset = L"table", Func lmda = [](KRecordset&, int, int, JObj&) -> int {})
+	void MakeRecsetToJson(JObj& hsr, PWS keyRecset = L"table", Func lmda = [](KRecordset&, int, int, JObj&) -> int {})
 	{
 		KRecordset& rs = *this;
 		try

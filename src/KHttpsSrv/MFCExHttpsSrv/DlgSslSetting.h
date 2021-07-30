@@ -17,6 +17,7 @@ public:
 	CEditCtrlCV c_prvpwd;
 
 	CDocument* _doc{ nullptr };
+	ShJObj _jobj;
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_SslSetting };

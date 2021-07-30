@@ -1,10 +1,12 @@
-#include "pch.h"
+#include "pch.h" /// 이 파일은 .. 에 있지만 여기서  "../pch.h" 로 주지 않는다. pre compiled header는 안한다.
 
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
 #include "../ThreadPool.h"
 #include "../Lock.h"
+#include "../tchtool.h"
+#include "../KBinary.h"
 #include "HttpSvr.h"
 
 #pragma comment(lib, "Httpapi.lib")

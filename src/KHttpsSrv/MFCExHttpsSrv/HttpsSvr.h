@@ -50,6 +50,9 @@ public:
 	{
 		if(len > 0)
 		{
+			if(m_p)
+				delete m_p;
+
 			m_p = new char[len + 1];
 			m_len = len;
 			memcpy(m_p, p, len);
@@ -249,7 +252,8 @@ public: // 아래는 소유권이 없다.
 	shared_ptr<function<int(HTTPSCacheSession*, const void*, size_t)>>         _fncOnReceived;
 	shared_ptr<function<int(HTTPSCacheSession*, HTTPRequest&)>> _fncOnReceivedRequestInternal;
 	shared_ptr<function<void(string)>>                                          _fncOnTrace;
-	
+	shared_ptr<function<int(KSessionInfo&, shared_ptr<KBinData>)>> _fncCluster;//
+
 	void ResetEvent()
 	{
 		auto server = this;
@@ -266,6 +270,7 @@ public: // 아래는 소유권이 없다.
 		server->_fncOnReceived.reset();
 		server->_fncOnReceivedRequestInternal.reset();
 		server->_fncOnTrace.reset();
+		server->_fncCluster.reset();
 	}
 
 	shared_ptr<CacheBin> _cache;
@@ -460,6 +465,10 @@ public:
 			std_coutD.AddCallbackOnTrace(fnc);
 		}
 	}
+	template<typename TFNC> void AddCallbackCluster(TFNC fnc, int bOvWR = 0)
+	{
+		TCreateFuncValue(_server->_fncCluster, fnc, bOvWR);
+	}
 
 };
 
@@ -568,7 +577,7 @@ public:
 				auto b1 = che.GetCacheValue(keyRes, cval);
 				if(b1)
 				{
-					ssn->_sinfo._stCached = "cached";
+					//ssn->_sinfo._stCached = "cached"; 부른쪽에서 해야지.
 					//ssn->SendResponseAsync(MakeJsonResponse(res1, valueRes));
 					return 1;
 				}
@@ -634,7 +643,9 @@ public:
 				/// 아래 POST에서 또 비동기 호출 하니 여기서 해봐야 소용 없다.
 				/// onSent 여러번 호출중에 맨마지막 pending size가 sent > size 일때 마지막 이므로 그때하면 되지 않을까
 			});*/
+		/// // BG에서 쓰려면 이걸 써야 한다.////////////////////////////////////////
 		auto sh_ss1(ssn->shared_from_this());// enable_shared_from_this<> 계승 받아서 가능. 이렇게 해도 되는지 확인해 보자
+		/// //////////////////////////////////////////
 
 		shared_ptr<KBinData> shbinDumy;
 		if(svr->_fncOnReceivedRequest)
@@ -643,8 +654,8 @@ public:
 		//string s = boost::lexical_cast<string>(sck.remote_endpoint());
 		if(request.method() == "HEAD")
 		{
-			HttpCmn::MakeStrErrorToJsonResponse(res1, "HEAD is not supported.", 400);
-			ssn->SendResponseAsync(res1);// .MakeHeadResponse());
+			ssn->SendResponseAsync(res1.MakeErrorResponse("Unsupported HTTP method: " + string(request.method())));
+			//ssn->SendResponseAsync(res1);// .MakeHeadResponse());
 		}
 		else if(request.method() == "GET")
 		{
@@ -664,6 +675,7 @@ public:
 			CacheVal cval;
 			rv = CheckCacheFirst(keyRes, cval, svr, ssn, request);
 			if (rv == 1)	{
+				ssn->_sinfo._stCached = "cached";
 				valueRes.insert(0, cval._data.m_p, cval._data.m_len);
 				res1.MakeGetResponse(valueRes, cval._contentType);
 				ssn->SendResponseAsync(res1);// MakeJsonResponse(res1, valueRes));
@@ -680,7 +692,7 @@ public:
 				auto sh_ss = svr->FindSession(ssn->id());//아래 람다 안으로 복사 하려고, 마침 shared_ptr을 리턴 한다.
 				auto sh_ss1(ssn->shared_from_this());// enable_shared_from_this<> 계승 받아서 가능. 이렇게 해도 되는지 확인해 보자
 				/// ssn == sh_ss == sh_ss1 == ssn1
-				// rambda 여기서 부터는 비즈니스로직과 함께 response 까지 다른 쓰레드에서 한다.
+				// lambda 여기서 부터는 비즈니스로직과 함께 response 까지 다른 쓰레드에서 한다.
 				auto bg_run = [svr, sh_ss, keyRes, shbin, &res1]()
 				{
 					auto ssn1 = (TSESSION*)sh_ss.get();
@@ -719,26 +731,69 @@ public:
 			CacheVal cval;
 			rv = CheckCacheFirst(keyRes, cval, svr, ssn, request);
 			if (rv == 1)	{
+				ssn->_sinfo._stCached = "cached";
 				valueRes.insert(0, cval._data.m_p, cval._data.m_len);
 				res1.MakeGetResponse(valueRes, cval._contentType);
 				ssn->SendResponseAsync(res1);// MakeJsonResponse(res1, valueRes));
 				return;
 			}
 
-			if(svr->_fncPOST.get())//앞에 const 가 있어서
+			std::map<string, string> mapHd;
+			GetResponseHeader(res1, mapHd);
+			string cntype = mapHd["Content-Type"];
+
+			/// auto sh_ss = svr->FindSession(ssn->id()); 이것도 되지만, shred 안되어 있으므로 sh_ss1 을 사용
+
+			auto& ainfo = ssn->_sinfo;
+			/// URL에서 SSL, 주소, 포트 뺀 _dir과 parameter를 그대로
+			/// request 한다. POST 데이터는 그대로
+			/// 그것은 ainfo._url 이다.
+			/// 재요청할때 ainfo._headers 를 전부 헤더로 붙여 줘야 한다.
+#ifdef _DEBUG
+// 			shared_ptr<KBinData> shbin = std::make_shared<KBinData>();
+// 			shbin->Attach(req1.body().data(), req1.body().size());// 진짜 데이터 부분만 이다.
+			string_view sprt = req1.protocol();	//	"HTTP/1.1"
+			string turl = ssn->_sinfo._url;
+#endif // _DEBUG
+#define _CLUSTER
+#ifdef _CLUSTER
+			if(svr->_fncCluster)//CSrvView::CallbackCluster
+			{
+				//auto bg_run = [svr, sh_ss, keyRes, shbin, cntype, &res1]() {
+				shared_ptr<KBinData> shbin = std::make_shared<KBinData>();
+				shbin->Attach(req1.body().data(), req1.body().size());
+				int rv = (int)(*svr->_fncCluster)(ssn->_sinfo, shbin);// => CResponse1::ResponseForPost
+				if(rv == 1) {//1:분산 처리됨. 2: localhost 지금 이거 이므로 통과
+					ssn->_sinfo._stCached = "distrib";
+					valueRes.insert(0, shbin->m_p, shbin->m_len);
+					res1.MakeGetResponse(valueRes, cntype);
+					ssn->SendResponseAsync(res1);
+					return;
+				}
+				//}; QueueFUNC(bg_run);
+			}
+#endif // _CLUSTER
+			if(svr->_fncPOST)//앞에 const 가 있어서
 			{
 				ssn->_sinfo._stCached = "NoCach";
-
-				auto sh_ss = svr->FindSession(ssn->id());
-
 				/// 아래 처리 루틴을 비동기로 하면 data를 챙겨야 한다. 이 함수 뒤에서 바로 request는 Clear 되기 때문이다.
 				shared_ptr<KBinData> shbin = std::make_shared<KBinData>();
 				shbin->Attach(req1.body().data(), req1.body().size());
-				
-				// rambda 여기서 부터는 비즈니스로직과 함께 response 까지 다른 쓰레드에서 한다.
-				auto bg_run = [svr, sh_ss, keyRes, shbin, &res1]() 
+
+ 				if(ssn->_sinfo._ip.length() == 0)
+ 					TRACE("");
+				// lambda 여기서 부터는 비즈니스로직과 함께 response 까지 다른 쓰레드에서 한다.
+				auto bg_run = [svr, sh_ss1, keyRes, shbin, cntype, &res1]()
 				{
-					auto ssn1 = (TSESSION*)sh_ss.get();
+					auto ssn1 = (TSESSION*)sh_ss1.get();
+					if(ssn1->_sinfo._ip.length() == 0)
+						TRACE("");///?error: onSentKw에서 _sinfo.Clear(); 해버리니. onSentKw 는 여러번 불리는데.
+					auto sh_ss2(ssn1->shared_from_this());// enable_shared_from_this<> 계승 받아서 가능. 이렇게 해도 되는지 확인해 보자
+					auto ssn2 = (TSESSION*)sh_ss2.get();
+
+ 					if(ssn2->_sinfo._ip.length() == 0)
+ 						TRACE("");
+
 					auto fnc = svr->_fncPOST.get();
 					/// ///////////////////////////////////////////////////////////////
 					int rv = (int)(*fnc)(ssn1, shbin, res1);// => CResponse1::ResponseForPost
@@ -747,9 +802,6 @@ public:
 					if(rv == 0)
 					{//성공한 경우만 캐시에 넣는다.
 						string value(res1.body());
-						std::map<string, string> mapHd;
-						GetResponseHeader(res1, mapHd);
-						string cntype = mapHd["Content-Type"];
 						svr->getCache().PutCacheValue(keyRes, value, cntype); // 성공한 값은 케시에 넣음
 						if(ssn1->_sinfo._status != 200)
 							res1.SetBegin(ssn1->_sinfo._status);
@@ -768,8 +820,11 @@ public:
 		}
 		else if(request.method() == "DELETE")
 		{
-			ssn->SendResponseAsync(res1.MakeGetResponse("{}", "application/json; charset=UTF-8"));
+			ssn->SendResponseAsync(res1.MakeErrorResponse("Unsupported HTTP method: " + string(request.method())));
 			return;
+
+#ifdef _DEBUGxx
+			ssn->SendResponseAsync(res1.MakeGetResponse("{}", "application/json; charset=UTF-8"));
 
 			string key(request.url());
 			string value;
@@ -788,11 +843,18 @@ public:
 			}
 			else
 				ssn->SendResponseAsync(res1.MakeErrorResponse("Deleted cache value was not found for the key: " + key, 404));
+#endif // _DEBUGxx
 		}
 		else if(request.method() == "OPTIONS")
-			ssn->SendResponseAsync(res1.MakeOptionsResponse());
+		{
+			ssn->SendResponseAsync(res1.MakeErrorResponse("Unsupported HTTP method: " + string(request.method())));
+			//ssn->SendResponseAsync(res1.MakeOptionsResponse());
+		}
 		else if(request.method() == "TRACE")
-			ssn->SendResponseAsync(res1.MakeTraceResponse(request.cache()));
+		{
+			ssn->SendResponseAsync(res1.MakeErrorResponse("Unsupported HTTP method: " + string(request.method())));
+			//ssn->SendResponseAsync(res1.MakeTraceResponse(request.cache()));
+		}
 		else
 			ssn->SendResponseAsync(res1.MakeErrorResponse("Unsupported HTTP method: " + string(request.method())));
 	}

@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="JSON">
-      <UniqueIdentifier>{646a6757-8720-435a-b516-e588267d8db7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="HTTPS">
       <UniqueIdentifier>{8f848a64-3bd8-4327-9abf-cd5b773eb073}</UniqueIdentifier>
     </Filter>
@@ -26,12 +23,6 @@
   <ItemGroup>
     <ClInclude Include="DlgTool.h">
       <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="JSON\JSON.h">
-      <Filter>JSON</Filter>
-    </ClInclude>
-    <ClInclude Include="JSON\JSONValue.h">
-      <Filter>JSON</Filter>
     </ClInclude>
     <ClInclude Include="KBinary.h">
       <Filter>헤더 파일</Filter>
@@ -145,12 +136,6 @@
     </ClCompile>
     <ClCompile Include="DlgTool.cpp">
       <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="JSON\JSON.cpp">
-      <Filter>JSON</Filter>
-    </ClCompile>
-    <ClCompile Include="JSON\JSONValue.cpp">
-      <Filter>JSON</Filter>
     </ClCompile>
     <ClCompile Include="KBinary.cpp">
       <Filter>소스 파일</Filter>

@@ -198,8 +198,6 @@
     <ClInclude Include="HTTPS\HttpSvr.h" />
     <ClInclude Include="HTTPS\SslConfig.h" />
     <ClInclude Include="inlinefnc.h" />
-    <ClInclude Include="JSON\JSON.h" />
-    <ClInclude Include="JSON\JSONValue.h" />
     <ClInclude Include="KBinary.h" />
     <ClInclude Include="KDebug.h" />
     <ClInclude Include="kinterface.h" />
@@ -234,8 +232,6 @@
     <ClCompile Include="HTTPS\HTTPS.cpp" />
     <ClCompile Include="HTTPS\HttpSvr.cpp" />
     <ClCompile Include="HTTPS\SslConfig.cpp" />
-    <ClCompile Include="JSON\JSON.cpp" />
-    <ClCompile Include="JSON\JSONValue.cpp" />
     <ClCompile Include="KBinary.cpp" />
     <ClCompile Include="KDebug.cpp" />
     <ClCompile Include="kinterface.cpp" />

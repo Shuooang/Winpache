@@ -29,10 +29,10 @@ static char BASED_CODE THIS_FILE[] = __FILE__;
 CHttpClient::CHttpClient(void)
 : m_byteSend(0)
 , m_byteResv(0)
-, m_nMilSecTimeout(5000)
-, m_nMilSecTimeoutSend(0)
-, m_nMilSecTimeoutRcv(0)
-, m_nMilSecTimeoutDataRcv(0)
+, m_nMilSecTimeoutResolve(2000) // 연결
+, m_nMilSecTimeoutConnect(3000)// 이건 파일 다운 로드 받을떄도 있으니. 안쓴다.
+, m_nMilSecTimeoutSend(30000)
+, m_nMilSecTimeoutRcv(30000)
 , m_pPrgress(NULL)
 , m_nGrowSize(10240)
 , m_bEncode(false)
@@ -151,14 +151,14 @@ hres CHttpClient::RequestPost( LPCTSTR pszServerName, INTERNET_PORT nPort, LPCTS
 		try
 		{
 			session.SetOption(INTERNET_OPTION_CONNECT_RETRIES, 3);
-		if(m_nMilSecTimeout > 0)// 60sec
-			session.SetOption(INTERNET_OPTION_CONNECT_TIMEOUT, m_nMilSecTimeout);//5sec
+		if(m_nMilSecTimeoutResolve > 0)// 60sec
+			session.SetOption(INTERNET_OPTION_CONNECT_TIMEOUT, m_nMilSecTimeoutResolve);//5sec
 		if(m_nMilSecTimeoutSend > 0)// 60sec
 			session.SetOption(INTERNET_OPTION_SEND_TIMEOUT, m_nMilSecTimeoutSend);
 		if(m_nMilSecTimeoutRcv > 0)// 이게 타임아웃/응답없음 모두 영향 있네. 
 			session.SetOption(INTERNET_OPTION_RECEIVE_TIMEOUT, m_nMilSecTimeoutRcv);
-		if(m_nMilSecTimeoutDataRcv > 0)// 60sec
-			session.SetOption(INTERNET_OPTION_DATA_RECEIVE_TIMEOUT, m_nMilSecTimeoutDataRcv);
+		if(m_nMilSecTimeoutConnect > 0)// 60sec
+			session.SetOption(INTERNET_OPTION_DATA_RECEIVE_TIMEOUT, m_nMilSecTimeoutConnect);
 #ifdef _before_edit
 	// 		session.SetOption(INTERNET_OPTION_CONNECT_TIMEOUT, m_nMilSecTimeout);
 			// 		session.SetOption(INTERNET_OPTION_CONNECT_RETRIES, 3);
@@ -541,15 +541,15 @@ hres CHttpClient::RequestGet( LPCTSTR pszServerName, INTERNET_PORT nPort, LPCTST
 		DWORD dwRet = 0;
 		session.SetOption(INTERNET_OPTION_CONNECT_RETRIES, 3);
 
-		if(m_nMilSecTimeout > 0)// 60sec
-			session.SetOption(INTERNET_OPTION_CONNECT_TIMEOUT, m_nMilSecTimeout);//5sec
+		if(m_nMilSecTimeoutResolve > 0)// 60sec
+			session.SetOption(INTERNET_OPTION_CONNECT_TIMEOUT, m_nMilSecTimeoutResolve);//5sec
 
 		if(m_nMilSecTimeoutSend > 0)// 60sec
 			session.SetOption(INTERNET_OPTION_SEND_TIMEOUT, m_nMilSecTimeoutSend);
 		if(m_nMilSecTimeoutRcv > 0)// 이게 타임아웃/응답없음 모두 영향 있네. 
 			session.SetOption(INTERNET_OPTION_RECEIVE_TIMEOUT, m_nMilSecTimeoutRcv);
-		if(m_nMilSecTimeoutDataRcv > 0)// 60sec
-			session.SetOption(INTERNET_OPTION_DATA_RECEIVE_TIMEOUT, m_nMilSecTimeoutDataRcv);
+		if(m_nMilSecTimeoutConnect > 0)// 60sec
+			session.SetOption(INTERNET_OPTION_DATA_RECEIVE_TIMEOUT, m_nMilSecTimeoutConnect);
 		
 // 			session.SetOption(INTERNET_OPTION_SEND_TIMEOUT, m_nMilSecTimeout);
 // 			session.SetOption(INTERNET_OPTION_DATA_RECEIVE_TIMEOUT, m_nMilSecTimeoutRcv);
@@ -797,7 +797,7 @@ int CHttpClient::RequestPostSSL( LPCTSTR surl, KBinary* pBinr, LPCSTR buf, UINT 
 #ifdef _Use_SSL_Http
 	try
 	{
-		CAutoCoInit _auco;
+		CAutoCoInit _auco(COINIT_APARTMENTTHREADED, !_coInit.m_bInit);
 		// http://stackoverflow.com/questions/1107862/http-client-example-on-win32
 		//https://msdn.microsoft.com/en-us/library/cc507432(v=vs.85).aspx
 		//https://www.microsoft.com/ko-KR/download/details.aspx?id=3988 msxml6.msi
@@ -808,8 +808,11 @@ int CHttpClient::RequestPostSSL( LPCTSTR surl, KBinary* pBinr, LPCSTR buf, UINT 
 		// Apartment 로 설정 해 줘야 
 		// CAutoCoInit 로 어디선가 CoInitializeEx 를 불러야 한다.
 		HRESULT hr;
-		CComPtr<IXMLHTTPRequest> request;
-		hr = request.CoCreateInstance(CLSID_XMLHTTP60);
+		//CComPtr<IXMLHTTPRequest> request;
+		if(!_sxrq)
+			hr = _sxrq.CoCreateInstance(CLSID_ServerXMLHTTP60);//CLSID_XMLHTTP60
+		CComPtr<IServerXMLHTTPRequest> request(_sxrq);
+		//hr = request.CoCreateInstance(CLSID_ServerXMLHTTP60);//CLSID_XMLHTTP60
 		//if(request.p == NULL)
 		//	hr = request.CoCreateInstance(CLSID_XMLHTTP40);
 		//if(request.p == NULL)
@@ -820,10 +823,22 @@ int CHttpClient::RequestPostSSL( LPCTSTR surl, KBinary* pBinr, LPCSTR buf, UINT 
 		//	hr = request.CoCreateInstance(CLSID_XMLHTTP);
 		if(request.p == NULL)
 		{
-			AfxMessageBox(L"msxml6.msi 설치해라");
+			//AfxMessageBox(L"msxml6.msi 설치해라");
 			throw __LINE__;
 		}
-
+		//                dns->ip   socket에 연결     보내는                 첫 받음(데이터 아님)
+#ifdef _DEBUGx
+		request->setTimeouts(1000, 7000, 30000, 30000);
+#else
+		request->setTimeouts(m_nMilSecTimeoutResolve, m_nMilSecTimeoutConnect, m_nMilSecTimeoutSend, m_nMilSecTimeoutRcv);
+#endif // _DEBUG
+		/// 서버에 접속이 안되면 m_nMilSecTimeoutResolve + m_nMilSecTimeoutConnect 
+		/// 성공 했을때: 94, 129, 
+		/// 실패: 1000, 2000 일때 3031 만에 실패 응답 했다.
+		/// 실패: 1000, 5000 일때 8000 만에 실패 응답 했다.
+		/// 실패: 2000, 2000 일때 4485 만에 실패 응답 했다.
+		/// 실패: 1000, 7000 일때 6828 만에 실패 응답 했다.
+		/// 결론: 접속 안되면, resolve + connect + a 정도에 응답 한다.
 		hr = request->open(
 			_bstr_t("POST"), //Method "GET", "POST"
 			_bstr_t(sUrl), //"https://maps.googleapis.com/maps/api/geocode/xml?address=%EC%9D%B4%EC%88%98&sensor=false&key=AIzaSyBSHdO1t0z0XWsEVBrhTMgnubnSDYnadWs"),
@@ -866,6 +881,7 @@ int CHttpClient::RequestPostSSL( LPCTSTR surl, KBinary* pBinr, LPCSTR buf, UINT 
 		//	hr = request->send(_variant_t());
 		//else if(strcmp(sMethod, "POST") == 0)
 		{
+			LONGLONG tk = GetTickCount64();
 			if(!bData)
 				hr = request->send(_variant_t()); // S_OK
 			else
@@ -883,7 +899,10 @@ int CHttpClient::RequestPostSSL( LPCTSTR surl, KBinary* pBinr, LPCSTR buf, UINT 
 				SafeArrayUnaccessData(var.parray);
 
 				hr = request->send(var);
+				/// WinRT originate error - 0x80072F45 : '전송 메서드가 호출되기 전에는 이 메서드를 호출할 수 없습니다.'
 			}
+			LONGLONG msel = GetTickCount64() - tk;
+
 			// 0x800C0008 is INET_E_DOWNLOAD_FAILURE The download has failed (the connection was interrupted).
 			m_dwRet = hr;
 // 			s.Format(L"%#x", hr);// 			smg += s;

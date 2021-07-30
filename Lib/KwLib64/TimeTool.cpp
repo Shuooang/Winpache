@@ -31,7 +31,7 @@ typedef struct _REG_TZI_FORMAT
 // #define REG_TZ_KEY_MAXLEN (REG_TIME_ZONES_LEN + (sizeof(((TIME_ZONE_INFORMATION*)0)->StandardName)/2) -1)
 // L"Atlantic Standard Time" StandardName
 // "GMT Standard Time" "China Standard Time", "Korea Standard Time"
-int CLocalTime::GetTimeZoneInformationByName(TIME_ZONE_INFORMATION* ptzi, PS StandardName)
+int CLocalTime::GetTimeZoneInformationByName(TIME_ZONE_INFORMATION* ptzi, PWS StandardName)
 {
 	int rc;
 	HKEY hkey_tz;
@@ -1079,7 +1079,7 @@ COleDateTime KwNextDay(const COleDateTime cTime, int nday)
 CString CTm::ToString()
 {
 	CString sTime;
-	PS KwTimeToString(CString & sTime, bool bSpace, TCHAR cSpDay, TCHAR cSpTime, int y, int m, int d, int hr, int mn, int sc);
+	PWS KwTimeToString(CString & sTime, bool bSpace, TCHAR cSpDay, TCHAR cSpTime, int y, int m, int d, int hr, int mn, int sc);
 	KwTimeToString(sTime, true, '-', ':', Year(), Month(), Day(), Hour(),
 		Min(), Sec());
 	return sTime;

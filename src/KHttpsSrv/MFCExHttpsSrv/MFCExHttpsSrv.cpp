@@ -249,7 +249,28 @@ BOOL CMFCExHttpsSrvApp::InitInstance()
 
 	LoadStdProfileSettings(10);  // Load standard INI file options (including MRU)
 
-	CMainPool::Pool(8);//?zzz
+	/// NUMBER_OF_PROCESSORS 시스템 변수가 CPU갯수
+	// WinAPI function; it returns a   dwNumberOfProcessors
+	SYSTEM_INFO si{0,};
+	GetSystemInfo(&si);
+// 	dwOemId	9	unsigned long
+// 	wProcessorArchitecture	9	unsigned short
+// 	wReserved	0	unsigned short
+// 	dwPageSize	4096	unsigned long
+// 	lpMinimumApplicationAddress	0x0000000000010000	void*
+// 	lpMaximumApplicationAddress	0x00007ffffffeffff	void*
+// 	dwActiveProcessorMask	15	unsigned __int64
+// 	dwNumberOfProcessors	4	unsigned long
+// 	dwProcessorType	8664	unsigned long
+// 	dwAllocationGranularity	65536	unsigned long
+// 	wProcessorLevel	6	unsigned short
+// 	wProcessorRevision	15363	unsigned short
+	SYSTEM_LOGICAL_PROCESSOR_INFORMATION slpi{0,};
+	DWORD len  = sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION);
+	BOOL b1 = GetLogicalProcessorInformation(&slpi, &len);
+	// b1 == FALSE : 실패
+	CMainPool::Pool(si.dwNumberOfProcessors * 2);//?zzz
+	///  4 * 2 인데, 14개 사용 되는거 보면, 내부적으로 5개, UI 1개 쓰인가 보다.
 
 	InitContextMenuManager();
 
@@ -434,7 +455,8 @@ BOOL KAppDoc::OnNewDocument()
 /// <returns>ODBC OpenEx에 연결에 쓰일 DSN문자열</returns>
 CString KAppDoc::MakeDsnString(bool bFirst)//false
 {
-	auto& jOdbc = *_json->O("ODBC");
+	AUTOLOCK(_csAppDoc);
+	auto& jOdbc = *_json->OMake("ODBC");
 	CString dsnLog;
 	dsnLog.Format(L"DSN=%s;UID=%s;PWD=%s"
 		, jOdbc.S("DSN")
@@ -457,33 +479,28 @@ CString KAppDoc::MakeDsnString(bool bFirst)//false
 }
 void KAppDoc::InitDoc()
 {
+	AUTOLOCK(_csAppDoc);
 	auto& jobj = *_json;
 	if(!jobj.Len("GUID"))
 		jobj("GUID") = KwGetFormattedGuid(FALSE);//main cfg GUID
 
 	//jobj("_GUID") = L"";
 	jobj("FName") = L"WinpacheMain.cfg";
-	jobj("LoadCount") = 0;// 이거로 bFirst  판별
+	jobj("LoadCount") = 0;// 이거로 bFirst ㅈ 판별
 	jobj("LastSpeed") = 0.;//분당 처리 횟수: 최근 5초 안에 응답한 요청만 계산
 	jobj("Elapsed") = 0.;//평균 처리 속도: 요청 들어와서 응답한 시간까지 계속 (합산/카운터)
-	jobj("RunningServers") = JObj(); // RunningServers : { GUID1 : { }, GUID2:{} }
 	jobj("StatDB") = L"none";
+
+	jobj("RunningServers") = JObj(); // RunningServers : { GUID1 : { }, GUID2:{} }
 	jobj("ODBC") = JObj(); // RunningServers : { GUID1 : { }, GUID2:{} }
 
 	//auto sjo = jobj.O("ODBC");
 	auto& jOdbc = *jobj.O("ODBC");
-	/// 아래는 regitry에 진짜 있는 값인데, ODBC셋팅이 없는 경우 이걸 초기값으로 쓴다.
-#ifdef _DEBUGx
-	jOdbc("DSN") = L"WinpacheFake";
-	jOdbc("UID") = L"rooter";
-	jOdbc("PWD") = L"xxxxx";//있는경우 메인 DB 비번
-	jOdbc("DATABASE") = L"winffffache";
-#else	
+
 	jOdbc("DSN") = L"Winpache";
 	jOdbc("UID") = L"root";
 	jOdbc("PWD") = L"";//있는경우 메인 DB 비번
 	jOdbc("DATABASE") = L"winpache";
-#endif // _DEBUG
 	jOdbc("SERVER") = L"localhost";
 	jOdbc("Driver") = L"MariaDB ODBC 3.1 Driver";
 	jOdbc("PORT") = L"3306";
@@ -518,6 +535,7 @@ void KAppDoc::InitDoc()
 
 void KAppDoc::LoadData()
 {
+	AUTOLOCK(_csAppDoc);
 	if(_json->size() == 0)
 		InitDoc();
 
@@ -531,11 +549,26 @@ void KAppDoc::LoadData()
 		}
 		SetPathName(full, FALSE);
 		//OnDocumentEvent(CDocument::onAfterOpenDocument);
+#ifdef _DEBUG
+		/// clustering test
+		auto& jobj = *_json;
+		if(!jobj.Has("Clustering"))
+		{//이전 데이터 읽을때 없으면
+			auto& jClst = *jobj.OMake("Clustering");
+			auto jobcl = JObj();
+			jobcl("option") = 1;
+			jobcl("count") = 0;
+			//jobcl("url") = L"http://parent.co.kr:80";
+			jClst("http://parent.co.kr:80") = jobcl;
+		}
+#endif // _DEBUG
+
 	}
 }
 
 CString KAppDoc::GetFilePath()
 {
+	AUTOLOCK(_csAppDoc);
 	TCHAR curDir[1002];
 	GetCurrentDirectory(1000, curDir);//C:\Users\dwkang\AppData\Roaming\Outbin\KHttpsSrv\x64\Debug
 	//L"Winpache.json";
@@ -614,7 +647,8 @@ void KAppDoc::SaveData()
 void KAppDoc::RegisterServerStart(ShJObj sjsvr)//?server recover 1.2
 {
 	BACKGROUND(1);
-	AUTOLOCK(_csRecover);
+	AUTOLOCK(_csAppDoc);
+	//AUTOLOCK(_csRecover);
 // 	auto lc = sjsvr->I("LoadCount");
 // 	(*sjsvr)("LoadCount") = lc + 1;//다시 시도 되면 2
 	(*sjsvr)("_bRecover") = TRUE;//일단 RunningServers에만 TRUE로 저장
@@ -632,7 +666,8 @@ void KAppDoc::RegisterServerStart(ShJObj sjsvr)//?server recover 1.2
 void KAppDoc::UnregisterServerStart(CStringA GUID)
 {
 	BACKGROUND(1);
-	AUTOLOCK(_csRecover);
+	AUTOLOCK(_csAppDoc);
+	//AUTOLOCK(_csRecover);
 
 	auto& jobjM = *_json;
 	auto oRS = jobjM.O("RunningServers");
@@ -808,6 +843,7 @@ void KAppDoc::SetPathName(LPCTSTR lpszPathName, BOOL bAddToMRU)
 
 void KAppDoc::Serialize(CArchive& ar)
 {
+	AUTOLOCK(_csAppDoc);
 	const CString& full0 = GetPathName();//load한 파일 이면
 	CString full1 = GetFilePath();	//full += L"WinpacheMain.cfg";
 
@@ -911,7 +947,7 @@ void KAppDoc::Serialize(CArchive& ar)
 				auto& js = *jdoc->AsObject();// .get();
 				KJSGETS(_GUID);
 				if (_GUID.IsEmpty())
-					_GUID = KwGetFormattedGuid();
+					_jdata("_GUID") = KwGetFormattedGuid();
 				KJSGETS(_fname);
 				KJSGETS(_DSN);
 				KJSGETS(_UID);

@@ -490,6 +490,10 @@ public:
 	{
 		return GetCount() - 1;
 	}
+	void RemoveAt(int i)
+	{
+		this->erase(this->begin() + i);
+	}
 	/// loop
 	// 	for(int& el : *this)
 	// 		el += i++;

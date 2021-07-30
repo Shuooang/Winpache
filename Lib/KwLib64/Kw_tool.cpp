@@ -1,7 +1,5 @@
 #include "Kw_tool.h"
 #include "TimeTool.h"
-#include "TimeTool.h"
-#include "TimeTool.h"
 #include "pch.h"
 
 #include <atlimage.h>
@@ -10,7 +8,7 @@
 
 #include "tchtool.h"
 #include "Kw_tool.h"
-
+#include "KJson.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -610,7 +608,7 @@ int KwUrlParamToMap(string& src, std::map<string, string>& mp)
 }
 
 
-int KwUrlParamToJson(string& src, CJsonPbj& jmp)
+int KwUrlParamToJson(string& src, Kw::JObj& jmp)
 {
 	vector<string> arp;
 	auto np = KwCutByToken(src, "&", arp, 0);
@@ -624,7 +622,7 @@ int KwUrlParamToJson(string& src, CJsonPbj& jmp)
 			jmp(CStringW(kv[0].c_str())) = kv[1].c_str();
 		//mp[kv[0]] = kv[1];
 	}
-	return (int)jmp.get()->size();
+	return (int)jmp.size();
 }
 
 /// <summary>
@@ -895,7 +893,7 @@ int KwSaveImageMultiSize(LPVOID idata, size_t isize, CStringArray& arPath, CSize
 // full path 의 디렉토리를 만들어 준다.
 // bToEnd가 FALSE이면 맨 마지막 것은 FILE NAME 이므로 만들 필요 없다는 뜻.
 // reffer to: File::createDirectory : recursive call
-int KwCheckTargetDir(PS sFull, BOOL bToEnd, BOOL bCreate)
+int KwCheckTargetDir(PWS sFull, BOOL bToEnd, BOOL bCreate)
 {
 	CStringArray ar;
 	KwCutByToken(sFull, L"\\", ar);
@@ -1511,7 +1509,7 @@ int KwFolderFileList(LPCTSTR pDir, CStringArray& ar, BOOL bRecursive)
 }
 
 
-LPCSTR KwReadSmallTextFileA(PS fileName, CStringA& str)
+LPCSTR KwReadSmallTextFileA(PWS fileName, CStringA& str)
 {
 	//	ASSERT(sizeof(TCHAR) == 1);
 	CFile stream;
@@ -1621,4 +1619,116 @@ LONGLONG KwGetTickCount100Nano()
 	auto bnow = QueryPerformanceCounter(&li);
 	//auto tik = GetTickCount64();
 	return li.QuadPart;
+}
+
+
+#include <Iphlpapi.h>
+#pragma comment(lib, "iphlpapi.lib")
+
+hres KwGetMacInfo(CString& localIP, CString& macAddr)
+{
+	PIP_ADAPTER_INFO ainf;
+	DWORD dwBufLen = sizeof(ainf);
+	//CStringchar *mac_addr = (char*)malloc(17);
+
+	ainf = (IP_ADAPTER_INFO*) new char[sizeof(IP_ADAPTER_INFO)];
+	if(ainf == NULL) {
+		TRACE(L"Error allocating memory needed to call GetAdaptersinfo\n");
+	}
+	CAutoFreePtr<IP_ADAPTER_INFO> _au(ainf);
+
+	// Make an initial call to GetAdaptersInfo to get the necessary size into the dwBufLen     variable
+	if(GetAdaptersInfo(ainf, &dwBufLen) == ERROR_BUFFER_OVERFLOW) {
+		_au.Free();
+		ainf = (IP_ADAPTER_INFO*)malloc(dwBufLen);
+		if(ainf == NULL) {
+			TRACE(L"Error allocating memory needed to call GetAdaptersinfo\n");
+		}
+	}
+
+	CString adapter, desc;
+#ifdef _DEBUGx
+	이더넷 어댑터 로컬 영역 연결 :
+
+	연결별 DNS 접미사. . . . :
+		설명. . . . . . . . . . . . : Intel(R) Ethernet Connection I217 - V
+		물리적 주소 . . . . . . . . : D0 - 50 - 99 - 66 - DC - 79
+		DHCP 사용 . . . . . . . . . : 예
+		자동 구성 사용. . . . . . . : 예
+		링크 - 로컬 IPv6 주소 . . . . : fe80::9cef : 5b71 : 230e : 1f1a % 11(기본 설정)
+		IPv4 주소 . . . . . . . . . : 192.168.2.100(기본 설정)
+		서브넷 마스크 . . . . . . . : 255.255.255.0
+		임대 시작 날짜. . . . . . . : 2016년 10월 3일 월요일 오전 7 : 52 : 26
+		임대 만료 날짜. . . . . . . : 2016년 10월 13일 목요일 오전 7 : 55 : 54
+		기본 게이트웨이 . . . . . . : 211.215.49.193
+		110.12.134.1
+		192.168.2.1
+		DHCP 서버 . . . . . . . . . : 192.168.2.1
+		DHCPv6 IAID . . . . . . . . : 248533145
+		DHCPv6 클라이언트 DUID. . . : 00 - 01 - 00 - 01 - 1C - 9B - B7 - 68 - D0 - 50 - 99 - 66 - DC - 79
+		DNS 서버. . . . . . . . . . : 192.168.2.1
+		Tcpip를 통한 NetBIOS. . . . : 사용
+		+ AdapterName	0x09aa62b0 "{41E0649D-21A6-40D0-8D04-7166DED6B5B5}"	char[260]
+		+ Description	0x09aa63b4 "Intel(R) Ethernet Connection I217-V"	char[132]
+		AddressLength	6	unsigned int
+		- Address	0x09aa643c "?셟?"	unsigned char[8]
+		[0x0]	0xd0 '?'	unsigned char
+		[0x1]	0x50 'P'	unsigned char
+		[0x2]	0x99 '?'	unsigned char
+		[0x3]	0x66 'f'	unsigned char
+		[0x4]	0xdc '?'	unsigned char
+		[0x5]	0x79 'y'	unsigned char
+		[0x6]	0x00	unsigned char
+		[0x7]	0x00	unsigned char
+		+ macAddr	"D0:50:99:66:DC:79"	ATL::CStringT<wchar_t, StrTraitMFC<wchar_t, ATL::ChTraitsCRT<wchar_t> > > &
+
+		// not twisted wan
+		-IpAddressList{Next = 0x00000000 IpAddress = {...} IpMask = {...} ...}	_IP_ADDR_STRING
+		+ IpAddress{String = 0x09aa6458 "110.12.134.50"}	IP_ADDRESS_STRING
+		+ IpMask{String = 0x09aa6468 "255.255.255.0"}	IP_ADDRESS_STRING
+		Context	0x32860c6e	unsigned long
+		- GatewayList{Next = 0x09aa6528 IpAddress = {...} IpMask = {...} ...}	_IP_ADDR_STRING
+		+ IpAddress{String = 0x09aa6480 "211.215.49.193"}	IP_ADDRESS_STRING
+		+ IpMask{String = 0x09aa6490 "255.255.255.255"}	IP_ADDRESS_STRING
+		Context	0xc131d7d3	unsigned long
+		- DhcpServer{Next = 0x00000000 IpAddress = {...} IpMask = {...} ...}	_IP_ADDR_STRING
+		+ IpAddress{String = 0x099e04b0 "172.23.237.97"}	IP_ADDRESS_STRING
+		+ IpMask{String = 0x099e04c0 "255.255.255.255"}	IP_ADDRESS_STRING
+		Context	0x61ed17ac	unsigned long
+
+		//  twisted wan
+		- IpAddressList{Next = 0x00000000 IpAddress = {...} IpMask = {...} ...}	_IP_ADDR_STRING
+		+ IpAddress{String = 0x09766458 "192.168.2.100"}	IP_ADDRESS_STRING
+		+ IpMask{String = 0x09766468 "255.255.255.0"}	IP_ADDRESS_STRING
+		Context	0x6402a8c0	unsigned long
+		- GatewayList{Next = 0x09766528 IpAddress = {...} IpMask = {...} ...}	_IP_ADDR_STRING
+		+ IpAddress{String = 0x09766480 "211.215.49.193"}	IP_ADDRESS_STRING
+		+ IpMask{String = 0x09766490 "255.255.255.255"}	IP_ADDRESS_STRING
+		Context	0xc131d7d3	unsigned long
+		- DhcpServer{Next = 0x00000000 IpAddress = {...} IpMask = {...} ...}	_IP_ADDR_STRING
+		+ IpAddress{String = 0x097664a8 "192.168.2.1"}	IP_ADDRESS_STRING
+		+ IpMask{String = 0x097664b8 "255.255.255.255"}	IP_ADDRESS_STRING
+		Context	0x0102a8c0	unsigned long
+
+#endif // _DEBUGx
+		if(GetAdaptersInfo(ainf, &dwBufLen) == NO_ERROR) {
+			PIP_ADAPTER_INFO pAinf = ainf;// Contains pointer to current adapter info
+			int i = 1;
+			do {
+				if(pAinf)
+				{
+					macAddr.Format(L"%02X:%02X:%02X:%02X:%02X:%02X",
+						pAinf->Address[0], pAinf->Address[1],
+						pAinf->Address[2], pAinf->Address[3],
+						pAinf->Address[4], pAinf->Address[5]);
+					localIP = CString(pAinf->IpAddressList.IpAddress.String);
+					adapter = CString(pAinf->AdapterName);
+					desc = CString(pAinf->Description);
+					TRACE(L"%d. %s, %s, %s\n", i++, localIP, macAddr, desc);
+					return S_OK;
+				}
+				pAinf = pAinf->Next;
+			} while(pAinf);
+		}
+	return -1;
 }

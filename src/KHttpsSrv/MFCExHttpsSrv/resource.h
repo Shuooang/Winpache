@@ -2,8 +2,11 @@
 // Microsoft Visual C++ generated include file.
 // Used by MFCExHttpsSrv.rc
 //
-#define IDC_CreateSimple                3
+#define IDC_Add                         3
 #define IDC_CreateSimple2               4
+#define IDC_Del                         4
+#define IDC_Add2                        5
+#define IDC_Apply                       5
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
 #define IDD_MFCEXHTTPSSRV_FORM          101
@@ -40,7 +43,6 @@
 #define ID_SORTING_SORTBYACCESS         148
 #define ID_VIEW_OUTPUTWND               149
 #define ID_VIEW_PROPERTIESWND           150
-#define IDR_PASTE_MENU                  151
 #define ID_SORTPROPERTIES               151
 #define IDR_WINDOWS_MENU                152
 #define ID_PROPERTIES1                  152
@@ -107,62 +109,58 @@
 #define IDB_WRITELARGE1                 313
 #define IDD_SslSetting                  314
 #define IDD_OdbcSetting                 315
+#define IDD_Clustering                  319
 #define IDD_DockTestApi                 322
 #define IDD_DockOdbc                    323
-#define IDC_Start                       1000
 #define IDC_ExList                      1000
-#define IDC_Stop                        1001
 #define IDC_UUD                         1001
-#define IDC_Restart                     1002
 #define IDC_PWD                         1002
-#define IDC_cachedPath                  1003
 #define IDC_Close                       1003
-#define IDC_certificate                 1004
 #define IDC_Input                       1004
 #define IDC_DSN                         1004
-#define IDC_privatekey                  1005
+#define IDC__certificate                1004
 #define IDC_Output                      1005
 #define IDC_ConnectDB                   1005
 #define IDC_PWD2                        1005
-#define IDC_dhparam                     1006
-#define IDC_BtnPath                     1007
+#define IDC__privatekey                 1005
+#define IDC__dhparam                    1006
 #define IDC_LinkToGithub                1007
 #define IDC_BtnCertificate              1008
 #define IDC_BtnPrivate                  1009
 #define IDC_OdbcSetting                 1009
 #define IDC_BtnDhparam                  1010
 #define IDC_NPM                         1010
-#define IDC_OdbcSetting2                1010
-#define IDC_port                        1011
 #define IDC_STATIC_PWD                  1011
+#define IDC__port                       1011
 #define IDC_MonitorList                 1012
-#define IDC_cachedUrl                   1013
 #define IDC_Elapsed                     1013
-#define IDC_Title                       1014
-#define IDC_prvpwd                      1014
-#define IDC_bSSL                        1015
-#define IDC_CacheLife                   1016
-#define IDC_ODBCDSN                     1017
+#define IDC__prvpwd                     1014
+#define IDC_url                         1015
+#define IDC__bSSL                       1015
+#define IDC_action                      1016
+#define IDC__CacheLife                  1016
+#define IDC_mode                        1017
+#define IDC__ODBCDSN                    1017
 #define IDC_SrcImagePath                1018
 #define IDC_BtnRootLocal                1019
 #define IDC_Width                       1019
-#define IDC_ApiURL                      1020
+#define IDC_Clustering                  1019
 #define IDC_Height                      1020
-#define IDC_StartDB                     1021
+#define IDC__ApiURL                     1020
 #define IDC_STATIC1                     1021
-#define IDC_note                        1022
 #define IDC_Simulation                  1022
+#define IDC__note                       1022
 #define IDC_STATICDB                    1023
 #define IDC_ExceptDir                   1023
-#define IDC_TestAPI                     1024
 #define IDC_BtnUploadLocal              1025
-#define IDC_uploadLocal                 1026
+#define IDC__uploadLocal                1026
 #define IDC_BtnSslSetting               1027
-#define IDC_rootLocal                   1028
-#define IDC_bStaticCache                1029
+#define IDC__rootLocal                  1028
 #define IDC_RunApi                      1029
-#define IDC_defFile                     1030
+#define IDC__bStaticCache               1029
 #define IDC_Select                      1030
+#define IDC__defFile                    1030
+#define IDC_Parallel                    1031
 #define ID_WRITE_PASTEASHYPERLINK       32770
 #define ID_FreeLibrary                  32771
 #define ID_MIGRATION_IMAGESIZEADJUST    32772
@@ -211,9 +209,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        319
+#define _APS_NEXT_RESOURCE_VALUE        322
 #define _APS_NEXT_COMMAND_VALUE         32815
-#define _APS_NEXT_CONTROL_VALUE         1012
+#define _APS_NEXT_CONTROL_VALUE         1020
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

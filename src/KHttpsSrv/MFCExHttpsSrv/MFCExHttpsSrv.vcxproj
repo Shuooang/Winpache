@@ -222,6 +222,7 @@
     <ClInclude Include="CmnDoc.h" />
     <ClInclude Include="CmnView.h" />
     <ClInclude Include="DlgOdbcSetting.h" />
+    <ClInclude Include="DlgParallel.h" />
     <ClInclude Include="DlgSizeAdjust.h" />
     <ClInclude Include="DlgSslSetting.h" />
     <ClInclude Include="DockOdbc.h" />
@@ -256,6 +257,7 @@
     <ClCompile Include="CmnDoc.cpp" />
     <ClCompile Include="CmnView.cpp" />
     <ClCompile Include="DlgOdbcSetting.cpp" />
+    <ClCompile Include="DlgParallel.cpp" />
     <ClCompile Include="DlgSizeAdjust.cpp" />
     <ClCompile Include="DlgSslSetting.cpp" />
     <ClCompile Include="DockOdbc.cpp" />

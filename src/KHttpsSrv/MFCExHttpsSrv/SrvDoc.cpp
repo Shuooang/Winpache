@@ -56,13 +56,14 @@ BOOL SrvDoc::OnNewDocument()
 	auto app = (CMFCExHttpsSrvApp*)GetMainApp();
 	auto& appd = (app)->_docApp;
 	//_fullPath = GetPathName();
-	if(_GUID.IsEmpty())
+	AUTOLOCK(_csJdata);
+	if(!_jdata.Len("_GUID"))//.IsEmpty())
 	{
 		CString guid;
 		if(appd.PopRecoveringServer(guid))//?server recover 4
-			_GUID = guid;
+			_jdata("_GUID") = guid;
 		else
-			_GUID = KwGetFormattedGuid();
+			_jdata("_GUID") = KwGetFormattedGuid();
 	}
 
 	// TODO: add reinitialization code here
@@ -73,7 +74,8 @@ BOOL SrvDoc::OnNewDocument()
 BOOL SrvDoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
 	BOOL b = __super::OnOpenDocument(lpszPathName);
-	_fullPath = lpszPathName;
+	AUTOLOCK(_csJdata);
+	_jdata("_fullPath") = lpszPathName;
 // 	auto app = (CMFCExHttpsSrvApp*)AfxGetApp();
 // 	auto& appd = (app)->_docApp;
 // 	auto& jobj = *appd._json;
@@ -183,57 +185,77 @@ void SrvDoc::Dump(CDumpContext& dc) const
 }
 #endif
 
+//#define KJJPUT(k) js.CopyAt(#k, _jdata.Get(#k))
+
 void SrvDoc::JsonToData(ShJObj& sjobj, bool bToJson)
 {
-
+	AUTOLOCK(_csJdata);
 	if(bToJson)//ar.IsStoring())
 	{
 		if(!sjobj)
 			sjobj = std::make_shared<JObj>();///이거 때문에 파라미터를 ShJObj&
-		JObj& js = *sjobj;
-		//js("_port") = _port;
-		ASSERT(!_GUID.IsEmpty());
-		//	_GUID = KwGetFormattedGuid();
-		KJSPUT(_GUID);
-		KJSPUT(_port);
-		KJSPUT(_bSSL);
-		KJSPUT(_bStaticCache);
-		KJSPUT(_CacheLife);
+//		JObj& js = *sjobj;
+		ASSERT(!_jdata.IsEmpty("_GUID"));
+
+		sjobj->Clone(_jdata, true);
+
+#ifdef _DEBUGxxxxxxx
+		//	_jdata("_GUID") = KwGetFormattedGuid();
+//#define KJSPUT(val) js(#val) = val
+		js("_GUID") = _jdata.Get("_GUID");
+//		KJJPUT(_GUID);
+		KJJPUT(_port);
+		KJJPUT(_bSSL);
+		KJJPUT(_bStaticCache);
+		KJJPUT(_CacheLife);
 		//		KJSPUT(_Title);
 		// 		KJSPUT(_cachedPath);
 		// 		KJSPUT(_cachedUrl);
-		KJSPUT(_certificate);
-		KJSPUT(_privatekey);
-		KJSPUT(_prvpwd);
-		KJSPUT(_dhparam);
-		KJSPUT(_ODBCDSN);
-		KJSPUT(_rootLocal);
-		KJSPUT(_defFile);
-		KJSPUT(_uploadLocal);
-		KJSPUT(_rootURL);
-		KJSPUT(_ApiURL);
+		KJJPUT(_certificate);
+		KJJPUT(_privatekey);
+		KJJPUT(_prvpwd);
+		KJJPUT(_dhparam);
+		KJJPUT(_ODBCDSN);
+		KJJPUT(_rootLocal);
+		KJJPUT(_defFile);
+		KJJPUT(_uploadLocal);
+		KJJPUT(_rootURL);
+		KJJPUT(_ApiURL);
 		// 		KJSPUT(_UdpSvr);
 		// 		KJSPUT(_portUDP);
-		KJSPUT(_SQL);
-		KJSPUT(_SrcImagePath);
-		KJSPUT(_note);
+		KJJPUT(_SQL);
+		KJJPUT(_SrcImagePath);
+		KJJPUT(_note);
 		//	JSPUT(_SrcTable);
 		//	JSPUT(_SrcKeyField);
 
-		KJSPUT(_bDbConnected);
-		KJSPUT(_bRecover);
-		KJSPUT(_tLastRunning);
-		KJSPUT(_fullPath);
+		KJJPUT(_bDbConnected);
+		KJJPUT(_bRecover);
+		KJJPUT(_tLastRunning);
+		KJJPUT(_fullPath);
+#endif // _DEBUGxxxxxxx
 	}
 	else
 	{
+		ASSERT(!sjobj->IsEmpty("_GUID"));
+		_jdata.Clone(sjobj, true);
+
+#ifdef _DEBUGxxxxx
 		//auto& js = *jdoc->AsObject().get();
 		JObj& js = *sjobj;
+#ifdef _DEBUGxxxxx
+#define KJSGETS(val) val = js.S(#val)
+#define KJSGETSA(val) val = CStringA(js.S(#val))
+#define KJSGETN(val) val = js.N(#val)
+#define KJSGETI(val) val = js.I(#val)
+#endif // _DEBUGxxxxx
+//#define KJJPUT(val) js(#val) = _jdata.Get(#val)
+#define KJJGETS(val) _jdata(#val) = js.Get(#val)
 
 		KJSGETS(_GUID);
 		//ASSERT(!_GUID.IsEmpty());
 		if(_GUID.IsEmpty())
-			_GUID = KwGetFormattedGuid();
+			_jdata("_GUID") = KwGetFormattedGuid();
 		KJSGETI(_port);// 숫자인 경우
 		KJSGETI(_bSSL);// 숫자인 경우
 		KJSGETI(_bStaticCache);// 숫자인 경우
@@ -267,14 +289,16 @@ void SrvDoc::JsonToData(ShJObj& sjobj, bool bToJson)
 		KJSGETI(_bRecover);// 숫자인 경우
 		KJSGETS(_tLastRunning);
 		KJSGETS(_fullPath);
-
+#endif // _DEBUGxxxxx
 	}
 }
 
 
+/// 저장할때 UpdateData로 최신 건드린거 읽어 들이기 위해
 // SrvDoc commands
 BOOL SrvDoc::DoFileSave()//?zzz
 {
+	AUTOLOCK(_csJdata);
 	auto mf = (CMDIFrameWnd*)AfxGetMainWnd();
 	if(mf)
 	{
@@ -284,11 +308,8 @@ BOOL SrvDoc::DoFileSave()//?zzz
 			auto vu = (CView*)cf->GetActiveView();
 			if(vu)
 				vu->UpdateData();
-			ASSERT(vu);
 		}
-		ASSERT(cf);
 	}
-	ASSERT(mf);
 
 	return __super::DoFileSave();
 }

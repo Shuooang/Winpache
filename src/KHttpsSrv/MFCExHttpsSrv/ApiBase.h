@@ -122,13 +122,13 @@ public:
 //	void CellToJson(KRecordset& rs, int r, int c, JObj& robj);
 
 
-	//void MakeRecsetToJson(KRecordset& rs, JObj& hsr, PS keyRecset = L"table");
+	//void MakeRecsetToJson(KRecordset& rs, JObj& hsr, PWS keyRecset = L"table");
 
-	//void MakeRecsetOneRowToJson(KRecordset& rs, JObj& hsr, PS keyRecset);
+	//void MakeRecsetOneRowToJson(KRecordset& rs, JObj& hsr, PWS keyRecset);
 
 	// odiso에서 MakeRecsetToJson2 형식을 참조
 	template<typename Func>
-	void MakeRecsetToJson(KRecordset& rs, JObj& hsr, PS keyRecset = L"table", Func lmda = [](KRecordset&, int, int, JObj&) -> int {})
+	void MakeRecsetToJson(KRecordset& rs, JObj& hsr, PWS keyRecset = L"table", Func lmda = [](KRecordset&, int, int, JObj&) -> int {})
 	{
 		try
 		{

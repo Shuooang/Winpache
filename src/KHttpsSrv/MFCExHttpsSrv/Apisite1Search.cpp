@@ -83,11 +83,11 @@ int ApiSite1::SearchBizByLocation(JObj& jpa, JObj& jrs, int iOp)
 		Tss ss1;
 		Tss sKwd;
 		if(key.GetLength() > 0)
-			sKwd << "(b.fTitle like '%" << (PS)key << L"%' or b.fDesc like '%" << (PS)key << L"%') and\n";
+			sKwd << "(b.fTitle like '%" << (PWS)key << L"%' or b.fDesc like '%" << (PWS)key << L"%') and\n";
 
 		ss1 << L"select b.fBizID, b.fLat, b.fLon, b.fTitle, b.fDesc, b.fForm, b.fTel, b.fStJoin, b.fState from tbiz b  \n\
-		left join tuser i on i.fUsrID = '" << (PS)uuid << L"' and i.fProj='" << (PS)fproj << L"'\n\
-	where b.fLat >= " << (PS)rcb << L" and b.fLat < " << (PS)rct << L" and b.fLon >= " << (PS)rcl << L" and b.fLon < " << (PS)rcr << L" and \n\
+		left join tuser i on i.fUsrID = '" << (PWS)uuid << L"' and i.fProj='" << (PWS)fproj << L"'\n\
+	where b.fLat >= " << (PWS)rcb << L" and b.fLat < " << (PWS)rct << L" and b.fLon >= " << (PWS)rcl << L" and b.fLon < " << (PWS)rcr << L" and \n\
 		b.fState in ('open','pause') and \n\
 		" << Psr(sKwd) << L"\
 		(	((b.fbegin <  b.fend) and (b.fbegin < TIME(now()) and TIME(now()) <= b.fend)) or \n\
@@ -305,7 +305,7 @@ SELECT * FROM ( -- \n\
 			{
 				CString inbz;
 				inbz.Format(L"'%s',", bzt->fBizID.c_str());
-				inlst += (PS)inbz; /// in (, , ,) : SQL 문자열을 넣어 만든다.
+				inlst += (PWS)inbz; /// in (, , ,) : SQL 문자열을 넣어 만든다.
 				nResult++;
 			}
 		}

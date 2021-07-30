@@ -151,6 +151,7 @@ public: // 아래는 소유권이 없다.
 	shared_ptr<function<int(HTTPCacheSession*, const void*, size_t)>>         _fncOnReceived;
 	shared_ptr<function<int(HTTPCacheSession*, HTTPRequest&)>> _fncOnReceivedRequestInternal;
 	shared_ptr<function<void(string)>>                                          _fncOnTrace;
+	shared_ptr<function<int(KSessionInfo&, shared_ptr<KBinData>)>> _fncCluster;//
 
 	void ResetEvent()
 	{
@@ -168,6 +169,7 @@ public: // 아래는 소유권이 없다.
 		server->_fncOnReceived.reset();
 		server->_fncOnReceivedRequestInternal.reset();
 		server->_fncOnTrace.reset();
+		server->_fncCluster.reset();
 	}
 	shared_ptr<CacheBin> _cache;
 	shared_ptr<Cache> _cacheOld;
@@ -278,5 +280,10 @@ public:
 			std_coutD.AddCallbackOnTrace(fnc);
 		}
 	}
+	template<typename TFNC> void AddCallbackCluster(TFNC fnc, int bOvWR = 0)
+	{
+		TCreateFuncValue(_server->_fncCluster, fnc, bOvWR);
+	}
+
 };
 
