@@ -7,7 +7,7 @@
 * Simplest HTTP server. (Window visible)
 * Minimum setting. (10 items. : port, local dir, etc...)
 * Fastest HTTP Server. (Server cache, clustering coming soon.)
-* Parallel processing.(Clustering)
+* Parallel processing.(new)
 
 
 ## Download and Install
