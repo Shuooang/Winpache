@@ -53,6 +53,7 @@ BOOL CPostTestDoc::OnNewDocument()
 using namespace Kw;
 
 // CPostTestDoc serialization
+PAS CPostTestDoc::_cMagicKey = "CC1111EE44559944770088339992728974";
 
 void CPostTestDoc::Serialize(CArchive& ar)
 {
@@ -61,6 +62,7 @@ void CPostTestDoc::Serialize(CArchive& ar)
 		//CJsonPbj js;
 		JObj js;
 		//js["xxx"] = xxx;
+		KJSPUT(_MagicKey);
 		KJSPUT(_Method);
 		KJSPUT(_URL);
 		KJSPUT(_Request);
@@ -100,6 +102,7 @@ void CPostTestDoc::Serialize(CArchive& ar)
 		}
 		auto& js = *jdoc->AsObject().get();
 
+		KJSGETS(_MagicKey);
 		KJSGETS(_Method);
 		KJSGETS(_URL);
 		KJSGETS(_Request);
@@ -200,5 +203,11 @@ BOOL CPostTestDoc::OnSaveDocument(LPCTSTR lpszPathName)
 }
 BOOL CPostTestDoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
-	return CDocument::OnOpenDocument(lpszPathName);
+	BOOL b = CDocument::OnOpenDocument(lpszPathName);
+	if(_MagicKey != CPostTestDoc::_cMagicKey)
+	{
+		KwMessageBoxError(L"This file is not supported.");
+		return FALSE;
+	}
+	return b;
 }

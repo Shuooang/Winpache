@@ -18,7 +18,7 @@ static char THIS_FILE[] = __FILE__;
 
 
 
-LPCSTR KwWcharToUTF8(LPCWSTR sWstr, CStringA& sUtf8)
+PAS KwWcharToUTF8(LPCWSTR sWstr, CStringA& sUtf8)
 {
 	char* pUtf8 = NULL;
 	// 	nLength = MultiByteToWideChar(CP_ACP, 0, pszCode, lstrlen(pszCode), NULL, NULL); 
@@ -32,7 +32,17 @@ LPCSTR KwWcharToUTF8(LPCWSTR sWstr, CStringA& sUtf8)
 
 	return sUtf8;
 }
-
+/// <summary>
+/// 위랑 똑같지만 KBinary만 다름.
+/// </summary>
+PAS KwWcharToUTF8(LPCWSTR sWstr, KBinary& sUtf8)
+{
+	char* pUtf8 = NULL;
+	int nLength2 = WideCharToMultiByte(CP_UTF8, 0, sWstr, -1, pUtf8, 0, NULL, NULL);
+	pUtf8 = sUtf8.Alloc(nLength2);//char*)malloc(nLength2+1); 
+	WideCharToMultiByte(CP_UTF8, 0, sWstr, -1, pUtf8, nLength2, NULL, NULL);
+	return pUtf8;
+}
 PAS KwCharToUTF8(PAS sAstr, CStringA& sUtf8)
 {
 	CStringW sWstr(sAstr);
@@ -132,6 +142,7 @@ PWS KwUTF8ToHtmlUrl(CStringA& sUtf8, CString& sWstr)
 	}
 	return sWstr;
 }
+/*
 PWS KwStringToWString(std::string& str, std::wstring& wstr)
 {
 	wstr.assign(str.begin(), str.end());
@@ -142,7 +153,6 @@ PAS KwWStringToString(std::wstring& wstr, std::string& str)
 	str.assign(wstr.begin(), wstr.end());
 	return str.c_str();
 }
-/*
 void KwCutByToken(LPCTSTR psSrc, LPCTSTR seps, CStringArray& strArray, bool bTrim)
 {
 	//	ASSERT(lstrlen(psSrc) > 0);
@@ -1585,7 +1595,7 @@ DWORD KwGetFullPathName(PWS lpszFileIn, CStringW& path, PWS* pFilePart)
 }
 
 
-DWORD EncodeBinary(KBinary& bin, LPCSTR key0, bool bEncode, KBinary* pbinr)
+UINT_PTR EncodeBinary(KBinary& bin, LPCSTR key0, bool bEncode, KBinary* pbinr)
 {
 	BYTE* key = (BYTE*)key0;
 	DWORD j;
@@ -1732,3 +1742,20 @@ hres KwGetMacInfo(CString& localIP, CString& macAddr)
 		}
 	return -1;
 }
+
+
+CStringW KwRsc(int idc)
+{
+	CStringW s;
+	s.LoadString(idc);
+	return s;
+}
+
+CStringA KwRscA(int idc)
+{
+	CStringA s;
+	s.LoadString(idc);
+	return s;
+}
+
+

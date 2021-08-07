@@ -305,8 +305,9 @@ LRESULT CDlgInvokable::OnBeginInvoke(WPARAM wParam, LPARAM lParam)
 {
 	CSyncAutoLock __lock(KBeginInvoke::GetCS(), TRUE, __FUNCTION__, __LINE__, "CDlgInvokable");
 	KBeginInvoke* pbi = (KBeginInvoke*)lParam;
-	pbi->_bCalled = true; (*pbi->m_pLambda)();
-	TRACE("### NOT CALLED YET, %ld, %s (%d)\n", pbi->_srl, pbi->m_fnc, pbi->m_line);
+	pbi->_bCalled = true; 
+	(*pbi->m_pLambda)();
+	//TRACE("### NOT CALLED YET, %ld, %s (%d)\n", pbi->_srl, pbi->m_fnc, pbi->m_line);
 	KBeginInvoke::freeInvokeFree();
 	return 0;
 }

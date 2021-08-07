@@ -72,13 +72,14 @@ CMyHttps::~CMyHttps()
 }
 
 
-int CMyHttps::start_server()//shared_ptr<CAsioService>* pService)
+int CMyHttps::start_server()
 {
 // 	if(_service && _service->IsStarted() && _server && _server->IsStarted())
 // 		return 1;
 	// Create a new Asio service
 	try 
 	{
+		///TODO: 일단 service를 매번 청소
 		if(_service)
 		{/// 기존거 청소
 			auto service = _service;
@@ -89,7 +90,11 @@ int CMyHttps::start_server()//shared_ptr<CAsioService>* pService)
 		}
 
 		ASSERT(!_service);
-		_service = std::make_shared<CAsioService>(4);
+	
+		int nThread = 4;
+		bool bPool = true;
+		_service = std::make_shared<CAsioService>(nThread, bPool);
+
 		std_cout << "Asio service starting...";
 		if(_service->Start())
 			std_cout << "Done!" << std_endl;
@@ -97,10 +102,15 @@ int CMyHttps::start_server()//shared_ptr<CAsioService>* pService)
 			std_cout << "Asio service is failed!" << std_endl;
 		///_service = CAsioSvcInst::getAsioService(1)->_service;
 		/// site별 포트 오류 나면 _service가 못살아 난다. 그래서 각자 가지고 있어야 할듯.
-	
-		// Start the Asio service
 /*
-		
+
+
+
+
+
+
+
+		// Start the Asio service
 		if(!_service->IsStarted())
 		{
 			if(_service->Start())
@@ -111,12 +121,6 @@ int CMyHttps::start_server()//shared_ptr<CAsioService>* pService)
 		else
 			std_cout << "Asio service is already started!!" << std_endl;
 */
-
-		
-
-
-
-
 
 		///[ Create and prepare a new SSL server context
 		auto context = std::make_shared<CppServer::Asio::SSLContext>(BAsio::ssl::context::tlsv12);
@@ -158,7 +162,9 @@ int CMyHttps::start_server()//shared_ptr<CAsioService>* pService)
 		if(!_server->IsStarted())
 		{
 			if(_server->Start())
-				std_cout << "Done! (SSL)" << std_endl;
+			{
+				//std_cout << "Done! (SSL)" << std_endl;
+			}
 			else
 			{
 				std_cout << "Server starting ERROR!!!!!!!!" << std_endl;
@@ -218,11 +224,11 @@ void CMyHttps::stop_server()
 	if(_service)
 	{
 		if(_server)
-				HttpCmn::stop_server(_service, _server);
+			HttpCmn::stop_server(_service, _server);
 	}
 }
 
-void CMyHttps::shutdown_server()//?Shutdown 
+void CMyHttps::shutdown_server() 
 {
 	if(_service)
 	{
@@ -230,6 +236,7 @@ void CMyHttps::shutdown_server()//?Shutdown
 			HttpCmn::shutdown_server(_service, _server);
 	}
 }
+
 
 void HTTPSCacheServer::onError(int error, const string& category, const string& message)
 {
@@ -242,7 +249,7 @@ void HTTPSCacheServer::onError(int error, const string& category, const string& 
 
 void HTTPSCacheServer::onStarted() 
 {
-	std_cout << "서버 시작. HTTPCacheServer::onStarted " << std_endl;
+	std_cout << "HTTPCacheServer::onStarted " << std_endl;
 	if(_fncOnStarted.get())
 		(*_fncOnStarted)();
 }
@@ -252,14 +259,8 @@ void HTTPSCacheServer::onStarted()
 void HTTPSCacheServer::onStopped() 
 {
 	std_cout << "HTTPCacheServer::onStopped " << std_endl;
-	if(_fncOnStopped.get())
-		(*_fncOnStopped)();
-
-// 	string esm = _eStopMode;// {"none"};// "stop", "shutdown", "restart",
-// 	if(esm == "shutdown")
-// 	{
-// 
-// 	}
+	if(_fncOnStopped)
+		(*_fncOnStopped)();//?destroy 4
 }
 
 
@@ -320,12 +321,11 @@ void KSessionInfo::GatherBasicInfo(const HTTPRequest& request, string ips)//, KS
 
 void HTTPSCacheSession::onReceivedRequest(const HTTPRequest& request)
 {
-	std_coutD << "HTTPSCacheSession::onReceivedRequest" << std_endl;
+	//std_coutD << "HTTPSCacheSession::onReceivedRequest" << std_endl;
 	HTTPResponse& res1 = response();
 	auto svr = server();	//+svr	shared_ptr<SSLServer>
-	shared_ptr<SSLServer>& svr1 = server();	//+svr1	shared_ptr{_fncGET=empty _fncPOST=empty} [5 strong refs, 1 weak ref] [{_Storage={_Value={_fncGET=empty _fncPOST=empty }} }]	shared_ptr<CppServer::Asio::SSLServer>&
-	auto psvr = svr1.get();
-	HTTPSCacheServer* svr2 = dynamic_cast<HTTPSCacheServer*>(psvr);
+	//shared_ptr<SSLServer>& svr = server();	//+svr1	shared_ptr{_fncGET=empty _fncPOST=empty} [5 strong refs, 1 weak ref] [{_Storage={_Value={_fncGET=empty _fncPOST=empty }} }]	shared_ptr<CppServer::Asio::SSLServer>&
+	auto svr2 = dynamic_cast<HTTPSCacheServer*>(svr.get());
 	HttpCmn::onReceivedRequest(svr2, this, (HTTPRequest&)request);
 }
 #ifdef _DEBUGxxx
@@ -394,6 +394,19 @@ void HTTPSCacheSession::onReceivedRequestError(const HTTPRequest& request, const
 void HTTPSCacheSession::onReceivedRequestHeader(const HTTPRequest& request)
 {// base가 빈 함수라 __super를 부를 필요 없다.
 	//std_cout << "HTTPSCacheSession::onReceivedRequestHeader- len: " << std_endl;//request.body_length <<  
+}
+
+std::string HTTPSCacheSession::getCacheKey(const char* notKey, const char* notKey2 /*= nullptr*/)
+{
+	Tas ss; ss << _sinfo._dir;
+	for(auto it : _sinfo._urlparam)
+	{
+		if(it.first != notKey && (!notKey2 || it.first != notKey2))//"uuid"=notKey 와 srl만 빼고 나머지 다 키로 생성한다.
+			ss << it.first << it.second;
+	}
+	if(ss.str().length() == 0)
+		ss << "/";
+	return ss.str();
 }
 
 void HTTPSCacheSession::onError(int error, const string& category, const string& message)
@@ -486,3 +499,34 @@ Request body:0
 HTTPSCacheSession::onSent
 HTTPSCacheSession::onEmpty
 */
+
+
+int CompareData(string url, string_view resbody, shared_ptr<KBinData> shbin, shared_ptr<CacheVal> scval, int rchche)
+{
+	if(rchche)
+	{
+		//string value(resbody);
+		auto l1 = resbody.size();
+		//auto l2 = value.length();
+		//auto l3 = shbin->m_len; //이건 안쓰는데 항상 0
+		auto l4 = scval->_data.m_len;
+		// 	int b10 = memcmp(shbin->m_p, scval->_data.m_p, l1);
+		// 	int b11 = memcmp(shbin->m_p, resbody.data(), l1);
+			//int b21 = memcmp(scval->_data.m_p, value.c_str(), l1);
+		if(l1 == l4)
+		{
+			int b01 = memcmp(scval->_data.m_p, resbody.data(), l1);
+			//if(b10 || b11 || b01 || b21 || l1 != l2 || l2 != l4 || l4 != l1)
+			if(b01)// || l4 != l1)
+			{
+				if(l4 > 0)
+				{
+					_break;
+					bool bt = b01;
+					return -1;
+				}
+			}
+		}
+	}
+	return 0;
+}

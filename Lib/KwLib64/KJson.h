@@ -172,6 +172,16 @@ namespace Kw
 
 		static void CloneObject(const JObj& source, JObj& tar, bool bClone = true);
 
+		template<typename FNC>
+		static void CloneObjCond(const JObj& source, JObj& tar, FNC lmbdaCondition = [](auto k, auto sjv) {return true; }, bool bClone = true)
+		{
+			for(auto& [k, sjv] : source)
+			{
+				if(lmbdaCondition(k, sjv))
+					tar.SetAt(k, make_shared<JVal>(*sjv, bClone));
+			}
+		}
+
 		ShJVal Get(PWS k);
 		ShJVal Get(PAS k) {
 			CStringW sw(k);
@@ -208,6 +218,7 @@ namespace Kw
 		BOOL OrStr(PAS k, PWS str, char tok = '|');
 		CTime T(PAS k);
 
+		/// src에서 tar로 필드 하나 복사
 		void Copy(JObj& src, PAS tarF, PAS srcF = nullptr);
 		void Copy(JObj& src, PWS tarF, PWS srcF = nullptr)
 		{
@@ -217,6 +228,8 @@ namespace Kw
 			CStringA sw(srcF);
 			Copy(src, tw, sw);
 		}
+		
+		/// src에 필드가 있으면 복사
 		BOOL CopyIf(JObj& src, PAS tarF, PAS srcF = nullptr);// = nullptr
 			/// 길이가 있고 내용이 같은 경우만 true 이다.
 		int IsUpdated(JObj& src, PAS tarF, PAS srcF = nullptr);
@@ -252,14 +265,14 @@ namespace Kw
 		{
 			return N(k);
 		}
-		int I(PWS k);
+		int I(PWS k, int def = 0);
 
 		// _buf.GetBuf(); 로 잡은 String buffer로 리턴 한다.
 		// SQL 안에 쓸 문자 이므로 굳이 그렇게 해야 한다.
 		PWS QN(PWS k, int underDot = 0);
 		PWS QN(PAS k, int underDot = 0)	{CStringW sw(k);return QN(sw, underDot);}
 		//double이 기본이지만 정수인지 확신할때
-		int I(PAS k) { CStringW sw(k); return (int)N((PWS)sw); }
+		int I(PAS k, int def = 0) { CStringW sw(k); return (int)I((PWS)sw, def); }
 		__int64 I64(PWS k);
 		__int64 I64(PAS k) { CStringW sw(k); return (__int64)I64((PWS)sw); }
 		ShJArr Array(PWS k);
@@ -344,6 +357,16 @@ namespace Kw
 			return Has((PWS)kw);
 		}
 
+		template<typename TKEY, typename TVAL>
+		bool SetDefault(TKEY k, TVAL v)
+		{
+			if(!Has(k))
+			{
+				(*this)(k) = v;
+				return true;
+			}
+			return false;
+		}
 
 		bool IsArray(PAS k) {	CStringW kw(k);	return IsArray(kw); }
 		bool IsObject(PAS k){	CStringW kw(k);	return IsObject(kw); }
@@ -363,6 +386,7 @@ namespace Kw
 
 		CStringW ToJsonStringW();
 		CStringA ToJsonStringUtf8();
+		SHP<KBinary> ToJsonBinaryUtf8();
 		KBinary ToJsonData();
 		bool CopyFielsIf(JObj& src, PWS key);
 		int CopyFieldsAll(JObj& src);
@@ -406,7 +430,8 @@ namespace Kw
 		void Add(bool v);
 		void Add(JObj& v, bool bClone = true);
 		///void Add(JArr& v, bool bClone = true); array안에 array넣는 것은 아직 없네?
-		void Add(ShJObj sv);
+		void Add(ShJObj sv, bool bClone = true);
+		void Add(ShJVal sv, bool bClone = true);
 		ShJObj FindByValue(PAS field, PWS value);
 	};
 
@@ -525,7 +550,7 @@ namespace Kw
 		{
 			return N();
 		}
-		int I();
+		int I(int def = 0);
 
 
 
@@ -611,6 +636,7 @@ namespace Kw
 		friend class JVal;
 
 	public:
+		static ShJObj ParseUtf8(const char* data);
 		static ShJVal Parse(const char* data);
 		static ShJVal Parse(const wchar_t* data);
 		static wstring Stringify(const ShJVal value);

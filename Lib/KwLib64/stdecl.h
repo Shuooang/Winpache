@@ -553,6 +553,8 @@ public:
 	}
 };
 
+
+#ifdef _DEBUG_error
 /// wstring <-> string 상호변환
 template<typename TS1, typename TS2>
 void Ucode(const TS1 str1, TS2& str2)
@@ -582,3 +584,4 @@ inline string ToAStr(const WCHAR* pws)
 	wstring ws = pws;
 	return ToAStr(ws);
 }
+#endif // _DEBUG_error

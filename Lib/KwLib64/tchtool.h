@@ -355,8 +355,14 @@ const TCH* tchcpynum(const TCH* dst, const TCH* src, int iOp = 3)
 template< class Tint >
 inline LPCSTR KwItoaA(Tint iv, CHAR* pbuf, size_t szBuf = 10)
 {
-	_itoa_s((int)iv, (LPTSTR)pbuf, szBuf, 10);
+	_itoa_s((int)iv, (char*)pbuf, szBuf, 10);
 	return (LPCSTR)pbuf;
+}
+template< class Tint >
+inline LPCWSTR KwItoaAW(Tint iv, WCHAR* pbuf, size_t szBuf = 10)
+{
+	_itow_s((int)iv, (WCHAR*)pbuf, szBuf, 10);
+	return (LPCWSTR)pbuf;
 }
 
 template< class Tchar >

@@ -33,12 +33,14 @@ CmnDoc::CmnDoc()
 
 
 
+PAS CmnDoc::_cMagicKey = "55EEBBDD44559944770088339992728974";
 
 
 void CmnDoc::InitData()
 {
 	AUTOLOCK(_csJdata);
 	//auto& _jdata = *_jdata;
+	_jdata("_MagicKey") = _cMagicKey;
 	_jdata("_GUID") = "";
 	_jdata("_port") = 0;
 	_jdata("_CacheLife") = 2000;

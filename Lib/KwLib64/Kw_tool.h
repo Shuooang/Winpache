@@ -76,12 +76,11 @@ public:
 	}
 	CKTrace& operator<<(const std::wstring& ctr)
 	{
-		std::string ctra;
-		Ucode(ctr, ctra);
-		//ctra.assign(ctr.begin(), ctr.end());
-		Output(ctra.c_str());
-		//CStringA ctra(ctr.c_str());
-		//Output((PAS)ctra);
+// 		std::string ctra;
+// 		Ucode(ctr, ctra);
+// 		Output(ctra.c_str());
+		CStringA ctra(ctr.c_str());
+		Output((PAS)ctra);
 		return *this;
 	}
 	CKTrace& operator<<(const std::string& ctr) {
@@ -237,11 +236,12 @@ va_end( argList );\
 
 PWS KwUTF8ToWchar(PAS sUtf8, CStringW& sWstr);
 PWS KwUTF8ToHtmlUrl(CStringA& sUtf8, CString& sWstr);
-PWS KwStringToWString(std::string& str, std::wstring& wstr);
-PAS KwWStringToString(std::wstring& wstr, std::string& str);
+// PWS KwStringToWString(std::string& str, std::wstring& wstr);
+// PAS KwWStringToString(std::wstring& wstr, std::string& str);
 PWS KwHtmlUrlToWChar(CStringA& shtml, CStringW& sw);
 PAS KwHtmlUrlToChar(CStringA& shtml, CStringA& sa);
 PAS KwWcharToUTF8(PWS sWstr, CStringA& sUtf8);
+PAS KwWcharToUTF8(LPCWSTR sWstr, KBinary& sUtf8);
 PAS KwCharToUTF8(PAS sWstr, CStringA& sUtf8);
 PAS KwUTF8ToChar(PAS sUtf8, CStringA& sAstr);
 
@@ -400,10 +400,12 @@ BOOL KwCopyTextClipboad(CWnd* pWnd, LPCWSTR text);
 LPCSTR KwReadSmallTextFileA(PWS fileName, CStringA& str);
 DWORD KwGetFullPathName(PWS lpszFileIn, CStringW& path, PWS* pFilePart = NULL);
 
-DWORD EncodeBinary(KBinary& bin, LPCSTR key0, bool bEncode, KBinary* pbinr);
+UINT_PTR EncodeBinary(KBinary& bin, LPCSTR key0, bool bEncode, KBinary* pbinr);
 
 LONGLONG KwGetTickCount100Nano();
 
 
 
 hres KwGetMacInfo(CString& localIP, CString& macAddr);
+CStringW KwRsc(int idc);
+CStringA KwRscA(int idc);

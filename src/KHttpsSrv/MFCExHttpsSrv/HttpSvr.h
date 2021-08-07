@@ -1,32 +1,21 @@
 #pragma once
-
-/// 
-/// 여기는 속칭 http_server.h가 없으므로 https_server.h 에 있는 것을 여기에 해줘야 한다.
-/// 아참, https_server.h는 내가 분리 해서 만들었지. 여기도 만들어야 겠다.
+#include "string/string_utils.h" // CppCommon::StringUtils::ReplaceFirst
 
 /// KHttp\pkg\CppServer\include\server
 #include "server/kwadjust.h"
+
+
+
 #include "server/http/http_server.h"
 
-/// KHttp\pkg\CppServer\examples
-// #include "asio_service.h" // AsioService => CAsioService 로 대체
-
-/// KHttp\pkg\CppCommon\include\string
-//#include "string/string_utils.h"
-//#include "utility/singleton.h"
-
+/// KHttp\src\KHttpsSrv\MFCAppServerEx2
 #include "Cache.h"
-
-
 #include "HttpsSvr.h"
-
-
 
 //using namespace std;
 using std::string;
 using std::shared_ptr;
 using std::function;
-
 
 
 
@@ -36,10 +25,113 @@ using CppServer::Asio::TCPSession;
 using CppServer::Asio::TCPServer;
 
 
-// extern CKTrace std_cout;// Debug 와 추가 출력 동시에 내 보낼때
-// extern CKTrace std_coutD;// Debug만 내보낼려면
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/// <summary>
+/// 130 :
+/// </summary>
 class HTTPCacheSession : public CppServer::HTTP::HTTPSession
 {
 public:
@@ -67,49 +159,32 @@ protected:
 public:
 	KSessionInfo _sinfo;
 
-	//string _url;
-	//string _sparams;
-	//std::map<string, string> _urlparam;
-	//std::map<string, string> _headers;
-	//string _dir;
-	//string _stCached;//{"cached"/"NoCach"};
-
-	//void MakeJsonError(HTTPResponse& res1, char* errmsg, int err = -1);
-	//void ResponseError(char* errmsg, int err = -1);
-
 	/// <summary>
 	/// url params에서 각 사용자 마다 다른 'notKey'만 빼고 캐시용 키를 만든다.
+	/// 
 	/// </summary>
-	std::string getCacheKey(const char* notKey, const char* notKey2 = nullptr)
-	{
-		Tas ss;
-		for(auto it:_sinfo._urlparam)
-		{
-			if(it.first != notKey && (!notKey2 || it.first != notKey2))//"uuid"=notKey 와 srl만 빼고 나머지 다 키로 생성한다.
-				ss << it.first << it.second;
-		}
-		if(ss.str().length() == 0)
-			ss << "/";
-		return ss.str();
-	}
+	std::string getCacheKey(const char* notKey, const char* notKey2 = nullptr);
 
 	shared_ptr<function<int(HTTPCacheSession*, HTTPRequest&)>> _fncOnReceivedRequestInternal;
 	shared_ptr<function<int(HTTPCacheSession*, const void*, size_t)>> _fncOnReceived;
 	shared_ptr<function<int(HTTPCacheSession*, size_t, size_t)>>      _fncOnSent;
 	shared_ptr<function<int(HTTPCacheSession*, uint8_t*, size_t)>>    _fncOnSentKw;
-	//shared_ptr<function<int(const void*, size_t)>> _fncOnReceived;
-	//shared_ptr<function<int(size_t, size_t)>>      _fncOnSent;
-	//shared_ptr<function<int(uint8_t*, size_t)>>    _fncOnSentKw;
 };
 
 
+
+/// <summary>
+/// No SSL server
+/// </summary>
 class HTTPCacheServer : public CppServer::HTTP::HTTPServer
 {
 public:
 	using CppServer::HTTP::HTTPServer::HTTPServer;
 
-	~HTTPCacheServer() {    }
-
+	~HTTPCacheServer()
+	{
+	}
+	bool _bChache{true};
 protected:
 	shared_ptr<CppServer::Asio::TCPSession> CreateSession(const shared_ptr<CppServer::Asio::TCPServer>& server) override
 	{
@@ -128,8 +203,9 @@ protected:
 	void onStopped() override;
 	/// _eStopMode = shutdown 이면 _service도 Stop한다.
 	//char* _eStopMode{"none"};// "stop", "shutdown", "restart",
-		// 보류: CAsiService도 start 할때 마다 완전 초기화 하니 좀 해결 된둣.
+	// 보류: CAsiService도 start 할때 마다 완전 초기화 하니 좀 해결 된둣.
 	// 오류 나면 CAsiService가 맛이 가는거 때문에
+
 
 	void onConnected(shared_ptr<TCPSession>& session) override;
 
@@ -141,10 +217,10 @@ public: // 아래는 소유권이 없다.
 	shared_ptr<function<void()>>                                              _fncOnStopped;
 	shared_ptr<function<int(int, const string&, const string&)>>              _fncOnError;
 	shared_ptr<function<int(HTTPCacheSession*, shared_ptr<KBinData>, HTTPResponse&)>> _fncOnReceivedRequest;
-	shared_ptr<function<int(HTTPCacheSession*, shared_ptr<KBinData>, HTTPResponse&)>> _fncGET;//HTTPRequest&, 
+	shared_ptr<function<int(HTTPCacheSession*, HTTPResponse&)>> _fncGET;//HTTPRequest&,
 	shared_ptr<function<int(HTTPCacheSession*, shared_ptr<KBinData>, HTTPResponse&)>> _fncPOST;
 	shared_ptr<function<int(HTTPCacheSession&)>>                              _fncOnConnected;
-	//	shared_ptr<function<int(HTTPCacheSession&)>>                              _fncOnHandshaked;
+	//shared_ptr<function<int(HTTPCacheSession&)>>                              _fncOnHandshaked;
 	shared_ptr<function<int(HTTPCacheSession&)>>                              _fncOnDisconnected;
 	shared_ptr<function<int(HTTPCacheSession*, size_t, size_t)>>              _fncOnSent;
 	shared_ptr<function<int(HTTPCacheSession*, uint8_t*, size_t)>>            _fncOnSentKw;
@@ -171,22 +247,110 @@ public: // 아래는 소유권이 없다.
 		server->_fncOnTrace.reset();
 		server->_fncCluster.reset();
 	}
-	shared_ptr<CacheBin> _cache;
-	shared_ptr<Cache> _cacheOld;
-	CacheBin& getCache() {
-		//return Cache::GetInstance();
-		if (_cache.get() == nullptr)
-			_cache = shared_ptr<CacheBin>(new CacheBin());
-		return *_cache.get();
-	}
-	Cache& getCacheOld() {
-		//return Cache::GetInstance();
-		if (_cacheOld.get() == nullptr)
-			_cacheOld = shared_ptr<Cache>(new Cache());
-		return *_cacheOld.get();
-	}
 
+// 	shared_ptr<CacheBin> _cache;
+// 	//shared_ptr<Cache> _cacheOld;
+// 	void setCache(shared_ptr<CacheBin> cache) {
+// 		if(!_cache)
+// 			_cache = cache;
+// 	}
+	CacheBin& getCache() {
+		return CacheBin::GetInstance();
+// 		if (_cache.get() == nullptr)
+// 			_cache = shared_ptr<CacheBin>(new CacheBin());
+// 		return *_cache.get();
+	}
+// 	Cache& getCacheOld() {
+// 		//return Cache::GetInstance();
+// 		if (_cacheOld.get() == nullptr)
+// 			_cacheOld = shared_ptr<Cache>(new Cache());
+// 		return *_cacheOld.get();
+// 	}
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+/// Server하나당 이거 하나씩 사용 하며, CAsioService는 각 Server마다 공유 하지만
+///	Server는 각 리스너 마다 하나씩 갖는다.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -226,7 +390,8 @@ public:
 	}
 	template<typename TFNC> void AddCallbackOnGET(TFNC fnc, int bOvWR = 0)
 	{
-		TCreateFuncValue(_server->_fncGET, fnc, bOvWR);
+		//_server->_fncGET = std::make_shared<function<int(HTTPSCacheSession*, shared_ptr<KBinData>, HTTPResponse&)>>(fnc);
+		TCreateFuncValue(_server->_fncGET, fnc, bOvWR);//함수의 파라미터를 생략할 수 있도록
 	}
 	template<typename TFNC> void AddCallbackOnPOST(TFNC fnc, int bOvWR = 0)
 	{
@@ -248,6 +413,7 @@ public:
 	{
 		TCreateFuncValue(_server->_fncOnConnected, fnc, bOvWR);
 	}
+
 
 
 

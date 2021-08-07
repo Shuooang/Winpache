@@ -234,7 +234,6 @@
     <ClInclude Include="HttpSvr.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MFCExHttpsSrv.h" />
-    <ClInclude Include="OpenSSL.h" />
     <ClInclude Include="OutputWnd.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PropertiesWnd.h" />
@@ -268,7 +267,6 @@
     <ClCompile Include="HttpSvr.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MFCExHttpsSrv.cpp" />
-    <ClCompile Include="OpenSSL.cpp" />
     <ClCompile Include="OutputWnd.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -285,6 +283,7 @@
   <ItemGroup>
     <None Include="MFCExHttpsSrv.reg" />
     <None Include="res\MFCExHttpsSrv.rc2" />
+    <None Include="res\mfcribbon-ms00001.mfcribbon-ms" />
     <None Include="res\ribbon.mfcribbon-ms" />
   </ItemGroup>
   <ItemGroup>

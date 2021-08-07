@@ -138,8 +138,9 @@ int CmnView::CheckData()
 		}
 		if(sjd->IsEmpty("_prvpwd"))
 		{
-			KwMessageBox(L"Password is invalid!");
-			throw 24;
+			///KwMessageBox(L"Password is invalid!");
+			TRACE(L"Password is empty!\n");
+			//throw 24;
 		}
 	}
 	return 0;
@@ -435,7 +436,7 @@ int CmnView::CallbackOnSent(KSessionInfo& inf, int vuid, size_t sent, size_t pen
 
 
 
-int CmnView::CallbackOnGET(KSessionInfo& inf, int vuid, SHP<KBinData> shbin, HTTPResponse& res)
+int CmnView::CallbackOnGET(KSessionInfo& inf, int vuid, HTTPResponse& res)
 {
 	BACKGROUND(1);//여기는 백그라운드 이다.
 	//TRACE("AddCallbackOnGET\n");

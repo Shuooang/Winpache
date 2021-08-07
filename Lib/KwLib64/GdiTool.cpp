@@ -301,3 +301,25 @@ PAS KwIsInRectSide(CRect rc, CPoint pt, int m)
 	}
 	return side;
 }
+
+IStream* KwCreateStreamOnResource(LPCTSTR lpName, LPCTSTR lpType)
+{
+	IStream* ipStream = NULL;
+	HRSRC hrsrc = FindResource(NULL, lpName, lpType);	if(hrsrc == NULL)	goto Return;
+	DWORD dwResourceSize = SizeofResource(NULL, hrsrc);
+	HGLOBAL hglbImage = LoadResource(NULL, hrsrc);	if(hglbImage == NULL)	goto Return;
+	LPVOID pvSourceResourceData = LockResource(hglbImage);	if(pvSourceResourceData == NULL) goto Return;
+	HGLOBAL hgblResourceData = GlobalAlloc(GMEM_MOVEABLE, dwResourceSize);	if(hgblResourceData == NULL) goto Return;
+
+	LPVOID pvResourceData = GlobalLock(hgblResourceData);	if(pvResourceData == NULL)	goto FreeData;
+	CopyMemory(pvResourceData, pvSourceResourceData, dwResourceSize);
+	GlobalUnlock(hgblResourceData);
+	if(SUCCEEDED(CreateStreamOnHGlobal(hgblResourceData, TRUE, &ipStream)))		goto Return;
+
+FreeData:
+	GlobalFree(hgblResourceData);
+
+Return:
+	return ipStream;
+}
+

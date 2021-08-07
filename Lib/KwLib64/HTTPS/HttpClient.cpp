@@ -650,10 +650,10 @@ hres CHttpClient::RequestGetSSL( LPCTSTR surl, KBinary* pBinr, KBinary* pBin, PA
 		CAutoCoInit _auco;/// 이거 안해줘서 thread 에서 안불려 짐
 		// http://stackoverflow.com/questions/1107862/http-client-example-on-win32
 		HRESULT hr;
-		CComPtr<IXMLHTTPRequest> request;
+		CComPtr<IServerXMLHTTPRequest> request;
 		for(int n = 1;n>0;n--)
 		{
-			hr = request.CoCreateInstance(CLSID_XMLHTTP60);
+			hr = request.CoCreateInstance(CLSID_ServerXMLHTTP60);
 			//if(request.p == NULL)
 			//	hr = request.CoCreateInstance(CLSID_XMLHTTP40);
 			//if(request.p == NULL)
@@ -810,8 +810,8 @@ int CHttpClient::RequestPostSSL( LPCTSTR surl, KBinary* pBinr, LPCSTR buf, UINT 
 		HRESULT hr;
 		//CComPtr<IXMLHTTPRequest> request;
 		if(!_sxrq)
-			hr = _sxrq.CoCreateInstance(CLSID_ServerXMLHTTP60);//CLSID_XMLHTTP60
-		CComPtr<IServerXMLHTTPRequest> request(_sxrq);
+			hr = _sxrq.CoCreateInstance(CLSID_ServerXMLHTTP60);//CLSID_XMLHTTP60 CLSID_ServerXMLHTTP60
+		CComPtr<IServerXMLHTTPRequest2> request(_sxrq);
 		//hr = request.CoCreateInstance(CLSID_ServerXMLHTTP60);//CLSID_XMLHTTP60
 		//if(request.p == NULL)
 		//	hr = request.CoCreateInstance(CLSID_XMLHTTP40);
@@ -974,11 +974,11 @@ int CHttpClient::RequestPostSSL( LPCTSTR surl, KBinary* pBinr, LPCSTR buf, UINT 
 		hr = -2;
 		e->Delete();//DelException(e);
 	}
-	catch(LONG ln) // __LINE__
+	catch(LONG ) // __LINE__
 	{
 		hr = -3;
 	}
-	catch(int ln) // __LINE__
+	catch(int ) // __LINE__
 	{
 		hr = -3;
 	}

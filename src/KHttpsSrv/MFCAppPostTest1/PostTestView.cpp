@@ -412,7 +412,7 @@ void CPostTestView::SendOneAsync(int i)
 		CStringW sWstrR;
 		KwUTF8ToWchar(binr.GetPA(), sWstrR);//utf8을 UNICODE로
 		sAstrR = CStringA(sWstrR);//다시 멀티바이트로 해야 저장 하지.
-		doc->_Response.Format("%4d.[HTTP %u] %s", i, cl._status, sAstrR);
+		doc->_Response.Format("%4d.[HTTP %u] %s", i, cl._status, (PAS)sAstrR);
 	}
 	_InterlockedIncrement(&_nResponse);
 

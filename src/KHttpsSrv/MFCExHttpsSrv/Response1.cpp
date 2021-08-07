@@ -74,8 +74,16 @@ int CResponse1::ResponseFileForGet(string url, KBinary& fbuf)
 		//}
 		//else return 2;
 	}
-	catch (CException* e)
-	{//모두 KException 로 바꿔서 rethrow하므로 여기로 오면 호출 하다 의외 심각한 오류일수있다.
+	catch(CFileException* e)
+	{
+		CString s; s.Format(L"File open error.(%s)\n", e->m_strFileName);CStringA sa(s);
+		TRACE((PAS)sa);
+		_api->LogExcepFN(e);//CException에는 FILE, LINE이 없어 오류는 파라미터 챙길게 많다.
+		e->Delete();
+		return 1;
+	}
+	catch(CException* e)
+	{///모두 KException 로 바꿔서 rethrow하므로 여기로 오면 호출 하다 의외 심각한 오류일수있다.
 		//CString sError;
 		//e->GetErrorMessage(sError.GetBuffer(1024), 1024); sError.ReleaseBuffer();
 		//DWORD err = GetLastError();
@@ -201,6 +209,13 @@ int CResponse1::ResponseForGet(KSessionInfo& sinfo, stringstream& rpost)
 	return rv;
 }
 
+/// <summary>
+/// called from CmnView::CallbackOnPOST
+/// </summary>
+/// <param name="sinfo"></param>
+/// <param name="body"></param>
+/// <param name="rpost"></param>
+/// <returns></returns>
 int CResponse1::ResponseForPost(KSessionInfo& sinfo, SHP<KBinData> body, stringstream& rpost)
 {
 	BACKGROUND(1);
@@ -391,6 +406,14 @@ int CResponse1::ResponseForPost(KSessionInfo& sinfo, SHP<KBinData> body, strings
 		}
 		_api->LogException(e, uuidW);//오류는 파라미터 챙길게 많아서 동기로 처리 한다.
 		
+		status = sinfo._status;// e->_error;// 400; status
+		e->Delete();//DeleteMeSafe(e);
+	}
+	catch(CDBException* e)
+	{//API중에 오류는 모두 여기로 온다.
+		JError(jres, L"Data Base Error.", e->m_nRetCode, eHttp_Expectation_Failed);
+		_api->LogException(e, uuidW);//오류는 파라미터 챙길게 많아서 동기로 처리 한다.
+
 		status = sinfo._status;// e->_error;// 400; status
 		e->Delete();//DeleteMeSafe(e);
 	}

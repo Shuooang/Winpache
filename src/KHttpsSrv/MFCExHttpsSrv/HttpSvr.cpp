@@ -85,12 +85,12 @@ int CMyHttp::start_server()
 			auto service = _service;
 			if(service->IsStarted())
 				service->Stop();
-
+		
 			_service.reset();
 		}
 
 		ASSERT(!_service);
-		
+	
 		int nThread = 4;
 		bool bPool = true;
 		_service = std::make_shared<CAsioService>(nThread, bPool);
@@ -100,11 +100,11 @@ int CMyHttp::start_server()
 			std_cout << "Done!" << std_endl;
 		else
 			std_cout << "Asio service is failed!" << std_endl;
+		///_service = CAsioSvcInst::getAsioService(1)->_service;
+		/// site별 포트 오류 나면 _service가 못살아 난다. 그래서 각자 가지고 있어야 할듯.
 /*
 		if(!_service)
 			_service = std::make_shared<CAsioService>();
-		///_service = CAsioSvcInst::getAsioService(1)->_service;
-		/// site별 포트 오류 나면 _service가 못살아 난다. 그래서 각자 가지고 있어야 할듯.
 
 		if (_service) // operator bool 있음. .get())
 			std_cout << "Asio service starting..." << std_endl;
@@ -148,11 +148,12 @@ int CMyHttp::start_server()
 		// 서버가 생성 되면 
 		if(!_server->_fncOnTrace)
 			_server->_fncOnTrace = _fncOnTrace;//?ExTrace 4 CMyHttps -> _server (불필요)
-		
+
+		//_cachedPath = "C:/Dropbox/Proj/STUDY/boostEx/CppServer/CppServer-master/www/api";"C:\Dropbox\Proj\STUDY\boostEx\CppServer\CppServer-master\www\api";
 		if(_bStaticCache && _cachedPath.size() > 0 && _cachedUrl.size() > 0)
 		{
 			string cachedPath = (PAS)KwReplaceStr(CStringA(_cachedPath.c_str()), "\\", "/");
-			_server->AddStaticContent(cachedPath, _cachedUrl);//, "/api");
+			_server->AddStaticContent(cachedPath, _cachedUrl);
 			/// 여기서 에러 나면, Dropbox 스마트동기화가 로컬로 안된경우 파일을 제대로 못읽어서 그렇다.
 		}
 
@@ -241,7 +242,7 @@ void HTTPCacheServer::onError(int error, const string& category, const string& m
 {
 	std_cout << "HTTPS server caught an error with code " << error << " and category '" << category << "': " << message << std_endl;
 	if(_fncOnError.get())
-		(*_fncOnError.get())(error, category, message);
+		(*_fncOnError)(error, category, message);
 }
 
 
@@ -258,15 +259,8 @@ void HTTPCacheServer::onStarted()
 void HTTPCacheServer::onStopped()
 {
 	std_cout << "HTTPCacheServer::onStopped " << std_endl;
-	if(_fncOnStopped.get())
-		(*_fncOnStopped.get())();//?destroy 4
-
-// 	string esm = _eStopMode;// {"none"};// "stop", "shutdown", "restart",
-// 	if(esm == "shutdown")
-// 	{
-// 		///TODO: 어떻게 셧다운 하지?
-// 	}
-
+	if(_fncOnStopped)
+		(*_fncOnStopped)();//?destroy 4
 }
 
 
@@ -280,7 +274,12 @@ void HTTPCacheServer::onConnected(shared_ptr<TCPSession>& session)
 
 
 /// CMyHttps::onHandshaked 는 SSL이 필요 없으니 여기서 빠진다.
-
+///
+///
+///
+///
+///
+///
 
 /// CMyHttps의 것과 동일
 void HTTPCacheServer::onDisconnected(shared_ptr<TCPSession>& session)
@@ -292,18 +291,68 @@ void HTTPCacheServer::onDisconnected(shared_ptr<TCPSession>& session)
 
 
 /// ///////////////////////// Session ////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void HTTPCacheSession::onReceivedRequestHeader(const HTTPRequest& request)
 {// base가 빈 함수라 __super를 부를 필요 없다.
 	//std_cout << "HTTPCacheSession::onReceivedRequestHeader- len: " << std_endl;//request.body_length <<  
 }
+
 void HTTPCacheSession::onReceivedRequest(const HTTPRequest& request)
 {
 	//std_coutD << "HTTPCacheSession::onReceivedRequest" << std_endl;
-	HTTPRequest& req1 = (HTTPRequest&)request; // this->request(); kdw가 추가
+	HTTPResponse& res1 = response();
 	auto svr = server();	//+svr	shared_ptr<SSLServer>
+
 	auto svr2 = dynamic_cast<HTTPCacheServer*>(svr.get());
-	HttpCmn::onReceivedRequest(svr2, this, req1);
+	HttpCmn::onReceivedRequest(svr2, this, (HTTPRequest&)request);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //?kdw virtual이 아닌걸 virtual로 돌려 override한다.
@@ -313,6 +362,19 @@ void HTTPCacheSession::onReceivedRequestInternal(const HTTPRequest& request)
 	if(_fncOnReceivedRequestInternal)
 		(*_fncOnReceivedRequestInternal)(this, (HTTPRequest&)request);
 	__super::onReceivedRequestInternal(request);
+}
+
+std::string HTTPCacheSession::getCacheKey(const char* notKey, const char* notKey2 /*= nullptr*/)
+{
+	Tas ss; ss << _sinfo._dir;
+	for(auto it : _sinfo._urlparam)
+	{
+		if(it.first != notKey && (!notKey2 || it.first != notKey2))//"uuid"=notKey 와 srl만 빼고 나머지 다 키로 생성한다.
+			ss << it.first << it.second;
+	}
+	if(ss.str().length() == 0)
+		ss << "/";
+	return ss.str();
 }
 
 void HTTPCacheSession::onReceived(const void* buffer, size_t size)

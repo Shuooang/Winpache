@@ -110,7 +110,7 @@ public:
 	{
 		return 0;
 	}
-	int CallbackOnGET(KSessionInfo& inf, int vuid, SHP<KBinData> shbin, HTTPResponse& res);
+	int CallbackOnGET(KSessionInfo& inf, int vuid, HTTPResponse& res);
 	int CallbackOnPOST(KSessionInfo& inf, int vuid, SHP<KBinData> shbin, HTTPResponse& res);
 	int CallbackOnErrorAsio(int e, string c, string m);
 	void StoptAndStart(string step);
@@ -183,11 +183,11 @@ int CmnView::StartServerHttpT(TMyserver* https, TSession* pss)
 			KSessionInfo& inf = ss->_sinfo;
 			return CallbackOnReceivedRequest(inf, vuid, shbin, res);
 		});
-	https->AddCallbackOnGET([&, vuid](TSession* ss, SHP<KBinData> shbin, HTTPResponse& res) -> int
+	https->AddCallbackOnGET([&, vuid](TSession* ss, HTTPResponse& res) -> int
 		{
 			//string ssid = ss->id().string();
 			KSessionInfo& inf = ss->_sinfo;
-			return CallbackOnGET(inf, vuid, shbin, res);
+			return CallbackOnGET(inf, vuid, res);
 		});
 	https->AddCallbackOnPOST([&, vuid](TSession* ss, SHP<KBinData> shbin, HTTPResponse& res) -> int
 		{

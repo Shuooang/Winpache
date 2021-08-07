@@ -76,6 +76,11 @@ BOOL SrvDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	BOOL b = __super::OnOpenDocument(lpszPathName);
 	AUTOLOCK(_csJdata);
 	_jdata("_fullPath") = lpszPathName;
+	if(!_jdata.SameSA("_MagicKey", CmnDoc::_cMagicKey))
+	{
+		KwMessageBoxError(L"This file is not supported.");
+		return FALSE;
+	}
 // 	auto app = (CMFCExHttpsSrvApp*)AfxGetApp();
 // 	auto& appd = (app)->_docApp;
 // 	auto& jobj = *appd._json;

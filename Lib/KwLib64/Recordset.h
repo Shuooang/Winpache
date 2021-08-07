@@ -750,18 +750,18 @@ public:
 	}
 
 	// row가 여러개인것을 전제 하고 array 를 hsr(key) = 에 넣는다.
-	void MakeRecsetToJson(JObj& hsr, PWS keyRecset);
+	BOOL MakeRecsetToJson(JObj& hsr, PWS keyRecset);
 
 	// row 0번 하나만 object 로서 hsr에 넣는다.
-	void MakeRecsetOneRowToJson(JObj& hsr, PWS keyRecset);
+	BOOL MakeRecsetOneRowToJson(JObj& hsr, PWS keyRecset);
 
 	template<typename Func>
-	void MakeRecsetToJson(JObj& hsr, PWS keyRecset = L"table", Func lmda = [](KRecordset&, int, int, JObj&) -> int {})
+	BOOL MakeRecsetToJson(JObj& hsr, PWS keyRecset = L"table", Func lmda = [](KRecordset&, int, int, JObj&) -> int {})
 	{
 		KRecordset& rs = *this;
 		try
 		{
-			JSONArray ar;
+			//JSONArray ar;
 			for(int r = 0; r < rs.RowSize(); r++)
 			{
 				JObj robj;
@@ -778,7 +778,9 @@ public:
 				ar.push_back(new JSONValue(*robj.get()));
 			}
 			hsr(keyRecset) = ar;
+			return !NoData();
 		}CATCH_GE;
+		return FALSE;
 	}
 
 };

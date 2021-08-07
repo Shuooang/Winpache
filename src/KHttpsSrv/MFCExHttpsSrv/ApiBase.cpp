@@ -485,7 +485,7 @@ VALUES ('%s', '%s', '%s', '%u', '%d','%d', ?, ?, '%s', '%d')", guidW
 	catch(...)
 	{
 		TRACE("catch ...  - %s %d\n", __FUNCTION__, __LINE__);
-		SvrMessageBeep(4);
+		SvrMessageBeep(1);
 	}
 
 }
@@ -750,10 +750,20 @@ int CApiBase::FileOpen(string url, KBinary& fbuf)
 // 		surlr += _defFile;
 	CStringA local;
 	CString rootLocal = KwReplaceStr(_rootLocal, L"/", L"\\");
+	rootLocal.TrimRight(L"\\");
 	if (_rootURL == "/")
-		local = CStringA(rootLocal) + surlr;
+	{
+		if(surlr.TrimRight(3) == "png")
+			_break;
+// 		if(surlr.Left(1) == "\\")
+// 			local = CStringA(rootLocal) + surlr.Mid(1);
+// 		else
+			local = CStringA(rootLocal) + surlr;
+	}
 	else
+	{
 		local = CStringA(rootLocal) + surlr.Mid(_rootURL.GetLength());
+	}
 	/*vector<string> arp;// http://v2.petme.kr:19479/files/images/org/8D23D27A-4286-4308-B8F1-EF17916B19EF.jpeg
 	auto np = KwCutByToken(url, "/", arp, 0);// [0]'', [1]files, [2]images
 	CStringA local = _rootLocal + "\\";
@@ -774,7 +784,11 @@ int CApiBase::FileOpen(string url, KBinary& fbuf)
 		//fbuf = std::make_shared<char>(len);
 		f.Read(fbuf.m_p, (UINT)len);
 	}
-	catch (CException* e)
+	catch(CFileException* e)
+	{
+		throw e;
+	}
+	catch(CException* e)
 	{
 		throw e;
 	}

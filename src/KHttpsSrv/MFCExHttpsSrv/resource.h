@@ -5,7 +5,6 @@
 #define IDC_Add                         3
 #define IDC_CreateSimple2               4
 #define IDC_Del                         4
-#define IDC_Add2                        5
 #define IDC_Apply                       5
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
@@ -200,7 +199,6 @@
 #define ID_CopyOutput                   32808
 #define ID_SiteStart                    32809
 #define ID_SiteStop                     32810
-#define ID_RestartSite                  32811
 #define ID_EDIT_CONNECTSITEDB           32812
 #define ID_ConnectSiteDB                32813
 #define ID_SiteRestart                  32814

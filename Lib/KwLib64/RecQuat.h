@@ -4,10 +4,19 @@
 #include "Kw_tool.h"
 //              CJsonPbj          JSONValue
 //               JObj              JVal
-template<typename TJSON, typename TJVAL>
+// class JObj;
+// class JVal;
+
+using namespace Kw;
+
+/// template<typename JObj, typename JVal>
+/// template class를 typedef로 대체 했다.
+/// header에 함수가 있으니, 빌드 작업하기 번거롭다.
 class QuatT
 {
 public:
+// 	typedef class JObj JOBJ;
+// 	typedef class JVal JVaL;
 	//?usage
 /*	Tss ss1;
 	ss1 << L"SELECT 1 fOrder, 'holiday' fMode, NULL fBizID, NULL fUsrIdStf,  \n\
@@ -34,62 +43,20 @@ public:
 	CStrBufferT<CString, LPCTSTR> _buf;
 	int _afterPoint{ 9 };//위에 class초기화가 있으므로 아예 안한다.
 
-	PWS Qs(PWS val, BOOL bQuat = TRUE, BOOL bNullIfEmpty = TRUE)
-	{
-		CString& sbuf = _buf.GetBuf();
-		if(val != nullptr)
-		{
-			if(bNullIfEmpty && tchlen(val) == 0)
-				return L"NULL";
-			else
-			{
-				if(bQuat)
-					sbuf.Format(L"'%s'", val);
-				else
-					sbuf = val;
-				return sbuf;
-			}
-		}
-
-		if(bNullIfEmpty)
-			return L"NULL";
-		else
-			return nullptr;
-	}
-	PWS Qs(int k, BOOL bNullIfMinusOne = TRUE)
-	{
-		CString& sbuf = _buf.GetBuf();
-		CString fmt;
-		//double d = k;// v->AsNumber();
-		if(bNullIfMinusOne && k == -1)// tchlen(val) == 0)
-			return L"NULL";
-
-		fmt = L"%d";
-		sbuf.Format(L"%d", k);
-		return sbuf;
-	}
-	PWS Qs(double k, BOOL bNullIfMinusOne = TRUE, int afterPoint = -1)
-	{
-		CString& sbuf = _buf.GetBuf();
-		CString fmt;
-		//double d = k;// v->AsNumber();
-		if(bNullIfMinusOne && k == -1.)// tchlen(val) == 0)
-			return L"NULL";
-
-		fmt.Format(L"%%.%df", afterPoint);
-		sbuf.Format(fmt, k);
-		return sbuf;
-	}
+	PWS Qs(PWS val, BOOL bQuat = TRUE, BOOL bNullIfEmpty = TRUE);
+	PWS Qs(int k, BOOL bNullIfMinusOne = TRUE);
+	PWS Qs(double k, BOOL bNullIfMinusOne = TRUE, int afterPoint = -1);
 
 	CString _sql; // @val 처럼 heidiSQL에서 바로 복사해온 문자열. 이제 @val 을 진짜 값으로 교체 한다
 	CString _sqlv; // @val 처럼 heidiSQL에서 바로 복사해온 문자열. 이제 @val 을 진짜 값으로 교체 한다
 
 	bool _bApplied{ false };
+
 	void SetSQL(PWS sql)
 	{
 		_sql = sql;
-		_sql.Trim();
-		_sql.TrimRight(';');
+// 		_sql.Trim();
+// 		_sql.TrimRight(';');
 #ifdef _DEBUG
 		Apply(); // 원래는 GetSQL 해야 Apply 하는데
 		_bApplied = true; // debug중에 최종 SQL이 보고 싶어서
@@ -97,6 +64,8 @@ public:
 		_bApplied = false;
 #endif
 	}
+
+
 	PWS GetSQL()
 	{
 		if(!_bApplied)
@@ -104,38 +73,36 @@ public:
 		return (PWS)_sqlv;
 	}
 
-	//CKRbPtr<CStringA, CUbj> _fields;
-	//std::map<string, CUbj*> _fields;
-	std::map<wstring, wstring> _fields;
-	//필수, 쿼터, NULL
-	bool Field(TJSON& json, LPCSTR ka, BOOL bNecessary = FALSE, BOOL bQuat = TRUE, BOOL bNullIfEmpty = TRUE)
+	KStdMap<wstring, wstring> _fields;
+
+	/// 필수, 쿼터, NULL
+	bool Field(JObj& json, LPCSTR ka, BOOL bNecessary = FALSE, BOOL bQuat = TRUE, BOOL bNullIfEmpty = TRUE);
+
+	bool Field(JObj& json, LPCSTR kget, LPCSTR kput, BOOL bNecessary = FALSE, BOOL bQuat = TRUE, BOOL bNullIfEmpty = TRUE);
+
+	/// number type field that has not quatation
+	bool FieldNum(JObj& json, LPCSTR kget, LPCSTR kput, BOOL bNecessary = FALSE, BOOL bNullIfEmpty = TRUE)
 	{
-		CString k(ka);
-		PWS pval = json.QS(k, bNullIfEmpty, bQuat, bNecessary);//quat ''는 나중에 붙이게 FALSE
-		if(bNecessary && pval == nullptr)
-			throw_field(ka);
-		//return false;
-		_fields[(PWS)k] = pval;
-		return true;
+		return Field(json, kget, kput, bNecessary, FALSE, bNullIfEmpty);
 	}
 	/// number type field that has not quatation
-	bool FieldNum(TJSON& json, LPCSTR ka, BOOL bNecessary = FALSE, BOOL bNullIfEmpty = TRUE)
+	bool FieldNum(JObj& json, LPCSTR ka, BOOL bNecessary = FALSE, BOOL bNullIfEmpty = TRUE)
 	{
 		return Field(json, ka, bNecessary, FALSE, bNullIfEmpty);
 	}
 
-	bool Field(TJSON& json, LPCWSTR kw, BOOL bNecessary = FALSE, BOOL bQuat = TRUE, BOOL bNullIfEmpty = TRUE)
+	bool Field(JObj& json, LPCWSTR kw, BOOL bNecessary = FALSE, BOOL bQuat = TRUE, BOOL bNullIfEmpty = TRUE)
 	{
 		CStringA ka(kw);
 		return Field(json, ka, bNecessary, bQuat, bNullIfEmpty);
 	}
 
-	size_t CopyField(QuatT<TJSON,TJVAL>& qt)
+	size_t CopyField(QuatT& qt)//<JObj,JVal>
 	{
 		this->_fields = qt._fields;
 		return _fields.size();
 	}
-	TJSON* _json{ nullptr };
+	JObj* _json{ nullptr };
 
 	template<typename TVal>//필수, 쿼터, NULL
 	bool Field(LPCWSTR kw, TVal v, BOOL bNecessary = FALSE, BOOL bQuat = TRUE, BOOL bNullIfEmpty = TRUE)
@@ -182,34 +149,13 @@ public:
 	CStringW _setval;
 
 	/// @SetField is created as inside string theat update field. ex: field1='xxx', field2='yyy'
-	void JsonToUpdateSetField(TJSON& jpa, PWS keyField, PWS keyField2 = nullptr)
-	{
-		_setval.Empty();
-		//jpa->for_loop([&](wstring key, JSONValue& jsv) -> void
-		auto l = jpa.size();
-		int nKey = 1;
-		if(keyField2)
-			nKey++;
-		int n = 0;
-		for(auto& [key, sjv] : jpa)
-		{
-			auto& jsv = *sjv;
-			bool bKey = key == keyField || (keyField2 != nullptr && key == keyField2);// L"fBizID";
-			if(!(jsv.IsArray() || jsv.IsObject()))
-			{
-				//여기에 서브 항목이 또 있을수 있으니 제외. 필드와 다른 항목은 Option:{} 이용
-				this->Field(jpa, key.c_str(), bKey);//필수 체크
-				if(!bKey) // where 에 쓰이는 것이 아니먄
-					this->AddSetField(key.c_str(), jsv, n == (l - 1 - nKey));
-			}
-			n++;
-		}//);
-		//_fields[L"SetField"] = _setval;
-	}
+	void JsonToUpdateSetField(JObj& jpa, PWS keyField, PWS keyField2 = nullptr);
+
+
 	/// update sql문에서 set 뒤에 f1 = v1, f2 = v2, f3 = v3 같이 다 만든다.
 	/// 맨뒤에는 , 를 제거.
 	/// _fields[L"SetField"]
-	bool AddSetField(PWS kw, TJVAL& jsv, BOOL bLast = FALSE)
+	bool AddSetField(PWS kw, JVal& jsv, BOOL bLast = FALSE)
 	{
 		CString value;
 		auto it = _fields.find((PWS)kw);
@@ -253,56 +199,20 @@ public:
 		//_sql.Empty();
 		_sqlv.Empty();
 	}
-	void Apply()
-	{
-		_sqlv.Empty();
-		_fields[L"NULL"] = L"NULL"; // 다 '' 싸는데 NULL 그야 말로 SET = COL1 = NULL 처럼 필드값이 삭제 된다. 행이 아니고.
 
-		bool bAt = false;
-		CString var;
-		CString value;
-		for(int i = 0; i < _sql.GetLength() + 1; i++)
-		{
-			WCHAR ch = i < _sql.GetLength() ? _sql.GetAt(i) : '\0';
-			if(bAt)
-			{
-				if(KwIsAlNum(ch) || ch == '_')
-				{
-					var += ch;
-				}
-				else// 끝나고 '\0'도 여기로 온다.
-				{
-					CString value;
-					//wstring val = _fields.find(var);
-					auto it = _fields.find((PWS)var);
-					if(it != _fields.end())
-					{
-						//value = Qs(it->second.c_str());// 여기서 'xxx' quat 가 씌워진다. (이미 씌워 져 있으므로)
-						value = it->second.c_str();// 여기서 'xxx' quat 가 씌워져 있으므로 그래로 넣는다. NULL 에외
-					}
-					else
-					{
-						CString ser; ser.Format(L"SQL variable @%s is not found.(Apply error)", var);
-						throw_str(ser);
-					}
+	void AppendSQL(PWS psql, PWS finish = L"");
 
-					_sqlv += value;
-					_sqlv += ch;
-					bAt = false;
-					var.Empty();
-				}
-			}
-			else
-			{
-				if(ch == '@')
-					bAt = true;
-				else
-					_sqlv += ch;
-			}
 
-		}
-		_bApplied = true;
-	}
+	/// <summary>
+	/// 한꺼번에 변수를 적용안하고, multi insert 할때 매 record 마다, Quat._fields 안에 값들이 매번 바뀌므로
+	/// 바로 그 레코드만 적용 하여 _sqlv 에 붙여 준다.
+	/// </summary>
+	/// <param name="psql">변수 들어 있는 조각 sql. 예: INSERT 의 조각 record (@fcol1, @fcol2,,) </param>
+	/// <param name="finish">맨뒤에 붙이는 어미. ',' 또는 ';'</param>
+	void AppendApply(PWS psql, PWS finish);
+	void Apply();
+
+	void Apply(CString& sql, CString& sqlv, KStdMap<wstring, wstring>& fields);
 };
 
 // 번호는 옵션 갯수: 필수, 쿼터, NULL로 표시
@@ -320,4 +230,4 @@ public:
 
 
 //typedef class QuatT<CJsonPbj, JSONValue> QuatJ;
-typedef class QuatT<Kw::JObj, Kw::JVal> Quat;
+typedef class QuatT Quat; //<Kw::JObj, Kw::JVal>

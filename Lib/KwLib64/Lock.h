@@ -56,6 +56,36 @@ inline BOOL(::CSyncAutoLock::IsLocked())
 	return m_bAcquired;
 }
 
+
+class KSyncBool
+{
+public:
+	ULONG _val{0};
+	/// Set 되었을때 상태
+#ifdef _DEBUG
+	CStringA _note;
+#endif // _DEBUG
+	/// 0이면 1로 만든다.
+	void Set(LPCSTR note = nullptr)
+	{
+		InterlockedCompareExchange(&_val, 1, 0);
+#ifdef _DEBUG
+		if(note)
+			_note = note;
+#endif // _DEBUG
+	}
+	void Reset()
+	{
+		InterlockedCompareExchange(&_val, 0, 1);
+	}
+	explicit operator bool() const noexcept {
+		return _val != 0;
+	}
+};
+
+
+
+
 #define AUTOLOCKN(sobj, n) CSyncAutoLock __lock##n(&(sobj), TRUE, __FUNCTION__, __LINE__, #sobj)
 #define AUTOLOCK(sobj) AUTOLOCKN((sobj), 1) // << 주로 쓴다.
 #define AUTOLOCK2(sobj) AUTOLOCKN((sobj), 2)
@@ -64,3 +94,5 @@ inline BOOL(::CSyncAutoLock::IsLocked())
 // pbj가 _GetCS() 가 있다는 전제로 만든 락 매크로
 #define SyncFnc(pbj)     CSingleLock __sync((pbj)->_GetCS(), TRUE)
 #define SyncFncN(pbj, n) CSingleLock __sync##n((pbj)->_GetCS(), TRUE)
+
+

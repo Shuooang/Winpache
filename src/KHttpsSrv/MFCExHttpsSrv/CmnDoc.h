@@ -20,6 +20,7 @@ public:
 	CResponse1* _svr{ nullptr };//CApiBase 
 	KAtEnd _d_svr;
 
+	static PAS _cMagicKey;
 	//CStringA _GUID;
 	//int      _port{ 0 };//0 이어야 SampleData가 적용 된다.
 // 	int      _CacheLife{ 3000 };

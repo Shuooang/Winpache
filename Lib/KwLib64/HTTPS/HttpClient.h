@@ -123,7 +123,7 @@ public:
 
 	bool m_bEncode;
 
-	CComPtr<IServerXMLHTTPRequest> _sxrq;
+	CComPtr<IServerXMLHTTPRequest2> _sxrq;
 	CAutoCoInit _coInit;
 // 	static CHttpClient* CreateHostApp(CHttpClient* pht, PWS func, LPARAM lp = NULL);
 // 	static void FillHostInfo_(CString& svr, CString& sUri, int& port);

@@ -12,7 +12,21 @@
 namespace Kw
 {
 
-
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <param name="data">null terminated string</param>
+	/// <returns></returns>
+	ShJObj Json::ParseUtf8(const char* data)
+	{
+		CString requ;
+		KwUTF8ToWchar(data, requ);
+		ShJVal jdoc = Json::Parse((PWS)requ);
+		if(jdoc->IsObject())
+			return jdoc->AsObject();
+		else
+			return ShJObj();
+	}
 	ShJVal Json::Parse(const char* data)
 	{
 		auto shv = ShJVal();
@@ -342,8 +356,6 @@ namespace Kw
 	}
 	void JObj::CloneObject(const JObj& source, JObj& tar, bool bClone)
 	{
-		if(bClone)
-		{
 			for(auto& [k, sjv] : source)
 			{
 				/// clone 해야 하므로 sjv 를 직접 주지 않는다.
@@ -357,9 +369,15 @@ namespace Kw
 
 				//tar[k] = make_shared<JVal>(*sjv, bClone); //ShJVal(new JVal(*sjv, bClone));;// v가 object 이거나 array면 딮카피 된다.
 			}
-		}
-		else
-			(std::map<wstring, ShJVal>&)tar = source;
+			if(bClone)
+			{
+			}
+			else
+			{
+				/// 위에 bClone이면 deep copy가 된다.
+				/// std::map 자체 기능에 항목을 일일이 복사 하지만 딮카피는 하니다. 
+				// (std::map<wstring, ShJVal>&)tar = source;
+			}
 	}
 
 	ShJObj JArr::FindByValue(PAS field, PWS value)
@@ -853,18 +871,18 @@ namespace Kw
 	}
 
 
-	int JVal::I()
+	int JVal::I(int def)
 	{
 		if(IsInt())
 			return AsInt();
-		return 0;
+		return def;
 	}
-	int JObj::I(PWS k)
+	int JObj::I(PWS k, int def)// = 0
 	{
 		ShJVal sjv;
 		if(Lookup(k, sjv))
 			return sjv->I();
-		return 0;
+		return def;
 	}
 	/// <summary>
 	/// Quata string: SQL 문에 데이터로 쓰일때 '%s' 대신 %s 만 써도 ' '를 붙여준다. 없는 경우 NULL 을 sql문에 맞게 준다.
@@ -1262,6 +1280,13 @@ namespace Kw
 		CStringW sw = ToJsonStringW();
 		CStringA sautf8;
 		KwWcharToUTF8(sw, sautf8);
+		return sautf8;
+	}
+	SHP<KBinary> JObj::ToJsonBinaryUtf8()
+	{
+		CStringW sw = ToJsonStringW();
+		SHP<KBinary> sautf8 = make_shared<KBinary>();
+		KwWcharToUTF8(sw, *sautf8);
 		return sautf8;
 	}
 
@@ -2647,16 +2672,23 @@ namespace Kw
 	/// 메모리 비효율적. 코드 간편
 	void JArr::Add(JObj& v, bool bClone)
 	{
-		auto jv = new JVal(v, bClone);//v는 복제 clone 된다.
-		KArray<ShJVal>::Add(ShJVal(jv));
+		//auto jv = new JVal(v, bClone);//v는 복제 clone 된다.
+		ShJVal sjv = make_shared<JVal>(v, bClone);
+		KArray<ShJVal>::Add(sjv);// ShJVal(jv));
 	}
 
 	/// 메모리 효율적. 코드 복잡
-	void JArr::Add(ShJObj sv)
+	void JArr::Add(ShJObj sv, bool bClone)
 	{
-		auto jv = new JVal(sv);// sv안에 있는 JObj 는 계속 share된다.
-		//KArray<ShJVal>::
-		__super::Add(ShJVal(jv));
+		//		auto jv = new JVal(sv);// sv안에 있는 JObj 는 계속 share된다.
+		ShJVal sjv = make_shared<JVal>(sv, bClone);
+		__super::Add(sjv);
+		//KArray<ShJVal>::Add
+	}
+	void JArr::Add(ShJVal sv, bool bClone)
+	{
+		ShJVal sjv = make_shared<JVal>(sv, bClone);
+		__super::Add(sjv);
 	}
 
 

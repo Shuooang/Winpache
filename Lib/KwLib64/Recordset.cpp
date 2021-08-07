@@ -908,12 +908,11 @@ int KRecordset::ExtractTable(CStringW sql0, CStringW& tblS)
 
 // row가 여러개인것을 전제 하고 array 를 hsr(key) = 에 넣는다.
 
-void KRecordset::MakeRecsetToJson(JObj& hsr, PWS keyRecset)
+BOOL KRecordset::MakeRecsetToJson(JObj& hsr, PWS keyRecset)
 {
 	KRecordset& rs = *this;
-	//try		{
-	//CStringArray arHd;
-	//rs.GetFieldNames(arHd);
+	if(rs.RowSize() == 0)
+		return FALSE;
 	JArr ar;
 	for(int r = 0; r < rs.RowSize(); r++)
 	{
@@ -932,25 +931,23 @@ void KRecordset::MakeRecsetToJson(JObj& hsr, PWS keyRecset)
 		ar.Add(robj);// new JVal(robj));
 	}
 	hsr(keyRecset) = ar;
-	//}CATCH_GE;
+	return TRUE;
 }
 
 // row 0번 하나만 object 로서 hsr에 넣는다.
 
-void KRecordset::MakeRecsetOneRowToJson(JObj& hsr, PWS keyRecset)
+BOOL KRecordset::MakeRecsetOneRowToJson(JObj& hsr, PWS keyRecset)
 {
 	KRecordset& rs = *this;
-	//try	{
 	if(rs.RowSize() == 0)
-		return;
+		return FALSE;
 	JObj robj;
 	for(int c = 0; c < rs.ColSize(); c++)
-	{
 		rs.CellToJson(0, c, robj, [&](JObj&, CDBVariant*) -> int { return 0; });
-	}
-	hsr(keyRecset) = robj;//ownership을 false 하고 hsr에 넣는다.
-						  //}CATCH_GE;
+	hsr(keyRecset) = robj;
+	return TRUE;
 }
+
 // @valriable 을 '%s' 바꿔준다.
 /*
 int KRecordset::SqlParams(CStringW sql0, CStringW& tblS)
@@ -1253,7 +1250,7 @@ int KDatabase::RegODBCMySQL(LPCWSTR sDSN, KWStrMap& kmap)// LPCTSTR sServer, LPC
 void KwQueryKey(HKEY hKey, KWStrMap& kmap)
 {
 	TCHAR    achKey[MAX_KEY_LENGTH];   // buffer for subkey name
-	TCHAR    achVal[MAX_KEY_LENGTH];   // buffer for subkey name
+	///TCHAR    achVal[MAX_KEY_LENGTH];   // buffer for subkey name
 	DWORD    cbName;                   // size of name string 
 	TCHAR    achClass[MAX_PATH] = TEXT("");  // buffer for class name 
 	DWORD    cchClassName = MAX_PATH;  // size of class string 
@@ -1261,7 +1258,7 @@ void KwQueryKey(HKEY hKey, KWStrMap& kmap)
 	DWORD    cbMaxSubKey;              // longest subkey size 
 	DWORD    cchMaxClass;              // longest class string 
 	DWORD    cValues;              // number of values for key 
-	DWORD    cKeys;              // number of values for key 
+	///DWORD    cKeys;              // number of values for key 
 	DWORD    cchMaxValue;          // longest value name 
 	DWORD    cbMaxValueData;       // longest value data 
 	DWORD    cbSecurityDescriptor; // size of security descriptor 
@@ -1658,7 +1655,7 @@ SHP<KDatabase> KDatabase::getDbConnected(wstring dsn, int sec)
 	ULONGLONG tick = GetTickCount64();
 	KList<SHP<KDatabaseOdbc>>* pldb = NULL;
 	int ndbUsing = 0;
-	int ndb = 0;
+	size_t ndb = 0;
 
 	if(!s_mapOdbc.Lookup(dsn, pldb))// 특정 dsn 연결중 놀고 있는 거 있나?
 	{///1.dns의 것이 없으면 만들어서 리턴

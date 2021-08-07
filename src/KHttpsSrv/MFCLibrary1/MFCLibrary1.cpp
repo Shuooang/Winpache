@@ -203,6 +203,7 @@ int DEXPORT ExGetApiDesc(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 
 int DEXPORT ExSelectBizToJson(KDatabase& _db, JObj& jpa, JObj& jrs)
 {
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	Rec(rec);
 	//KRecordset Rec(&_db);
 	Quat qs;
@@ -211,10 +212,10 @@ int DEXPORT ExSelectBizToJson(KDatabase& _db, JObj& jpa, JObj& jrs)
 fBizReq fBizID, fBizPath, fBizReq, fUsrIdCeo, fUsrIdAdm, fForm, fTel, fTel2, fTel3, fState, fStJoin, fAnimal, fShowPrice, fBegin, fEnd, fTitle, fSubTitle, fDesc, fAddr, fLat, fLon -- \n\
 	FROM tbiz WHERE fBizReq = @fBizID;");
 	rec.OpenSelectFetch(qs.GetSQL());//이때 아직 연결 전이면 ODBC선택 창이 발 뜬다.
-	if(rec.NoData())
-		jrs("Return") = L"No Data";
+	if(rec.MakeRecsetToJson(jrs, L"tbiz"))// , L"table"); 생략
+		jrs("Return") = L"OK";
 	else
-		rec.MakeRecsetToJson(jrs, L"tbiz");	// "torder2pet":[{obj},{obj},{},] }
+		jrs("Return") = L"No Data";
 
 	return 0;
 }
@@ -222,6 +223,7 @@ fBizReq fBizID, fBizPath, fBizReq, fUsrIdCeo, fUsrIdAdm, fForm, fTel, fTel2, fTe
 
 int DEXPORT ExNewBusiness(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 {
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	// 입력 안했지만, 비지니스로직으로 채워 주는 필드 4개
 	jpa("fBizID") = KwGetFormattedGuid(true, L"biz", 16);
 	jpa("fState") = L"hide";
@@ -250,8 +252,8 @@ int DEXPORT ExNewBusiness(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 
 	qs.SetSQL(L"\
 INSERT INTO tbiz( -- \n\
-fBizID, fBizPath, fBizReq, fUsrIdReg, fUsrIdCeo, fUsrIdAdm, fForm, fTel, fTel2, fTel3, fState, fStJoin, fAnimal, fShowPrice, fBegin, fEnd, fTitle, fSubTitle, fDesc, fMemo, fAddr, fLat, fLon, fUsrIdUpdate)-- \n\
-VALUES(NULL, @fBizPath, @fBizID, @fUsrIdReg, NULL, @fUsrIdReg, @fForm, @fTel, @fTel2, @fTel3, @fState, @fStJoin, @fAnimal, @fShowPrice, @fBegin, @fEnd, @fTitle, @fSubTitle, @fDesc, @fMemo, @fAddr, @fLat, @fLon, @fUsrIdReg);\
+      fBizID, fBizPath,  fBizReq, fUsrIdReg, fUsrIdCeo, fUsrIdAdm,  fForm,  fTel,  fTel2,  fTel3,  fState,  fStJoin,  fAnimal,  fShowPrice,  fBegin,  fEnd,  fTitle,  fSubTitle,  fDesc,  fMemo,  fAddr,  fLat,  fLon,  fUsrIdUpdate)-- \n\
+VALUES(NULL, @fBizPath, @fBizID, @fUsrIdReg, NULL,     @fUsrIdReg, @fForm, @fTel, @fTel2, @fTel3, @fState, @fStJoin, @fAnimal, @fShowPrice, @fBegin, @fEnd, @fTitle, @fSubTitle, @fDesc, @fMemo, @fAddr, @fLat, @fLon, @fUsrIdReg);\
 ");
 	_db.ExecuteSQL(qs);
 	ExSelectBizToJson(_db, jpa, jrs);
@@ -263,6 +265,7 @@ VALUES(NULL, @fBizPath, @fBizID, @fUsrIdReg, NULL, @fUsrIdReg, @fForm, @fTel, @f
 
 int DEXPORT ExUpdateBusiness(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 {
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	Quat qs;
 	qs.JsonToUpdateSetField(jpa, L"fBizID"); // 키를 제외한 필드가 @SetField로 할당 된다. 키는 where에 쓰이고
 	qs.SetSQL(L"UPDATE tbiz SET @SetField where fBizID = @fBizID;");
@@ -277,6 +280,7 @@ int DEXPORT ExUpdateBusiness(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 
 int DEXPORT ExRemoveBizClass(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 {
+	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	Quat qs;
 	qs.Field(jpa, "fBizID", TRUE);//필수
 	qs.Field(jpa, "fBIzClsCD", TRUE);//필수
@@ -373,9 +377,10 @@ int DEXPORT ExSelectUser(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 	sql.Format(L"select * from tuser %s limit %d", swh, limit);
 
 	BOOL bOpen = rs.OpenSelectFetch(sql);//이때 아직 연결 전이면 ODBC선택 창이 발 뜬다.
-
-	rs.MakeRecsetToJson(jrs, L"tuser");
-	jrs("Return") = L"OK";
+	if(rs.MakeRecsetToJson(jrs, L"tuser"))// , L"table"); 생략
+		jrs("Return") = L"OK";
+	else
+		jrs("Return") = L"No Data";
 	return 0;
 }
 
@@ -403,9 +408,10 @@ int DEXPORT ExSelectUserQS(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 * from tuser @where limit @limit");
 
 	BOOL bOpen = rs.OpenSelectFetch(qs);//이때 아직 연결 전이면 ODBC선택 창이 발 뜬다.
-
-	rs.MakeRecsetToJson(jrs, L"tuser");
-	jrs("Return") = L"OK";
+	if(rs.MakeRecsetToJson(jrs, L"tuser"))// , L"table"); 생략
+		jrs("Return") = L"OK";
+	else
+		jrs("Return") = L"No Data";
 	return 0;
 }
 

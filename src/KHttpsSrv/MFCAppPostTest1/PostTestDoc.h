@@ -53,8 +53,11 @@ public:
 	virtual void Dump(CDumpContext& dc) const;
 #endif
 
-
-	CStringA _Method{ "POST" };
+	// httpclientwincacher
+	// 
+	static PAS _cMagicKey;
+	CStringA _MagicKey{_cMagicKey};
+	CStringA _Method{"POST"};
 #ifdef _DEBUG
 	CString  _URL{L"https://localhost:443/api?func=ExGetApiDesc" };
 #else

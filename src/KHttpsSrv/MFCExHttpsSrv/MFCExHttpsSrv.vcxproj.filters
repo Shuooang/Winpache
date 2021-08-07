@@ -57,9 +57,6 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OpenSSL.h">
-      <Filter>Cmn</Filter>
-    </ClInclude>
     <ClInclude Include="DlgOdbcSetting.h">
       <Filter>Wnd</Filter>
     </ClInclude>
@@ -155,9 +152,6 @@
     <ClCompile Include="OutputWnd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="OpenSSL.cpp">
-      <Filter>Cmn</Filter>
-    </ClCompile>
     <ClCompile Include="DlgOdbcSetting.cpp">
       <Filter>Wnd</Filter>
     </ClCompile>
@@ -237,6 +231,9 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="res\MFCExHttpsSrv.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\mfcribbon-ms00001.mfcribbon-ms">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

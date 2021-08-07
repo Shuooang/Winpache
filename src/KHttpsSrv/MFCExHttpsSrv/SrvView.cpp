@@ -500,7 +500,8 @@ void CSrvView::RecoverServer()//?server recover 5.1 contunue running server
 		doc->AddCallbackOnTrace(fm->_fncExtraTrace);//?ExTrace 3 CmnView -> MyHttps + std_cout(KTrace)
 
 	//SSL쓰면 비번도 RunningServers에는 저장 되므로 
-	ASSERT(!doc->_jdata.I("_bSSL") || doc->_jdata.Len("_prvpwd"));
+	///ASSERT(!doc->_jdata.I("_bSSL") || doc->_jdata.Len("_prvpwd"));
+	/// 비번 없이도 서버 시작 된다.
 	StartServer();
 }
 
@@ -526,7 +527,10 @@ void CSrvView::OnBnClickedStart()
 		{
 			OnBnClickedBtnSslSetting();//비번을 받는다.
 			if(!doc->_jdata.Len("_prvpwd"))//doc->_prvpwd.GetLength() == 0)
-				return;
+			{
+				TRACE("No password key.");
+				//return;
+			}
 		}
 	}
 

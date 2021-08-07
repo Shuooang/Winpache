@@ -86,7 +86,7 @@ public:
 	int m_nSavedDC;
 
 	/// clrColor =  pDC->GetBkColor();
-	CAutoSmoothDraw(CRect rc, CDC* pDC, COLORREF clrColor = 0)
+	CAutoSmoothDraw(CRect rc, CDC* pDC)//, COLORREF clrColor = 0)
 		: m_pDC(pDC)
 		, m_dcMem(pDC, rc)
 		, m_nSavedDC(0)
@@ -130,3 +130,8 @@ bool KwIsInRect(CRect rc, CPoint pt);
 
 // rect 엣지 부분 어디서 마우스가 얼쩡거리느냐 
 PAS KwIsInRectSide(CRect rc, CPoint pt, int wfrm = 2);
+IStream* KwCreateStreamOnResource(LPCTSTR lpName, LPCTSTR lpType = L"PNG");
+inline IStream* KwCreateStreamOnResource(int idc, LPCTSTR lpType = L"PNG")
+{
+	return KwCreateStreamOnResource(MAKEINTRESOURCE(idc), lpType);
+}

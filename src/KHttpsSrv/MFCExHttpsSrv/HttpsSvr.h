@@ -1,11 +1,5 @@
 #pragma once
-/// KHttp\src\KHttpsSrv\MFCAppServerEx2\HttpsSvr.h
-
-//#include <boost/lexical_cast.hpp>
-
-/// KHttp\pkg\CppCommon\include\string
 #include "string/string_utils.h" // CppCommon::StringUtils::ReplaceFirst
-//#include "utility/singleton.h"
 
 /// KHttp\pkg\CppServer\include\server
 #include "server/kwadjust.h"
@@ -16,25 +10,24 @@
 
 /// KHttp\src\KHttpsSrv\MFCAppServerEx2
 #include "Cache.h"
-// #include <memory>
-// #include <functional>
+
 
 //using namespace std;
 using std::string;
 using std::shared_ptr;
 using std::function;
 
-using CppServer::Asio::SSLSession;
 using CppServer::Asio::SSLServer;
 
 using CppServer::HTTP::HTTPRequest;
 using CppServer::HTTP::HTTPResponse;
-//using CppServer::HTTP::HTTPSSession;
+using CppServer::Asio::SSLSession;
 //using CppServer::HTTP::HTTPSServer;
 
 //#define SPtr std::shared_ptr; // 오류나네 
-
-
+#ifndef _break
+#define _break {int ____i = 0;}
+#endif
 
 class KBinData
 {
@@ -135,6 +128,10 @@ public:
 };
 
 
+
+/// <summary>
+/// 130 :
+/// </summary>
 class HTTPSCacheSession : public CppServer::HTTP::HTTPSSession
 {
 public:
@@ -162,58 +159,41 @@ protected:
 public:
 	KSessionInfo _sinfo;
 
-	//void MakeJsonError(HTTPResponse& res1, char* errmsg, int err = -1);
-	//void ResponseError(char* errmsg, int err = -1);
-
 	/// <summary>
 	/// url params에서 각 사용자 마다 다른 'notKey'만 빼고 캐시용 키를 만든다.
 	/// "uuid"는 client사용자 구분이고, "srl"은 캐시가 안되게 테스트 용이다.
 	/// </summary>
-	std::string getCacheKey(const char* notKey, const char* notKey2 = nullptr)
-	{
-		Tas ss;
-		for(auto it: _sinfo._urlparam)
-		{
-			if(it.first != notKey && (!notKey2 || it.first != notKey2))//"uuid"=notKey 와 srl만 빼고 나머지 다 키로 생성한다.
-				ss << it.first << it.second;
-		}
-		if(ss.str().length() == 0)
-			ss << "/";
-		return ss.str();
-	}
+	std::string getCacheKey(const char* notKey, const char* notKey2 = nullptr);
 
 	shared_ptr<function<int(HTTPSCacheSession*, HTTPRequest&)>> _fncOnReceivedRequestInternal;
 	shared_ptr<function<int(HTTPSCacheSession*, const void*, size_t)>> _fncOnReceived;
 	shared_ptr<function<int(HTTPSCacheSession*, size_t, size_t)>>      _fncOnSent;
 	shared_ptr<function<int(HTTPSCacheSession*, uint8_t*, size_t)>>    _fncOnSentKw;
 };
+
 typedef HTTPSCacheSession THCSsn; //너무 길어서 썼는데, 정의/선언 만들기 기능에서 안되어서 안쓰기로 했다.
 
-
+/// <summary>
+/// SSL server
+/// </summary>
 class HTTPSCacheServer : public CppServer::HTTP::HTTPSServer
 {
 public:
 	using CppServer::HTTP::HTTPSServer::HTTPSServer;
 
-	//HTTPSCacheServer() :_fncGET(0), _fncPOST(0)
-	//{//error C2512: 'CppServer::HTTP::HTTPSServer': 사용할 수 있는 적절한 기본 생성자가 없습니다.
-	//}
 	~HTTPSCacheServer()
 	{
-		//if(_fncGET)//shared_ptr로 싸지 않았기 때문에 free해줘야 한다.
-		//	delete _fncGET;
-		//if(_fncPOST)
-		//	delete _fncPOST;
 	}
+	bool _bChache{true};
 protected:
 	shared_ptr<SSLSession> CreateSession(const shared_ptr<SSLServer>& server) override
 	{
 		auto ss = std::make_shared<HTTPSCacheSession>(std::dynamic_pointer_cast<HTTPSServer>(server));
+		auto ip = server->address();
 		ss->_fncOnReceivedRequestInternal = _fncOnReceivedRequestInternal;
 		ss->_fncOnReceived = _fncOnReceived;
 		ss->_fncOnSent = _fncOnSent;
 		ss->_fncOnSentKw = _fncOnSentKw;
-		auto ip = server->address();
 		return ss;
 	}
 
@@ -233,17 +213,12 @@ protected:
 
 	//kdw added 
 public: // 아래는 소유권이 없다.
-	//두개는 일부러 그냥 포인터로 해본다.
-	//function<int(HTTPSCacheSession*, const HTTPRequest&, HTTPResponse&)>* _fncGET;
-	//function<int(HTTPSCacheSession*, const HTTPRequest&, HTTPResponse&)>* _fncPOST;
-	//메모리 관리차원에서 shared_ptr에 넣는다.
-
-	shared_ptr<function<void()>>                                               _fncOnStarted;
-	shared_ptr<function<void()>>                                               _fncOnStopped;
-	shared_ptr<function<int(int, const string&, const string&)>>               _fncOnError;
-	shared_ptr<function<int(HTTPSCacheSession*, shared_ptr<KBinData>, HTTPResponse&)>> _fncOnReceivedRequest; //HTTPRequest&,
-	shared_ptr<function<int(HTTPSCacheSession*, shared_ptr<KBinData>, HTTPResponse&)>> _fncGET; //HTTPRequest&,
-	shared_ptr<function<int(HTTPSCacheSession*, shared_ptr<KBinData>,HTTPResponse&)>> _fncPOST;//
+	shared_ptr<function<void()>>                                              _fncOnStarted;
+	shared_ptr<function<void()>>                                              _fncOnStopped;
+	shared_ptr<function<int(int, const string&, const string&)>>              _fncOnError;
+	shared_ptr<function<int(HTTPSCacheSession*, shared_ptr<KBinData>, HTTPResponse&)>> _fncOnReceivedRequest;
+	shared_ptr<function<int(HTTPSCacheSession*, HTTPResponse&)>> _fncGET; //HTTPRequest&,
+	shared_ptr<function<int(HTTPSCacheSession*, shared_ptr<KBinData>, HTTPResponse&)>> _fncPOST;//
 	shared_ptr<function<int(HTTPSCacheSession&)>>                              _fncOnConnected;
 	shared_ptr<function<int(HTTPSCacheSession&)>>                              _fncOnHandshaked;
 	shared_ptr<function<int(HTTPSCacheSession&)>>                              _fncOnDisconnected;
@@ -273,20 +248,24 @@ public: // 아래는 소유권이 없다.
 		server->_fncCluster.reset();
 	}
 
-	shared_ptr<CacheBin> _cache;
-	shared_ptr<Cache> _cacheOld;
+	//shared_ptr<CacheBin> _cache;
+	//shared_ptr<Cache> _cacheOld;
+// 	void setCache(shared_ptr<CacheBin> cache) {
+// 		if(!_cache)
+// 			_cache = cache;
+// 	}
 	CacheBin& getCache() {
-		//return Cache::GetInstance();
-		if (_cache.get() == nullptr)
-			_cache = shared_ptr<CacheBin>(new CacheBin());
-		return *_cache.get();
+		return CacheBin::GetInstance();
+// 		if (!_cache)
+// 			_cache = shared_ptr<CacheBin>(new CacheBin());
+// 		return *_cache.get();
 	}
-	Cache& getCacheOld() {
-		//return Cache::GetInstance();
-		if (_cacheOld.get() == nullptr)
-			_cacheOld = shared_ptr<Cache>(new Cache());
-		return *_cacheOld.get();
-	}
+// 	Cache& getCacheOld() {
+// 		//return Cache::GetInstance();
+// 		if (!_cacheOld)
+// 			_cacheOld = shared_ptr<Cache>(new Cache());
+// 		return *_cacheOld.get();
+// 	}
 };
 
 /// KHttp\pkg\CppServer\examples
@@ -310,6 +289,7 @@ protected:
 
 /// CppServer::Asio::Service의 derived class이며, 
 /// App전체에서 Server가 여러개 일지라도 하나만 시작하면 되므로 static으로 처리한다.
+///?deprecated
 class CAsioSvcInst
 {
 public:
@@ -370,6 +350,9 @@ inline void CAsioSvcInst::ShutdownService()
 		///std_coutD << "Done!" << std_endl;
 	}
 }
+
+
+
 
 /// Server하나당 이거 하나씩 사용 하며, CAsioService는 각 Server마다 공유 하지만
 ///	Server는 각 리스너 마다 하나씩 갖는다.
@@ -458,7 +441,7 @@ public:
 	}
 	void AddCallbackOnTrace(shared_ptr<function<void(string)>> fnc, int bOvWR = 0)//?ExTrace 3.5 MyHttp -> std_cout(KTrace)
 	{
-		if(!_fncOnTrace)
+		if(bOvWR || !_fncOnTrace)
 		{
 			_fncOnTrace = fnc;
 			std_cout.AddCallbackOnTrace(fnc);
@@ -666,20 +649,40 @@ public:
 				ssn->SendResponseAsync(res1);// MakeJsonResponse(res1, JError("URL is empth.")));
 				return;
 			}
+			else
+			{
+#ifdef _DEBUG
+				string s = ssn->_sinfo._url;
+				string ext;
+				int length = 3;// ssn->_sinfo._url.size();
+				if(length >= s.size()) { ext = s; }
+				else
+					ext = s.substr(s.size() - length);
+				if(ext == "png")
+				{
+					ext = ext;
+				}
+#endif // _DEBUG
+			}
 			// uuid 와 srl 빼고 
 			string keyRes = ssn->getCacheKey("uuid");//_urlparam이 이미 들어 있어야 리턴. _url
 // 			if(keyRes.size() == 0)//?이후 URL파라미터가 없으면 
 // 				keyRes = "index.html";// ssn->_sinfo._url;// "/"만 남는다. 
 
 			string valueRes;
-			CacheVal cval;
-			rv = CheckCacheFirst(keyRes, cval, svr, ssn, request);
-			if (rv == 1)	{
-				ssn->_sinfo._stCached = "cached";
-				valueRes.insert(0, cval._data.m_p, cval._data.m_len);
-				res1.MakeGetResponse(valueRes, cval._contentType);
-				ssn->SendResponseAsync(res1);// MakeJsonResponse(res1, valueRes));
-				return;
+			//CacheVal cval;
+			shared_ptr<CacheVal> scval = make_shared<CacheVal>();
+			int rchche = 0;
+			if(svr->_bChache)
+			{
+				rchche = CheckCacheFirst(keyRes, *scval, svr, ssn, request);
+				if(rchche == 1) {
+					ssn->_sinfo._stCached = "cached";
+					valueRes.insert(0, scval->_data.m_p, scval->_data.m_len);
+					res1.MakeGetResponse(valueRes, scval->_contentType);
+					ssn->SendResponseAsync(res1);// MakeJsonResponse(res1, valueRes));
+					return;
+				}
 			}
 
 			if(svr->_fncGET.get())
@@ -693,21 +696,33 @@ public:
 				auto sh_ss1(ssn->shared_from_this());// enable_shared_from_this<> 계승 받아서 가능. 이렇게 해도 되는지 확인해 보자
 				/// ssn == sh_ss == sh_ss1 == ssn1
 				// lambda 여기서 부터는 비즈니스로직과 함께 response 까지 다른 쓰레드에서 한다.
-				auto bg_run = [svr, sh_ss, keyRes, shbin, &res1]()
+				auto bg_run = [svr, sh_ss, keyRes, shbin, &res1, scval, rchche]()
 				{
 					auto ssn1 = (TSESSION*)sh_ss.get();
 					auto fnc = svr->_fncGET.get();
+					if(rchche == 1)
+					{
+						_break;
+					}
 					/// ///////////////////////////////////////////////////////////////
-					int rv = (int)(*fnc)(ssn1, shbin, res1);
+					/// res1에 담아 올거면서 shbin은 왜주는 거냐?
+					int rv = (int)(*fnc)(ssn1, res1); // => CmnView::CallbackOnGET
 					/// ///////////////////////////////////////////////////////////////
 
 					if(rv == 0)
 					{//성공한 경우만 캐시에 넣는다.
-						string value(res1.body());
-						std::map<string, string> mapHd;
-						GetResponseHeader(res1, mapHd);
-						string cntype = mapHd["Content-Type"];
-						svr->getCache().PutCacheValue(keyRes, value, cntype); // 성공한 값은 케시에 넣음
+						if(svr->_bChache)
+						{
+#ifdef _DEBUG
+							int CompareData(string url, string_view resbody, shared_ptr<KBinData> shbin, shared_ptr<CacheVal> scval, int rchche);
+							int rcv = CompareData(ssn1->_sinfo._url, res1.body(), shbin, scval, rchche);
+
+#endif // _DEBUG
+							std::map<string, string> mapHd;
+							GetResponseHeader(res1, mapHd);
+							string cntype = mapHd["Content-Type"];
+							svr->getCache().PutCacheValue(keyRes, res1.body(), cntype); // 성공한 값은 케시에 넣음
+						}
 						if(ssn1->_sinfo._status != 200)
 							res1.SetBegin(ssn1->_sinfo._status);
 					}
