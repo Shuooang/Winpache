@@ -58,7 +58,7 @@
 
 ## Sample 'TokCube' Game client app
 * [MSI Download : `TokCube.msi`](https://www.dropbox.com/s/bg17pvtrqnph7a9/TokCube.msi?dl=1)
-* API : Report score, Register ID, List the ranking.
+* API Supported game site server : Report score, Register ID, List the ranking.
 <img align="center" src="rsc/TokCube.gif" width="694">
 
 
