@@ -56,6 +56,12 @@
 ## Start `Wincatcher` Client for Test
 <img align="center" src="rsc/Wincatcher.png" width="550">
 
+## Sample 'TokCube' Game client app
+* [MSI Download : `TokCube.msi`](https://www.dropbox.com/s/bg17pvtrqnph7a9/TokCube.msi?dl=1)
+<img align="center" src="rsc/TokCube.gif" width="694">
+
+
+
 ## Example API
 ### Request `WhatIsThis`
 ```JSON
