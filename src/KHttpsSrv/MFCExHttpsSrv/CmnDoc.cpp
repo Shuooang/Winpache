@@ -75,7 +75,7 @@ void CmnDoc::InitData()
 
 
 	/// 여기서 auto에 붙는 '&' 는 아주 중요 하다. 복사냐, 참조냐. 여기서는 참조여야 데이터 들어 갖지
-	auto& arClst = *_jdata.AMake("Clustering");
+	auto& arClst = *_jdata.A("Clustering", true);
 	/// 아래는 regitry에 진짜 있는 값인데, ODBC셋팅이 없는 경우 이걸 초기값으로 쓴다.
 	{
 		auto jobcl0 = JObj();

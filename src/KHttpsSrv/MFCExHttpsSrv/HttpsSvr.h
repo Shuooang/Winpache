@@ -676,6 +676,7 @@ public:
 			if(svr->_bChache)
 			{
 				rchche = CheckCacheFirst(keyRes, *scval, svr, ssn, request);
+				TRACE("%s : %s\n", scval->_contentType.c_str(), keyRes.c_str());
 				if(rchche == 1) {
 					ssn->_sinfo._stCached = "cached";
 					valueRes.insert(0, scval->_data.m_p, scval->_data.m_len);

@@ -57,32 +57,6 @@ inline BOOL(::CSyncAutoLock::IsLocked())
 }
 
 
-class KSyncBool
-{
-public:
-	ULONG _val{0};
-	/// Set 되었을때 상태
-#ifdef _DEBUG
-	CStringA _note;
-#endif // _DEBUG
-	/// 0이면 1로 만든다.
-	void Set(LPCSTR note = nullptr)
-	{
-		InterlockedCompareExchange(&_val, 1, 0);
-#ifdef _DEBUG
-		if(note)
-			_note = note;
-#endif // _DEBUG
-	}
-	void Reset()
-	{
-		InterlockedCompareExchange(&_val, 0, 1);
-	}
-	explicit operator bool() const noexcept {
-		return _val != 0;
-	}
-};
-
 
 
 
@@ -95,4 +69,65 @@ public:
 #define SyncFnc(pbj)     CSingleLock __sync((pbj)->_GetCS(), TRUE)
 #define SyncFncN(pbj, n) CSingleLock __sync##n((pbj)->_GetCS(), TRUE)
 
+
+
+class KSyncBool
+{
+public:
+	CKCriticalSection _csBool;
+	ULONG _val{0};
+	/// Set 되었을때 상태
+#ifdef _DEBUG
+	CStringA _note;
+#endif // _DEBUG
+	/// 0이면 1로 만든다.
+	void Set(LPCSTR note = nullptr)
+	{
+		AUTOLOCK(_csBool);
+		InterlockedCompareExchange(&_val, 1, 0);
+#ifdef _DEBUG
+		if(note)
+			_note = note;
+#endif // _DEBUG
+	}
+	void Reset()
+	{
+		AUTOLOCK(_csBool);
+		InterlockedCompareExchange(&_val, 0, 1);
+	}
+	explicit operator bool() /*const */ noexcept 
+	{
+		AUTOLOCK(_csBool);
+		return _val != 0;
+	}
+};
+
+
+/// <summary>
+/// 뭔가 하고 있는 중 이라는 객체
+/// 스택을 벗어 나면 FALSE가 된다.
+/// </summary>
+class KSyncRunning
+{
+public:
+	KSyncRunning(BOOL& b) : _pBool(&b)
+	{
+		AUTOLOCK(_csBool);
+		*_pBool = TRUE;
+	}
+	~KSyncRunning()
+	{
+		AUTOLOCK(_csBool);
+		*_pBool = FALSE;
+	}
+	CKCriticalSection _csBool;
+	BOOL* _pBool;
+	/// Set 되었을때 상태
+	/// 0이면 1로 만든다.
+	explicit operator bool() /*const*/ noexcept
+	{
+		AUTOLOCK(_csBool);
+		return *_pBool;
+	}
+};
 

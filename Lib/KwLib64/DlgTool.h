@@ -330,8 +330,11 @@ PWS KwOpenFileOpenDlg(HWND hwnd, CStringW& fname, PWS filter = NULL);
 /////////////////////////////////////////////////////////////////////
 //  AfxMessageBox("abcdefgh"); 형태의 메시지 박스에서 서식 포함 할때..
 int KwMessageBox(LPCWSTR lpFormat, ...);
+int KwMessageBox(HWND hwnd, LPCWSTR lpFormat, ...);
+int KwMessageBox(CWnd* pwnd, LPCWSTR lpFormat, ...);
 int KwMessageBoxA(LPCSTR lpFormat, ...);
 int KwMessageBoxError(LPCTSTR lpFormat, ...);
+int KwMessageBoxError(CWnd* pwnd, LPCWSTR lpFormat, ...);
 
 
 
@@ -344,7 +347,7 @@ int KwMessageBoxError(LPCTSTR lpFormat, ...);
 
 void DockOrder::SetMyTimer() //?LbTimer ex
 {
-	SetLambdaTimer("test", 1000, [&](int ntm, PAS tmk)
+	SetTimerLambda("test", 1000, [&](int ntm, PAS tmk)
 		{
 			KTrace(L"%d. %s (%s)\n", ntm, __FUNCTIONW__, L"Lambda timer test");
 		});
@@ -358,8 +361,9 @@ public:
 	UINT _elapsed{ 1000 };
 	int _i{ 0 };// 반복때 마다 1씩 증가. _maxCount -1 하고 멈춘다.
 	int _maxCount{ 0 };//0이면 무한정
+	CStringA _stat{"stopped"};
 	LPARAM _param{ NULL };
-	DWORD _tickStart{ 0 };
+	LONGLONG _tickStart{ 0 };
 };
 class KLambdaTimer
 {
@@ -383,14 +387,26 @@ public:
 
 
 	template<typename TFNC>
-	void SetLambdaTimer(PAS sid, UINT elapsed, TFNC lmda, int maxCount = 0)
+	void SetTimerLambda(PAS sid, UINT elapsed, TFNC lmda, int maxCount = 0)
 	{
 		auto fnc = make_shared < function<void(int, PAS)>>(lmda);
 		SetLambdaTimerImple(sid, elapsed, fnc, maxCount);
 	}
-	
-	void SetLambdaTimerImple(PAS sid, UINT elapsed, shared_ptr<function<void(int, PAS)>> lmda, int maxCount = 0);
+	template<typename TFNC>
+	void ChangeLambdaTask(PAS sid, UINT elapsed, TFNC lmda, int maxCount = 0)
+	{
+		auto fnc = make_shared < function<void(int, PAS)>>(lmda);
+		ChangeLambdaTaskImple(sid, fnc);
+	}
 
+	void SetLambdaTimerImple(PAS sid, UINT elapsed, shared_ptr<function<void(int, PAS)>> lmda, int maxCount = 0);
+	void ChangeLambdaTaskImple(PAS sid, shared_ptr<function<void(int, PAS)>> lmda);
+
+	void ChangeInterval(PAS sid, UINT elapsed);
+	int GetInterval(PAS sid);
+	KTimerObj* GetTimerInfo(PAS sid);
+	void PauseTimer(PAS sid);
+	void RestartTimer(PAS sid);
 	void KillLambdaTimer(PAS sid, bool bKill = true);
 
 	void DoTimerTask(UINT_PTR nIDEvent);
@@ -449,18 +465,13 @@ public:
 
 
 class CDlgInvokable : public CDialogEx
+	, public KLambdaTimer
 {
 public: // serialization에서만 만들어집니다.
 	//CFormInvokable() noexcept;
-	CDlgInvokable()
-		: CDialogEx()
-	{}
-		CDlgInvokable(UINT nIDTemplate, CWnd* pParent = NULL)
-		: CDialogEx(nIDTemplate, pParent)
-	{}
-	CDlgInvokable(LPCTSTR lpszTemplateName, CWnd* pParentWnd = NULL)
-		: CDialogEx(lpszTemplateName, pParentWnd)
-	{}
+	CDlgInvokable();
+	CDlgInvokable(UINT nIDTemplate, CWnd* pParent = NULL);
+	CDlgInvokable(LPCTSTR lpszTemplateName, CWnd* pParentWnd = NULL);
 
 	DECLARE_DYNAMIC(CDlgInvokable)
 
@@ -468,7 +479,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg LRESULT OnBeginInvoke(WPARAM wParam, LPARAM lParam);//?beginInvoke 1
-
+	afx_msg void OnTimer(UINT_PTR nIDEvent);//?LbTimer 3
 };
 
 
@@ -637,6 +648,8 @@ struct _STitleWidthField
 	int width;
 	PAS field;
 	PWS title; // 뒤에 comment 따라 오는것 편집 쉽게 뒤로 붙임
+	int idsTitle;
+	int align;/// 0 left, 1:right, 2:center
 	LPARAM lp;
 };
 void KwSetListColumn(CListCtrl* pList, _STitleWidthField* parLst, int count);

@@ -456,7 +456,7 @@ BOOL KAppDoc::OnNewDocument()
 CString KAppDoc::MakeDsnString(bool bFirst)//false
 {
 	AUTOLOCK(_csAppDoc);
-	auto& jOdbc = *_json->OMake("ODBC");
+	auto& jOdbc = *_json->O("ODBC", true);
 	CString dsnLog;
 	dsnLog.Format(L"DSN=%s;UID=%s;PWD=%s"
 		, jOdbc.S("DSN")
@@ -554,7 +554,7 @@ void KAppDoc::LoadData()
 		auto& jobj = *_json;
 		if(!jobj.Has("Clustering"))
 		{//이전 데이터 읽을때 없으면
-			auto& jClst = *jobj.OMake("Clustering");
+			auto& jClst = *jobj.O("Clustering", true);
 			auto jobcl = JObj();
 			jobcl("option") = 1;
 			jobcl("count") = 0;

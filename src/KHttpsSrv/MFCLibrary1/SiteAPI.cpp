@@ -171,59 +171,93 @@ int SaveCubeScore(KDatabase& _db, JArr& pngm, JObj& jrs, int iOp) noexcept(false
 			ShJObj sjgm = sjvgm->AsObject();
 			Quat qs;
 			/// sql 문에 변수명을 달리 하는 예
+#ifdef _DEBUG_req
+			{
+				"func":"CubeSaveCubeScore",
+					"params" : {
+					"GGUID":"5C75C044FF03444FBE48E7E76DFF49B5",
+						"GUID" : "3D813446B6084A6AA48D0AACADD61F34",
+						"actions" : [
+					{
+						"direction":1,
+							"elapsed" : 24960507,
+							"index" : 0,
+							"line" : 2,
+							"space" : 3
+					},
+	  {
+		"direction":2,
+		"elapsed" : 44888880,
+		"index" : 1,
+		"line" : 3,
+		"space" : 3
+	  }
+						],
+						"cube":"0,0,0,4,1,1,2,2,2\n0,0,0,4,1,1,2,2,2\n4,1,1,2,2,2,0,0,0\n3,3,3,1,4,4,5,5,5\n3,3,3,1,4,4,5,5,5\n3,3,3,1,4,4,5,5,5\n",
+							"mode" : "axis",
+							"note" : "한글 테스트 test 1234",
+							"stat" : "finished",
+							"time" : 44888877,
+							"unit" : 3
+				}
+			}
+#endif // _DEBUG_req
 			qs.Field(*sjgm, "GUID", "fuuid", TRUE);//필수
 			qs.Field(*sjgm, "GGUID", "fgguid", TRUE);//필수
+			qs.Field(*sjgm, "cube", "fcube", TRUE);
 			qs.Field(*sjgm, "note", "fnote");
 			qs.Field(*sjgm, "time", "fSec7th", TRUE);
-			qs.Field(*sjgm, "cube", "fcube", TRUE);
-			qs.Field(*sjgm, "unit", "fSpace");// 기존 데이터 땜에 , TRUE);
+			qs.Field(*sjgm, "unit", "fUnit");// 기존 데이터 땜에 , TRUE);
 			qs.Field(*sjgm, "mode", "fMode");// 기존 데이터 땜에, TRUE);
-
+			qs.Field(*sjgm, "initGGUID", "fInitGguid");// 기존 데이터 땜에, TRUE);
+			
 			ShJArr jacts = sjgm->Array("actions");
 			auto nar = jacts->size();
 			qs.FieldNum("fCount", (int)nar);
-
-			qs.SetSQL(L"\
-INSERT IGNORE INTO tgame  ( fuuid,  fgguid, fcube,   fnote,   fSec7th, fCount) -- \n\
-                   VALUES (@fuuid, @fgguid, @fcube, @fnote, @fSec7th, @fCount);");
-			sql = qs._sqlv;
-			_db.ExecuteSQL(qs);
-
-			CString gguid = sjgm->S("GGUID");
 			Quat qs1;
-			/// sql 문에 변수명과 일치 하는 예
-			qs1.Field("GGUID", gguid, TRUE);//필수
-			qs1.AppendSQL(L"\
-INSERT IGNORE INTO taction (fgguid, findex, fdirect, felapsed, fline, fspace) VALUES -- \r\n");
-			int i = 0;//마지막 항복인걸 알아내기 위해
-			for(auto& jvl : *jacts)
+			if(nar > 0)
 			{
-				if(!jvl->IsObject())
-					throw_BadRequest(-1, "Wrong a game action data format.");
-				auto& jia = *jvl->AsObject();
-				//(*sjact)("index") = index;//처음에는 여기서 만들었는데, client에서 보내기로
-				if(!jia.Has("index"))
-					qs1.Field("index", i);
-				else
-					qs1.Field(jia, "index", TRUE);//필수
-				qs1.Field(jia, "direction", TRUE);//필수
-				qs1.Field(jia, "elapsed", TRUE);//필수 mysql double type range 1.7976931348623157e+308 ~ -2.225077738585072014e-308
-				qs1.Field(jia, "line", TRUE);//필수
-				qs1.Field(jia, "space", TRUE);//필수
-				qs1.AppendSQL(L"\t(@GGUID, @index, @direction, @elapsed, @line, @space)",
-					i < (nar - 1) ? L", -- \r\n" : L" -- \r\n"); // 원래 L";" 였는데, on duplicate key 붙으면서
-				i++;
-			}
-			qs1.AppendSQL(L"\
+				qs.SetSQL(L"\
+INSERT IGNORE INTO tgame  ( fuuid,  fgguid, fcube,   fnote,   fSec7th, fUnit,  fMode,  fCount,  fInitGguid) -- \n\
+                   VALUES (@fuuid, @fgguid, @fcube, @fnote, @fSec7th, @fUnit, @fMode, @fCount, @fInitGguid);");
+				sql = qs._sqlv;
+				_db.ExecuteSQL(qs);
+
+				CString gguid = sjgm->S("GGUID");
+				/// sql 문에 변수명과 일치 하는 예
+				qs1.Field("GGUID", gguid, TRUE);//필수
+				qs1.AppendSQL(L"\
+INSERT IGNORE INTO taction (fgguid, findex, fdirect, felapsed, fline, fspace) VALUES -- \r\n");
+				int i = 0;//마지막 항복인걸 알아내기 위해
+				for(auto& jvl : *jacts)
+				{
+					if(!jvl->IsObject())
+						throw_BadRequest(-1, "Wrong a game action data format.");
+					auto& jia = *jvl->AsObject();
+					//(*sjact)("index") = index;//처음에는 여기서 만들었는데, client에서 보내기로
+					if(!jia.Has("index"))
+						qs1.Field("index", i);
+					else
+						qs1.Field(jia, "index", TRUE);//필수
+					qs1.Field(jia, "direction", TRUE);//필수
+					qs1.Field(jia, "elapsed", TRUE);//필수 mysql double type range 1.7976931348623157e+308 ~ -2.225077738585072014e-308
+					qs1.Field(jia, "line", TRUE);//필수
+					qs1.Field(jia, "space", TRUE);//필수
+					qs1.AppendSQL(L"\t(@GGUID, @index, @direction, @elapsed, @line, @space)",
+						i < (nar - 1) ? L", -- \r\n" : L" -- \r\n"); // 원래 L";" 였는데, on duplicate key 붙으면서
+					i++;
+				}
+				qs1.AppendSQL(L"\
 		ON DUPLICATE KEY -- \r\n\
 		UPDATE frewrite = frewrite + 1;");
+				sql = qs1._sqlv;
+				_db.ExecuteSQL(qs1);
+			}
 #ifdef _DEBUG_sample
 			INSERT INTO taction(fgguid, findex, fdirect, felapsed, fline, fspace) VALUES--
 				('0FDD1FA6E4DC4E3EA31D0E3ECDF0C9F4', '0', 3, 12641622, 6, 3),
 				('0FDD1FA6E4DC4E3EA31D0E3ECDF0C9F4', '1', 3, 24892756, 5, 3);
 #endif // _DEBUG_sample
-			sql = qs1._sqlv;
-			_db.ExecuteSQL(qs1);
 		}
 		_db.TransCommit();
 	}
@@ -344,13 +378,14 @@ int DEXPORT CubeGetRankingList(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 // 		jpa("unit") = 3;/// 현재는 3칸 이동만 경기 랭킹 가능. 차후에는 1칸, 2칸 리그도 가능
 // 	if(!jpa.Has("class"))
 // 		jpa("class") = "personal";/// 현재는 3칸 이동만 경기 랭킹 가능. 차후에는 1칸, 2칸 리그도 가능
-	jpa.SetDefault("unit", 3);
-	jpa.SetDefault("class", "personal");
+	jpa.HasElse("unit", 3);
+	jpa.HasElse("class", "personal");
 	qs.Field(jpa, "unit", "fUnit");//필수
 	qs.Field(jpa, "class", "fClass");
 
-	qs.SetSQL(L"SELECT g.fgguid, g.fuuid, (g.fSec7th/10000000) fSec, g.fCount, u.fNickname, g.fTimeReg -- \r\n\
-FROM tgame g JOIN tuser u ON g.fuuid=u.fuuid WHERE g.fUnit = @fUnit and g.fClass = @fClass ORDER BY g.fSec7th LIMIT 20;");
+	qs.SetSQL(L"SELECT g.fgguid, g.fuuid, (g.fSec7th/10000000) fSec, g.fCount, u.fNickname, DATE_ADD(g.fTimeReg, INTERVAL -9 HOUR) fTimeReg, g.fcube -- \r\n\
+FROM tgame g JOIN tuser u ON g.fuuid=u.fuuid WHERE -- \r\n\
+g.fUnit = @fUnit and g.fClass = @fClass and g.fState = 'complete' ORDER BY g.fSec7th, g.fTimeReg desc LIMIT 20;");
 	BOOL bOpen = rs.OpenSelectFetch(qs);/// 위에 테이블이 2개 이지만 transaction 으로 한꺼번에 처리 하였으므로 하나만 체크
 	jrs("Return") = rs.MakeRecsetToJson(jrs, L"table") ? "OK" : "No Data";
 	return 0;
@@ -369,10 +404,7 @@ int DEXPORT CubeGetGameActions(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 	return 0;
 }
 
-
-
-
-
+ 
 
 
 

@@ -291,37 +291,32 @@ namespace Kw
 #endif
 	}
 
-	void JObj::Set(PAS name, ShJVal val)
-	{
-		CStringW k(name);
-		//wstring wk = (PWS)k;
-		SetAt((PWS)k, val);// []를 쓰지 않고 Set을 써야 toString이 적용 된다.
-// 		(*this)[name] = val;
+// 	void JObj::Set(PAS name, ShJVal val)
+// 	{
+// 		CStringW k(name);
+// 		SetAt((PWS)k, val);// []를 쓰지 않고 Set을 써야 toString이 적용 된다.
 // 		toString();
-		toString();
-	}
-	void JObj::SetObj(PWS name, ShJObj sjo, BOOL bClone)
-	{
-		ShJVal sjv = make_shared<JVal>(sjo, bClone);
-		Set(name, sjv);
-		//(*this)[name] = sjv;
-	}
-	void JObj::SetArray(PWS name, ShJArr sja, BOOL bClone)
-	{
-		ShJVal sjv = make_shared<JVal>(sja, bClone);
-		Set(name, sjv);
-	}
+// 	}
+// 	void JObj::SetObj(PWS name, ShJObj sjo, BOOL bClone)
+// 	{
+// 		ShJVal sjv = make_shared<JVal>(sjo, bClone);
+// 		Set(name, sjv);
+// 	}
+// 	void JObj::SetArray(PWS name, ShJArr sja, BOOL bClone)
+// 	{
+// 		ShJVal sjv = make_shared<JVal>(sja, bClone);
+// 		Set(name, sjv);
+// 	}
 
-	bool JObj::DeleteKey(PWS name)
-	{
-		//JObj::const_iterator it = this->find(name);
-		if(Has(name))//it == this->end())
-		{
-			this->erase(name);
-			return true;
-		}
-		return false;
-	}
+// 	bool JObj::DeleteKey(PWS name)
+// 	{
+// 		if(Has(name))//it == this->end())
+// 		{
+// 			this->erase(name);
+// 			return true;
+// 		}
+// 		return false;
+// 	}
 
 
 
@@ -416,87 +411,70 @@ namespace Kw
 	}
 	void JObj::ErrTest()
 	{
-		auto jnull = this->Obj(L"notexist");
+		auto jnull = this->O(L"notexist");
 		auto an1y = jnull->O("any");
 	}
-	wstring JObj::String(PWS k)
-	{
-		//?주의: if((*this)[k]) 이걸 쓰는 쑨간 만들어져 버린다.
-		if(Has(k)) //this->find(k) != this->end())
-		{
-			auto sjv = (*this)[k];
-			if(sjv->IsString())
-			{
-				wstring val = sjv->AsString().c_str();
-				return val;//tchsame(val, L"null") ? wstring.Empty() : val;
-			}
-		}
-		return wstring();
-	}
+// 	wstring JObj::String(PWS k)
+// 	{
+// 		//?주의: if((*this)[k]) 이걸 쓰는 쑨간 만들어져 버린다.
+// 		if(Has(k)) //this->find(k) != this->end())
+// 		{
+// 			auto sjv = (*this)[k];
+// 			if(sjv->IsString())
+// 			{
+// 				wstring val = sjv->AsString().c_str();
+// 				return val;//tchsame(val, L"null") ? wstring.Empty() : val;
+// 			}
+// 		}
+// 		return wstring();
+// 	}
 
 	/// JVal을 복사 한다.
-	void JObj::Copy(JObj& src, PAS tarF, PAS srcF)// = nullptr
-	{
-		BOOL bHas = CopyIf(src, tarF, srcF);
+// 	void JObj::Copy(JObj& src, PAS tarF, PAS srcF)// = nullptr
+// 	{
+// 		BOOL bHas = CopyIf(src, tarF, srcF);
+// 		if(!bHas)
+// 		{
+// 			CStringA s; s.Format("JObj::Copy src(%s) field key Not found.", srcF);
+// 			throw_str(s);
+// 		}
+// 	}
+
+	/// src에 필드가 있으면 복사
+// 	BOOL JObj::CopyIf(JObj& src, PAS tarF, PAS srcF)// = nullptr
+// 	{
 // 		if(!srcF)
 // 			srcF = tarF;
 // 		CStringW srf(srcF);
 // 		CStringW taf(tarF);
-// 
-// 		if(src.Has(srf))//this->find(k) != this->end())
+// 		if(src.Has((PWS)srf))//this->find(k) != this->end())
 // 		{
 // 			this->DeleteKey(taf);//타겟에 있으면 삭제
-// 
 // 			auto sjvS = src[(PWS)srf];
 // 			auto sjvT = ShJVal(new JVal(sjvS, true));
-// 			//this->Clone(sjv, true);
-// 			(*this)[(PWS)taf] = sjvT;
+// 			Set((PWS)taf, sjvT);
+// 			return TRUE;
 // 		}
-// 		else
-		if(!bHas)
-		{
-			CStringA s; s.Format("JObj::Copy src(%s) field key Not found.", srcF);
-			throw_str(s);
-		}
-	}
+// 		return FALSE;
+// 	}
+// 	ShJVal JObj::Get(PWS k)
+// 	{
+// 		ShJVal sjv;
+// 		Lookup(k, sjv);//can be FALSE
+// 		return sjv;
+// 	}
 
-	/// src에 필드가 있으면 복사
-	BOOL JObj::CopyIf(JObj& src, PAS tarF, PAS srcF)// = nullptr
-	{
-		if(!srcF)
-			srcF = tarF;
-		CStringW srf(srcF);
-		CStringW taf(tarF);
-
-		if(src.Has(srf))//this->find(k) != this->end())
-		{
-			this->DeleteKey(taf);//타겟에 있으면 삭제
-			auto sjvS = src[(PWS)srf];
-			auto sjvT = ShJVal(new JVal(sjvS, true));
-			//this->Clone(sjv, true);
-			//(*this)[(PWS)taf] = sjvT;
-			Set((PWS)taf, sjvT);
-			return TRUE;
-		}
-		return FALSE;
-	}
-	ShJVal JObj::Get(PWS k)
-	{
-		ShJVal sjv;
-		Lookup(k, sjv);//can be FALSE
-		return sjv;
-	}
 	/// 길이가 있고 내용이 같은 경우만 true 이다.
 	int JObj::IsUpdated(JObj& src, JObj& tar, PAS tarF, PAS srcF)
 	{
 		if(!srcF)
 			srcF = tarF;
-		CStringW srf(srcF);
+		PWS srf = CStringW(srcF);
 		CStringW taf(tarF);
 
 		if(src.Has(srf))//this->find(k) != this->end())
 		{
-			auto sjvS = src[(PWS)srf];
+			auto sjvS = src[srf];
 			auto s = sjvS->AsString();
 			if(tar.Has(srf))
 			{
@@ -593,56 +571,42 @@ namespace Kw
 		{
 			auto sjv = (*this)[k];
 			return sjv->Ptr();
-			//if(sjv->IsString())
-			//{
-			//	PWS val = sjv->AsString().c_str();
-			//	/// IsString 인데 null일리 없잖아.
-			//	return val;// tchsame(val, L"null") ? L"" : val;
-			//}
-			//else if(sjv->IsNull())
-			//{
-			//	return nullptr;
-			//}
-			//else
-			//{
-			//	ASSERT(0);//문자열 일때만 요청해야 한다. 아니면 GetText 를 쓰던가.
-			//}
 		}
 		return NULL;
 	}
 
-
-	PWS JVal::SN()
+	/// 반드시 IsString 이어야 한다.
+	PWS JVal::SN(PWS def)
 	{
 		if(IsString())
 			return string_.c_str();
 		else if(IsNull())
-			return NULL;
+			return def;
 		throw_str("Not a string type.");
 	}
-	PWS JObj::SN(PAS k)
-	{
-		ShJVal sjv;
-		CStringW kw(k);
-		if(Lookup((PWS)kw, sjv))
-			return sjv->SN();
-		return NULL;
-	}
+// 	PWS JObj::SN(PAS k)
+// 	{
+// 		ShJVal sjv;
+// 		CStringW kw(k);
+// 		if(Lookup((PWS)kw, sjv))
+// 			return sjv->SN();
+// 		return NULL;
+// 	}
 
-	PWS JObj::S(PAS k, CStringW& sv)
-	{
-		CStringW kw(k);
-		ShJVal sjv;
-		if(Lookup((PWS)kw, sjv))
-		{
-			if(sjv->IsString())
-			{
-				sv = sjv->AsString().c_str();
-				return (PWS)sv;
-			}
-		}
-		return NULL;
-	}
+// 	PWS JObj::S(PAS k, CStringW& sv)
+// 	{
+// 		CStringW kw(k);
+// 		ShJVal sjv;
+// 		if(Lookup((PWS)kw, sjv))
+// 		{
+// 			if(sjv->IsString())
+// 			{
+// 				sv = sjv->AsString().c_str();
+// 				return (PWS)sv;
+// 			}
+// 		}
+// 		return NULL;
+// 	}
 	
 	PWS JObj::LenS(PAS k, CStringW& sv)
 	{
@@ -704,26 +668,26 @@ namespace Kw
 		return tchsame(sn, str);
 	}
 
-	BOOL JObj::BeginS(PAS k, PWS str)
-	{
-		PWS sn = SN(k);
-		return tchbegin(sn, str);
-	}
+// 	BOOL JObj::BeginS(PAS k, PWS str)
+// 	{
+// 		PWS sn = SN(k);
+// 		return tchbegin(sn, str);
+// 	}
+// 
+// 	BOOL JObj::Find(PAS k, PWS str)
+// 	{
+// 		PWS sn = SN(k);
+// 		return tchstr(sn, str) != NULL;
+// 	}
 
-	BOOL JObj::Find(PAS k, PWS str)
-	{
-		PWS sn = SN(k);
-		return tchstr(sn, str) != NULL;
-	}
-
-	BOOL JObj::Append(PAS k, PWS str)
-	{
-		CString sn = SN(k);
-		BOOL b = !sn.IsEmpty();
-		sn += str;
-		(*this)(k) = sn;
-		return b;
-	}
+// 	BOOL JObj::Append(PAS k, PWS str)
+// 	{
+// 		CString sn = SN(k);
+// 		BOOL b = !sn.IsEmpty();
+// 		sn += str;
+// 		(*this)(k) = sn;
+// 		return b;
+// 	}
 	/// <summary>
 	/// 
 	/// </summary>
@@ -746,108 +710,58 @@ namespace Kw
 	}
 
 
-	PAS JVal::SA()/// const : _bufa 때문에 const를 못쓴다.
+	PAS JVal::SA(PAS def)/// const : _bufa 때문에 const를 못쓴다.
 	{
 		CStringA& sbuf = _bufa.GetBuf();
-		PWS sw = S();
-		sbuf = CStringA(sw);
-		return (PAS)sbuf;
+		if(def)
+		{
+			CStringW defw(def);
+			PWS sw = S(defw);
+			sbuf = sw;
+			return (PAS)sbuf;
+		}
+		PWS sw = S(NULL);
+		if(sw)
+		{
+			sbuf = CStringA(sw);
+			return (PAS)sbuf;
+		}
+		return def;//NULL
 	}
-	PAS JObj::SA(PAS k)
-	{
-		CString kw = CString(k);
-		ShJVal sjv;
-		if(Lookup((PWS)kw, sjv))
-			return sjv->SA();
-		//if(Has(kw))//this->find(k) != this->end())
-		//{
-		//	auto sjv = (*this)[(PWS)kw];
-		//	return sjv->SA();
-		//}
-		return NULL;
-	}
+// 	PAS JObj::SA(PAS k)
+// 	{
+// 		CString kw = CString(k);
+// 		ShJVal sjv;
+// 		if(Lookup((PWS)kw, sjv))
+// 			return sjv->SA();
+// 		return NULL;
+// 	}
 
-	PWS JVal::S() const
+	PWS JVal::S(PWS def) const
 	{
 		if(IsString())
 			return string_.c_str();
 		else if(IsNull())
-			return L"";
+			return def;// L"";
 		throw_str("Not a string type.");
 	}
-	PWS JObj::S(PWS k)
-	{
-		ShJVal sjv;
-		if(Lookup((PWS)k, sjv))
-			return sjv->S();
-		//if(Has(k))//this->find(k) != this->end())
-		//{
-		//	auto sjv = (*this)[k];
-		//	return sjv->S();
-		//}
-		return L"";
-		//PWS s = Ptr(k);
-		//if(s == NULL)
-		//	return L"";
-		//else
-		//	return s;
-	}
+// 	PWS JObj::S(PWS k)
+// 	{
+// 		ShJVal sjv;
+// 		if(Lookup((PWS)k, sjv))
+// 			return sjv->S();
+// 		return L"";
+// 	}
 
-	PWS JObj::Str(PAS k, int point)
-	{
-		CString& sbuf = _buf.GetBuf();
-		ShJVal sjv;
-		CStringW kw(k);
-		if(Lookup((PWS)kw, sjv))
-			return sjv->Str(point);
-		return L"";
-		//auto buf = sbuf.GetBuffer(lenBuf);
-		//if(Has(k))//this->find(k) != this->end())
-		//{
-		//	CStringW kw(k);
-		//	auto sjv = (*this)[(PWS)kw];
-		//	return sjv->Str(point);
-		//	//if(sjv->IsString())
-		//	//{
-		//	//	PWS val = sjv->AsString().c_str();
-		//	//	return val;
-		//	//}
-		//	//else if(sjv->IsDouble())
-		//	//{
-		//	//	//CString fmt; fmt = L"%%f";
-		//	//	double d = sjv->AsDouble();
-		//	//	CString fmt; fmt.Format(L"%%.%df", point);
-		//	//	sbuf.Format(fmt, (double)d);
-		//	//	return sbuf;
-		//	//}
-		//	//else if(sjv->IsInt())
-		//	//{
-		//	//	auto d = sjv->AsInt();
-		//	//	sbuf.Format(L"%d", (int)d);
-		//	//	return sbuf;
-		//	//}
-		//	//else if(sjv->IsInt64())
-		//	//{
-		//	//	auto d = sjv->AsInt64();
-		//	//	sbuf.Format(L"%I64d", (__int64)d);
-		//	//	return sbuf;
-		//	//}
-		//	//else if(sjv->IsBool())
-		//	//	return sjv->AsBool() ? L"1" : L"0";
-		//	//else if(sjv->IsNull())
-		//	//	return L"NULL";
-		//	//else if(sjv->IsObject())
-		//	//	return L"[obj]";//이래야 SQL에러가 나도록 유도 하지.
-		//	//else if(sjv->IsArray())
-		//	//	return L"[array]";
-		//	//else
-		//	//{
-		//	//	ASSERT(0);
-		//	//}
-		//}
-		//return L"NULL";
-	}
-	//CStringA& sbuf = _bufa.GetBuf();
+// 	PWS JObj::Str(PAS k, int point)
+// 	{
+// 		CString& sbuf = _buf.GetBuf();
+// 		ShJVal sjv;
+// 		CStringW kw(k);
+// 		if(Lookup((PWS)kw, sjv))
+// 			return sjv->Str(point);
+// 		return L"";
+// 	}
 
 	CTime JVal::T()
 	{
@@ -877,13 +791,13 @@ namespace Kw
 			return AsInt();
 		return def;
 	}
-	int JObj::I(PWS k, int def)// = 0
-	{
-		ShJVal sjv;
-		if(Lookup(k, sjv))
-			return sjv->I();
-		return def;
-	}
+// 	int JObj::I(PWS k, int def)// = 0
+// 	{
+// 		ShJVal sjv;
+// 		if(Lookup(k, sjv))
+// 			return sjv->I();
+// 		return def;
+// 	}
 	/// <summary>
 	/// Quata string: SQL 문에 데이터로 쓰일때 '%s' 대신 %s 만 써도 ' '를 붙여준다. 없는 경우 NULL 을 sql문에 맞게 준다.
 	/// </summary>
@@ -1016,33 +930,33 @@ namespace Kw
 	}
 
 	/// 내부 배열을 리턴 없으면 NULL
-	ShJArr JObj::Array(PWS k)
-	{
-		ShJVal sjv;
-		if(Lookup(k, sjv))
-		{
-			if(sjv->IsArray())
-				return sjv->AsArray();
-			else
-				throw_str("IsArray() false.");
-		}
-		return NULL;
-	}
+// 	ShJArr JObj::Array(PWS k)
+// 	{
+// 		ShJVal sjv;
+// 		if(Lookup(k, sjv))
+// 		{
+// 			if(sjv->IsArray())
+// 				return sjv->AsArray();
+// 			else
+// 				throw_str("IsArray() false.");
+// 		}
+// 		return NULL;
+// 	}
 	/// 내부 배열을 없으면 만들어서 라도 리턴
-	ShJArr JObj::AMake(PWS k)
-	{
-		ShJVal sjv;
-		if(Lookup(k, sjv))
-		{
-			if(sjv->IsArray())
-				return sjv->AsArray();// shared_ptr 내부가 그대로 노출 된다.
-			else
-				throw_str("IsObject() false.");
-		}
-		ShJArr sjo = make_shared<JArr>();
-		SetArray(k, sjo, false);
-		return sjo;
-	}
+// 	ShJArr JObj::AMake(PWS k)
+// 	{
+// 		ShJVal sjv;
+// 		if(Lookup(k, sjv))
+// 		{
+// 			if(sjv->IsArray())
+// 				return sjv->AsArray();// shared_ptr 내부가 그대로 노출 된다.
+// 			else
+// 				throw_str("IsObject() false.");
+// 		}
+// 		ShJArr sjo = make_shared<JArr>();
+// 		SetArray(k, sjo, false);
+// 		return sjo;
+// 	}
 
 
 
@@ -1053,18 +967,29 @@ namespace Kw
 	{
 		CStringW kw1(k1);
 		CStringW kw2(k2);
-		ShJObj sjo1 = Obj(kw1);
+		ShJObj sjo1 = O(kw1);
 		if(sjo1)
-			return sjo1->Obj(kw2);
+			return sjo1->O(kw2);
 		return nullptr;
 	}
 	ShJArr JObj::OA(PAS k1, PAS k2)
 	{
 		CStringW kw1(k1);
+		ShJObj sjo1 = O(kw1);
+
+#ifdef _DEBUG
 		CStringW kw2(k2);
-		ShJObj sjo1 = Obj(kw1);
+		CStringA ka2(k2);
+		wstring ws2((PWS)kw2);
+		string as2(k2);
+		sjo1->Array(kw2);//PAS
+		sjo1->Array(ka2);//CStringA
+		sjo1->Array(ws2);//wstirng
+		sjo1->Array(as2);//stirng
+#endif // _DEBUG
+
 		if(!sjo1)
-			return sjo1->Array(kw2);
+			return sjo1->Array(k2);//(PWS)
 		return nullptr;
 	}
 	PWS JObj::OOS(PAS k1, PAS k2, PAS k3)
@@ -1074,39 +999,39 @@ namespace Kw
 	}
 
 	/// 복사 되는게 아니고, 내부 객체가 그대로 가르킨것이 포인터로 리턴된다.
-	ShJObj JObj::Obj(PWS k)
-	{
-		/// 아래 ->find에서 unhandled로 못빠져 나온다. 왜 unhandled
-		//?주의: if((*this)[k]) 이걸 쓰는 쑨간 만들어져 버린다.
-		if(this == nullptr)
-			throw_str("this == nullptr.");
-
-		ShJVal sjv;
-		if(Lookup(k, sjv))
-		{
-			if(sjv->IsObject())
-				return sjv->AsObject();// shared_ptr 내부가 그대로 노출 된다.
-			else
-				throw_str("IsObject() false.");
-		}
-		return ShJObj();
-	}
+// 	ShJObj JObj::Obj(PWS k)
+// 	{
+// 		/// 아래 ->find에서 unhandled로 못빠져 나온다. 왜 unhandled
+// 		//?주의: if((*this)[k]) 이걸 쓰는 쑨간 만들어져 버린다.
+// 		if(this == nullptr)
+// 			throw_str("this == nullptr.");
+// 
+// 		ShJVal sjv;
+// 		if(Lookup(k, sjv))
+// 		{
+// 			if(sjv->IsObject())
+// 				return sjv->AsObject();// shared_ptr 내부가 그대로 노출 된다.
+// 			else
+// 				throw_str("IsObject() false.");
+// 		}
+// 		return ShJObj();
+// 	}
 	/// make_shared<JObj>() 로 만들어 넣어서 빈객체라도 넣는다.
-	ShJObj JObj::OMake(PWS k)
-	{
-		ShJVal sjv;
-		if(Lookup(k, sjv))
-		{
-			if(sjv->IsObject())
-				return sjv->AsObject();// shared_ptr 내부가 그대로 노출 된다.
-			else
-				throw_str("IsObject() false.");
-		}
-		ShJObj sjo = make_shared<JObj>();
-		SetObj(k, sjo, false);
-		return sjo;
-	}
-
+// 	ShJObj JObj::OMake(PWS k)
+// 	{
+// 		ShJVal sjv;
+// 		if(Lookup(k, sjv))
+// 		{
+// 			if(sjv->IsObject())
+// 				return sjv->AsObject();// shared_ptr 내부가 그대로 노출 된다.
+// 			else
+// 				throw_str("IsObject() false.");
+// 		}
+// 		ShJObj sjo = make_shared<JObj>();
+// 		SetObj(k, sjo, false);
+// 		return sjo;
+// 	}
+// 
 	CStringW JVal::SLeft(int len)
 	{
 		wstring s = S();
@@ -1127,34 +1052,22 @@ namespace Kw
 
 	}
 
-	CStringW JObj::SLeft(PWS k, int len)
-	{
-		ShJVal sjv;
-		if(Lookup(k, sjv))
-			return sjv->SLeft(len);
-		return L"";
-		//wstring s = String(k);
-		//if(s.length() > len)
-		//	s = s.substr(0, len);
-		//return CStringW(s.c_str());
-	}
+// 	CStringW JObj::SLeft(PWS k, int len)
+// 	{
+// 		ShJVal sjv;
+// 		if(Lookup(k, sjv))
+// 			return sjv->SLeft(len);
+// 		return L"";
+// 	}
+// 	CStringW JObj::SRight(PWS k, int len)
+// 	{
+// 		ShJVal sjv;
+// 		if(Lookup(k, sjv))
+// 			return sjv->SRight(len);
+// 		return L"";
+// 	}
 
-	CStringW JObj::SRight(PWS k, int len)
-	{
-		ShJVal sjv;
-		if(Lookup(k, sjv))
-			return sjv->SRight(len);
-		return L"";
-		//wstring s = String(k);
-		//if(s.length() > len)
-		//{
-		//	size_t ist = s.length() - len;
-		//	s = s.substr(ist, len);
-		//}
-		//return CStringW(s.c_str());
-	}
-
-	double JVal::N()
+	double JVal::N(double def)
 	{
 		if(this == NULL)
 			throw (L"JObj.JVal == NULL");
@@ -1168,50 +1081,34 @@ namespace Kw
 			return (double)sjv->AsInt64();
 		else if(sjv->IsString())
 		{
-
+			TRACE("Return double converted IsString JVal.\n");
 			CStringW s = sjv->AsString().c_str();
 			if(s.IsEmpty())
-				return 0;
-
+				return def;
 			return (double)KwAtoi((LPCWSTR)s);
 		}
-		return 0.;
+		return def;
 	}
 
-	double JObj::N(PWS k)
-	{
-		if(this == NULL)
-			throw (L"JObj.this == NULL");
-		//?주의: if((*this)[k]) 이걸 쓰는 쑨간 만들어져 버린다.
-		ShJVal sjv;
-		if(Lookup(k, sjv))
-		{
-			return sjv->N();
-			//if(sjv->IsDouble())
-			//	return sjv->AsDouble();
-			//else if(sjv->IsInt())
-			//	return (double)sjv->AsInt();
-			//else if(sjv->IsDouble())
-			//	return (double)sjv->AsInt64();
-			//else if(sjv->IsString())
-			//{
-			//	CStringW s = sjv->AsString().c_str();
-			//	if(s.IsEmpty())
-			//		return 0;
-			//	return (double)KwAtoi((LPCWSTR)s);
-			//}
-		}
-		return 0.;
-	}
-	__int64 JObj::I64(PWS k)
-	{
-		if(this == NULL)
-			throw (L"JObj.this == NULL");
-		ShJVal sjv;
-		if(Lookup(k, sjv))
-			return sjv->AsInt64();
-		return 0;
-	}
+// 	double JObj::N(PWS k)
+// 	{
+// 		if(this == NULL)
+// 			throw (L"JObj.this == NULL");
+// 		//?주의: if((*this)[k]) 이걸 쓰는 쑨간 만들어져 버린다.
+// 		ShJVal sjv;
+// 		if(Lookup(k, sjv))
+// 			return sjv->N();
+// 		return 0.;
+// 	}
+// 	__int64 JObj::I64(PWS k)
+// 	{
+// 		if(this == NULL)
+// 			throw (L"JObj.this == NULL");
+// 		ShJVal sjv;
+// 		if(Lookup(k, sjv))
+// 			return sjv->AsInt64();
+// 		return 0;
+// 	}
 
 
 	bool JObj::IsArray(PWS k)

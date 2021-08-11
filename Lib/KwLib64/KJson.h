@@ -121,41 +121,59 @@ namespace Kw
 		CStrBufferT<CStringW, LPCWSTR> _buf;
 		CStrBufferT<CStringA, LPCSTR> _bufa;
 		void toString();
-		void Set(PAS name, ShJVal val);
-		void Set(PWS name, ShJVal val)
+		//void Set(PAS name, ShJVal val);
+		template <typename TKEY>
+		void Set(TKEY k, ShJVal val)
 		{
-			SetAt(name, val);
+			SetAt(Pws(k), val);
+			toString();
 		}
 
-		void CopyAt(PWS k, ShJVal val)
+		template <typename TKEY>
+		void CopyAt(TKEY k, ShJVal val)
 		{
 			ShJVal nv = make_shared<JVal>(val);
-			SetAt(k, nv);
+			SetAt(Pws(k), nv);
 		}
-		void CopyAt(PAS k, ShJVal val)
-		{
-			CStringW kw(k);
-			CopyAt(kw, val);
-		}
+// 		void CopyAt(PAS k, ShJVal val)
+// 		{
+// 			CStringW kw(k);
+// 			CopyAt(kw, val);
+// 		}
 
-		void SetObj(PWS name, ShJObj sjo, BOOL bClone = FALSE);
-		void SetObj(PAS name, ShJObj sjo, BOOL bClone = FALSE)
+		template <typename TKEY>
+		void SetObj(TKEY k, ShJObj sjo, BOOL bClone = FALSE)
 		{
-			CStringW kw(name);
-			SetObj(kw, sjo, bClone);
+			ShJVal sjv = make_shared<JVal>(sjo, bClone);
+			Set(Pws(k), sjv);
 		}
-		void SetArray(PWS name, ShJArr sja, BOOL bClone = FALSE);
-		void SetArray(PAS name, ShJArr sja, BOOL bClone = FALSE)
+		template <typename TKEY>
+		void SetArray(TKEY k, ShJArr sja, BOOL bClone = FALSE)
 		{
-			CStringW kw(name);
-			SetArray(kw, sja, bClone);
+			ShJVal sjv = make_shared<JVal>(sja, bClone);
+			Set(Pws(k), sjv);
 		}
-		bool DeleteKey(PWS name);
-		bool DeleteKey(PAS name)
+// 		void SetArray(PAS name, ShJArr sja, BOOL bClone = FALSE)
+// 		{
+// 			CStringW kw(name);
+// 			SetArray(kw, sja, bClone);
+// 		}
+		template <typename TKEY>
+		bool DeleteKey(TKEY k)
 		{
-			CStringW kw(name);
-			return DeleteKey(kw);
+			auto kw = Pws(k);
+			if(Has(kw))
+			{
+				this->erase(kw);
+				return true;
+			}
+			return false;
 		}
+// 		bool DeleteKey(PAS name)
+// 		{
+// 			CStringW kw(name);
+// 			return DeleteKey(kw);
+// 		}
 
 
 		//void Import(const JObj& src);
@@ -182,17 +200,101 @@ namespace Kw
 			}
 		}
 
-		ShJVal Get(PWS k);
-		ShJVal Get(PAS k) {
-			CStringW sw(k);
-			return Get(sw);
+/*
+		PWS GetWide(PAS k)
+		{
+			static KStdMap<string, wstring> smap;
+			auto it = smap.find(k);
+			if(it == smap.end())
+			{
+				CStringW sw(k);
+				smap[k] = (PWS)sw;
+				it = smap.find(k);
+			}
+			return (PWS)it->second.c_str();
 		}
 
+		/// <summary>
+		/// change PWS or PAS to PWS
+		/// </summary>
+		/// <typeparam name="TKEY">PWS or PAS</typeparam>
+		/// <param name="k">key string point</param>
+		/// <returns>PWS</returns>
+		template <typename TKEY>
+		PWS Pws(TKEY k)
+		{
+			PWS pw = nullptr;
+			if(sizeof(k[0]) == sizeof(char))
+				pw = GetWide((PAS)k);
+			else
+			{
+				ASSERT(sizeof(k[0]) == sizeof(wchar_t));
+				pw = (PWS)k;
+			}
+			return pw;
+		}
+*/
+
+		template <typename TKEY>
+		ShJVal Get(TKEY k)
+		{
+			ShJVal sjv;
+			Lookup(Pws(k), sjv);//can be FALSE
+			return sjv;
+		}
+
+// 		ShJVal Get(PAS k) {
+// 			CStringW sw(k);
+// 			return Get(sw);
+// 		}
+
 		PWS Ptr(PWS k);
-		wstring String(PWS k);
-		PAS SA(PAS k);
-		PWS S(PWS k);
-		PWS SN(PAS k); // nullable
+		//wstring String(PWS k);
+		//PAS SA(PAS k);
+		//PWS S(PWS k);
+		//PWS SN(PAS k); // nullable
+		/// 실수 인경우 소수점 아래 수
+		template <typename TKEY>
+		PWS Str(TKEY k, int point = 2)
+		{
+			CString& sbuf = _buf.GetBuf();
+			ShJVal sjv;
+			PWS kw = Pws(k);
+			if(Lookup(kw, sjv))
+				return sjv->Str(point);
+			return L"";
+		}
+
+		/// 항목이 있고 IsString 이면 리턴. 아니면 널
+		//PWS S(PAS k) { CStringW sw(k);		return S((PWS)sw); }
+		//PWS S(PAS k, CStringW& sv);
+
+		template <typename TKEY>
+		PWS S(TKEY k, PWS def = L"")
+		{
+			ShJVal sjv;
+			if(Lookup(Pws(k), sjv))
+				return sjv->S(def);
+			return def;
+		}
+		template <typename TKEY>
+		PAS SA(TKEY k, PAS def = "")
+		{
+			ShJVal sjv;
+			if(Lookup(Pws(k), sjv))
+				return sjv->SA(def);
+			return def;
+		}
+
+		template <typename TKEY>
+		PWS SN(TKEY k, PWS def = L"")
+		{
+			ShJVal sjv;
+			if(Lookup(Pws(k), sjv))
+				return sjv->SN(def);
+			return def;
+		}
+
 		PWS QS(PWS k, BOOL bNullIfEmpty = TRUE, BOOL bQuat = TRUE, BOOL bNecessary = FALSE);
 		PWS QS(PAS k, BOOL bNullIfEmpty = TRUE, BOOL bQuat = TRUE)
 		{
@@ -200,37 +302,83 @@ namespace Kw
 			return QS(sw, bNullIfEmpty, bQuat);
 		}
 
-		/// 실수 인경우 소수점 아래 수
-		PWS Str(PAS k, int point = 2);
-		/// 항목이 있고 IsString 이면 리턴. 아니면 널
-		PWS S(PAS k) { CStringW sw(k);		return S((PWS)sw); }
 		/// 길이가 1이상 이면 리턴. 아니면 널
 		size_t Length(PAS k);
 		BOOL Len(PAS k);
 		BOOL IsEmpty(PAS k) { return !Len(k); }
-		PWS S(PAS k, CStringW& sv);
 		PWS LenS(PAS k, CStringW& sv);
 		BOOL SameS(PAS k, PWS strk);
 		BOOL SameSA(PAS k, PAS strk) { CStringW sw(strk); return SameS(k, sw); }
-		BOOL BeginS(PAS k, PWS str);
-		BOOL Find(PAS k, PWS str);
-		BOOL Append(PAS k, PWS str);
 		BOOL OrStr(PAS k, PWS str, char tok = '|');
 		CTime T(PAS k);
 
-		/// src에서 tar로 필드 하나 복사
-		void Copy(JObj& src, PAS tarF, PAS srcF = nullptr);
-		void Copy(JObj& src, PWS tarF, PWS srcF = nullptr)
+
+		template <typename TKEY>
+		BOOL Find(TKEY k, PWS str)
 		{
-			CStringA tw(tarF);
+			PWS sn = SN(k);
+			return tchstr(sn, str) != NULL;
+		}
+
+
+		template <typename TKEY>
+		BOOL BeginS(TKEY k, PWS str)
+		{
+			PWS sn = SN(k);
+			return tchbegin(sn, str);
+		}
+
+		template <typename TKEY>
+		BOOL Append(TKEY k, PWS str)
+		{
+			auto kw = Pws(k);
+			ShJVal sjv;
+			if(Lookup(Pws(k), sjv))
+			{
+				wstring& ws = (wstring&)sjv->AsString();
+				ws += str;
+				return TRUE;
+			}
+			(*this)(kw) = str;
+			return FALSE;
+		}
+
+		/// src에서 tar로 필드 하나 복사
+		//void Copy(JObj& src, PAS tarF, PAS srcF = nullptr);
+		template <typename TKEY>
+		void Copy(JObj& src, TKEY tarF, TKEY srcF = nullptr)
+		{
 			if(srcF == nullptr)
 				srcF = tarF;
-			CStringA sw(srcF);
-			Copy(src, tw, sw);
+			PWS srcw = Pws(srcF);
+			BOOL bHas = CopyIf(src, Pws(tarF), srcw);
+			if(!bHas)
+			{
+				CStringA s; s.Format("JObj::Copy src(%s) field key Not found.", srcw);
+				throw_str(s);
+			}
+// 			Copy(src, Pws(tarF), Pws(srcF));
 		}
-		
+		template <typename TKEY>
+		BOOL CopyIf(JObj& src, TKEY tarF, TKEY srcF)// = nullptr
+		{
+			if(!srcF)
+				srcF = tarF;
+			PWS srf = Pws(srcF);
+			PWS taf = Pws(tarF);
+			if(src.Has(srf))//this->find(k) != this->end())
+			{
+				this->DeleteKey(taf);//타겟에 있으면 삭제
+				auto sjvS = src[srf];
+				auto sjvT = ShJVal(new JVal(sjvS, true));
+				Set((PWS)taf, sjvT);
+				return TRUE;
+			}
+			return FALSE;
+		}
+
 		/// src에 필드가 있으면 복사
-		BOOL CopyIf(JObj& src, PAS tarF, PAS srcF = nullptr);// = nullptr
+		//BOOL CopyIf(JObj& src, PAS tarF, PAS srcF = nullptr);// = nullptr
 			/// 길이가 있고 내용이 같은 경우만 true 이다.
 		int IsUpdated(JObj& src, PAS tarF, PAS srcF = nullptr);
 		static int IsUpdated(JObj& src, JObj& tar, PAS tarF, PAS srcF = nullptr);
@@ -238,54 +386,143 @@ namespace Kw
 		static int IsUpdated(ShJObj& src, JObj& tar, PAS tarF, PAS srcF = nullptr);
 		static int IsUpdated(JObj& src, ShJObj& tar, PAS tarF, PAS srcF = nullptr);
 
-		CStringW SLeft(PAS k, int len)
+// 		CStringW SLeft(PAS k, int len)
+// 		{
+// 			CStringW sw(k);
+// 			return SLeft((PWS)sw, len);
+// 		}
+// 		CStringW SLeft(PWS k, int len);
+// 		CStringW SRight(PAS k, int len)
+// 		{
+// 			CStringW sw(k);
+// 			return SRight((PWS)sw, len);
+// 		}
+// 		CStringW SRight(PWS k, int len);
+		template <typename TKEY>
+		CStringW SLeft(TKEY k, int len)
 		{
-			CStringW sw(k);
-			return SLeft((PWS)sw, len);
+			ShJVal sjv;
+			if(Lookup(Pws(k), sjv))
+				return sjv->SLeft(len);
+			return L"";
 		}
-		CStringW SLeft(PWS k, int len);
-		CStringW SRight(PAS k, int len)
-		{
-			CStringW sw(k);
-			return SRight((PWS)sw, len);
-		}
-		CStringW SRight(PWS k, int len);
 
-		double N(PWS k);
-		double N(PAS k)
+		template <typename TKEY>
+		CStringW SRight(TKEY k, int len)
 		{
-			CStringW sw(k);
-			return N((PWS)sw);
+			ShJVal sjv;
+			if(Lookup(Pws(k), sjv))
+				return sjv->SRight(len);
+			return L"";
 		}
-		double D(PWS k)
+
+// 		double N(PWS k);
+// 		double N(PAS k)		{			CStringW sw(k);			return N((PWS)sw);		}
+// 		double D(PWS k)		{			return N(k);		}
+// 		double D(PAS k)		{			return N(k);		}
+		template <typename TKEY>
+		double N(TKEY k, double dfv = 0.)
 		{
-			return N(k);
+			if(this == NULL)
+				throw (L"JObj.this == NULL");
+			//?주의: if((*this)[k]) 이걸 쓰는 쑨간 만들어져 버린다.
+			ShJVal sjv;
+			if(Lookup(Pws(k), sjv))
+				return sjv->N(dfv);
+			return dfv;
 		}
-		double D(PAS k)
-		{
-			return N(k);
-		}
-		int I(PWS k, int def = 0);
+		template <typename TKEY> double D(TKEY k, double dfv = 0.)
+		{	return N(k, dfv);	}
 
 		// _buf.GetBuf(); 로 잡은 String buffer로 리턴 한다.
 		// SQL 안에 쓸 문자 이므로 굳이 그렇게 해야 한다.
 		PWS QN(PWS k, int underDot = 0);
 		PWS QN(PAS k, int underDot = 0)	{CStringW sw(k);return QN(sw, underDot);}
+		
 		//double이 기본이지만 정수인지 확신할때
-		int I(PAS k, int def = 0) { CStringW sw(k); return (int)I((PWS)sw, def); }
-		__int64 I64(PWS k);
-		__int64 I64(PAS k) { CStringW sw(k); return (__int64)I64((PWS)sw); }
-		ShJArr Array(PWS k);
-		ShJArr Array(PAS k) { CStringW sw(k); return Array((PWS)sw); }
-		ShJArr AMake(PWS k);
-		ShJArr AMake(PAS k) { CStringW sw(k); return AMake((PWS)sw); }
+		//int I(PWS k, int def = 0);
+		//int I(PAS k, int def = 0) { CStringW sw(k); return (int)I((PWS)sw, def); }
+		template <typename TKEY>
+		int I(TKEY k, int def = 0)
+		{
+			ShJVal sjv;
+			if(Lookup(Pws(k), sjv))
+				return sjv->I(def);
+			return def;
+		}
+		// 		__int64 I64(PWS k);
+// 		__int64 I64(PAS k) { CStringW sw(k); return (__int64)I64((PWS)sw); }
+		template <typename TKEY>
+		__int64 I64(TKEY k, __int64 dfv = 0)
+		{
+			ShJVal sjv;
+			if(Lookup(Pws(k), sjv))
+				return sjv->AsInt64();
+			return dfv;
+		}
+		
+		template <typename TKEY>
+		ShJArr A(TKEY k, bool bCreat = false)
+		{
+			ShJVal sjv;
+			PWS kw = Pws(k);
+			if(Lookup(kw, sjv))
+			{
+				if(sjv->IsArray())
+					return sjv->AsArray();
+				else
+					throw_str("IsArray() false.");
+			}
+			if(bCreat)
+			{
+				ShJArr sjo = make_shared<JArr>();
+				SetArray(kw, sjo, false);
+				return sjo;
+			}
+			return ShJArr();
+		}
+		template <typename TKEY> ShJArr Array(TKEY k, bool bCreat = false)
+		{
+			return A(k, bCreat);
+		}
+
+// 		ShJArr Array(PWS k);
+// 		ShJArr Array(PAS k) { CStringW sw(k); return Array((PWS)sw); }
+// 		ShJArr AMake(PWS k);
+// 		ShJArr AMake(PAS k) { CStringW sw(k); return AMake((PWS)sw); }
 
 		/// 복사 되는게 아니고, 내부 객체가 그대로 가르킨것이 포인터로 리턴된다.
-		ShJObj Obj(PWS k);
-		ShJObj OMake(PWS k);// make_shared<JObj>() 로 만들어 넣어서 빈객체라도 넣는다.
-		ShJObj OMake(PAS k) { CStringW sw(k); return OMake((PWS)sw); }
-		ShJObj O(PAS k)					{CStringW sw(k);return Obj((PWS)sw);}
-		ShJObj O(string k)				{CStringW sw(k.c_str());return Obj((PWS)sw);}
+		template <typename TKEY>
+		ShJObj O(TKEY k, bool bCreat = false)
+		{
+			/// 아래 ->find에서 unhandled로 못빠져 나온다. 왜 unhandled
+			//?주의: if((*this)[k]) 이걸 쓰는 쑨간 만들어져 버린다.
+			if(this == nullptr)
+				throw_str("this == nullptr.");
+			ShJVal sjv;
+			if(Lookup(Pws(k), sjv))
+			{
+				if(sjv->IsObject())
+					return sjv->AsObject();// shared_ptr 내부가 그대로 노출 된다.
+				else
+					throw_str("IsObject() false.");
+			}
+			if(bCreat)
+			{
+				ShJObj sjo = make_shared<JObj>();
+				SetObj(k, sjo, false);
+				return sjo;
+			}
+			return ShJObj();
+		}
+		template <typename TKEY> ShJObj Obj(TKEY k, bool bCreat = false)
+		{	return O(k, bCreat);	}
+
+		// O() 참조
+// 		ShJObj OMake(PWS k);// make_shared<JObj>() 로 만들어 넣어서 빈객체라도 넣는다.
+// 		ShJObj OMake(PAS k) { CStringW sw(k); return OMake((PWS)sw); }
+// 		ShJObj O(PAS k)					{CStringW sw(k);return Obj((PWS)sw);}
+// 		ShJObj O(string k)				{CStringW sw(k.c_str());return Obj((PWS)sw);}
 		ShJObj OO(PAS k1, PAS k2);
 		ShJObj OO(PAS k1, string k2)	{return OO(k1, k2.c_str());}
 		ShJObj OO(string k1, string k2)	{return OO(k1.c_str(), k2.c_str());}
@@ -298,25 +535,39 @@ namespace Kw
 
 		// 이전 CJsonPbj와 호혼을 위해. 매면 *jobj.O("field") 하기 귀찮아. jobj.Oref("field"); 끝내
 		//JObj _jobjNull;// { nullptr };
-		JObj& Oref(PAS k)
-		{
-			CStringW sw(k);
-			auto sjo = Obj((PWS)sw);
-			if(!sjo)//.get())
-				throw_str("JObj::Oref() ShJObj is empty.");
-			return *sjo;
-		}
-		//ShJObj operator->() const throw()
+// 		template <typename TKEY>
+// 		JObj& Oref(TKEY k)
+// 		{
+// 			//CStringW sw(k);
+// 			auto sjo = O(k);
+// 			if(!sjo)//.get())
+// 				throw_str("JObj::Oref() ShJObj is empty.");
+// 			return *sjo;
+// 		}
+// 		//ShJObj operator->() const throw()
 		//{
 		//	ASSERT(m_pJobj != NULL);
 		//	return m_pJobj;
 		//}
-		JUnit operator()(PWS k)			{return JUnit(this, k);}
-		JUnit operator()(wstring k)		{return JUnit(this, k.c_str());}
-		JUnit operator()(string k)		{CStringW kw(k.c_str());return JUnit(this, kw);}
-		JUnit operator()(PAS k)			{CStringW kw(k);return JUnit(this, kw);}
-		JUnit Unit(PWS k)				{return JUnit(this, k);}
-		JUnit Unit(PAS k)				{CStringW kw(k);return JUnit(this, kw);}
+// 		JUnit operator()(PWS k)			{return JUnit(this, k);}
+// 		JUnit operator()(wstring k)		{return JUnit(this, k.c_str());}
+// 		JUnit operator()(string k)		{CStringW kw(k.c_str());return JUnit(this, kw);}
+// 		JUnit operator()(PAS k)			{CStringW kw(k);return JUnit(this, kw);}
+// 		JUnit Unit(PWS k)				{return JUnit(this, k);}
+// 		JUnit Unit(PAS k)				{CStringW kw(k);return JUnit(this, kw);}
+		template <typename TKEY>
+		JUnit operator()(TKEY k) 
+		{ return JUnit(this, Pws(k)); 
+		}
+
+		
+
+
+		template <typename TKEY>
+		JUnit Unit(TKEY k) 
+		{
+			return JUnit(this, Pws(k));
+		}
 
 
 		/// 1차키의 값이 배열, 그 배열의 2차 인덱스가 JObj 크리고 2차키로 값을 담아 온다.
@@ -329,43 +580,62 @@ namespace Kw
 		//{
 		//	*m_pJobj = *v.m_pJobj;//clone해야 하는데,..
 		//}
-
-		bool Has(wstring kw)
+// 		bool Has(wstring kw)
+// 		{
+// 			return __super::Find(kw) != this->end();
+// 		}
+// 		bool Has(string k)
+// 		{
+// 			if(k.empty())
+// 				TRACE("Has(k) k is empty.(Can empty string be key?)\n");
+// 			CStringW kw(k.c_str());
+// 			wstring wsk((PWS)kw);
+// 			return this->Has(wsk);
+// 		}
+		// 		bool Has(PWS k)
+// 		{
+// 			wstring wk(k);
+// 			return this->Has(wk);
+// 		}
+// 		bool Has(PAS k)
+// 		{
+// 			CStringW kw(k);
+// 			return Has((PWS)kw);
+// 		}
+		template <typename TKEY>
+		bool Has(TKEY k)
 		{
-			if(kw.empty())
-				throw_str("Has(kw) kw is empty");
-			return this->find(kw) != this->end();
+// 			PWS pw = nullptr;
+// 			if(sizeof(k[0]) == sizeof(char))
+// 			{
+// 				CStringW kw(k);
+// 				pw = (PWS)kw;
+// 			}
+// 			else
+// 			{
+// 				ASSERT(sizeof(k[0]) == sizeof(wchar_t));
+// 				pw = (PWS)k;
+// 			}
+			return __super::Find(Pws(k)) != this->end();
 		}
-		bool Has(string k)
-		{
-			if(k.empty())
-				throw_str("Has(k) k is empty");
-			CStringW kw(k.c_str());
-			return this->Has((PWS)kw);
-		}
-
-		bool Has(PWS k)
-		{
-			if(this == nullptr)
-				throw_str("Has(k) k is null");
-			wstring wk(k);
-			return this->Has(wk);
-		}
-		bool Has(PAS k)
-		{
-			CStringW kw(k);
-			return Has((PWS)kw);
-		}
-
+// 		bool Has(CStringW sk)
+// 		{
+// 			return Has((PWS)sk);
+// 		}
+		/// <summary>
+		/// 데이터가 없는 경우만 디폴트 값으로 넣는다. 
+		/// </summary>
+		/// <returns>Has의 리턴값과 같다. </returns>
 		template<typename TKEY, typename TVAL>
-		bool SetDefault(TKEY k, TVAL v)
+		bool HasElse(TKEY k, TVAL v)
 		{
-			if(!Has(k))
+			PWS pwk = Pws(k);
+			if(!Has(pwk))
 			{
-				(*this)(k) = v;
-				return true;
+				(*this)(pwk) = v;
+				return false;
 			}
-			return false;
+			return true;
 		}
 
 		bool IsArray(PAS k) {	CStringW kw(k);	return IsArray(kw); }
@@ -528,27 +798,27 @@ namespace Kw
 
 		const wstring& AsString() const	{	return string_;		}
 		bool AsBool() const			{		return int64_ == 1;		}
-		double AsDouble() const		{		return double_;		}	//double AsNumber() const;
-		int AsInt() const			{		return (int)int64_;		}
-		__int64 AsInt64() const		{		return int64_;		}
-		ShJArr AsArray()			{		return array_;		} //앞에 const 없앰. array편집 하려고
-		ShJObj AsObject()			{		return object_;		}
+		double AsDouble() const		{ ASSERT(IsDouble());	return double_;		}	//double AsNumber() const;
+		int AsInt() const			{ ASSERT(IsInt());	return (int)int64_;		}
+		__int64 AsInt64() const { ASSERT(IsInt64());	return int64_; }
+		ShJArr AsArray()			{ ASSERT(IsArray());	return array_;		} //앞에 const 없앰. array편집 하려고
+		ShJObj AsObject()			{ ASSERT(IsObject());	return object_;		}
 
-		PWS S() const;
+		PWS S(PWS def = L"") const;
 		PWS Str(int point = 2);
 		PWS Ptr() const;
-		PAS SA();
-		PWS SN(); // nullable
+		PAS SA(PAS def = "");
+		PWS SN(PWS def = L""); // nullable
 		CTime T();
 		CStringW SLeft(int len);
 		CStringW SRight(int len);
 
 
 
-		double N();
-		double D()
+		double N(double dfv = 0.);
+		double D(double dfv = 0.)
 		{
-			return N();
+			return N(dfv);
 		}
 		int I(int def = 0);
 

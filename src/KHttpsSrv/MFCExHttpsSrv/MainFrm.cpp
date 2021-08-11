@@ -218,7 +218,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		}));
 	
 	/// 지금 떠있는 서버를 찾아서, 마지막 체크 시간을 update 한다.
-	SetLambdaTimer("Pending Server Check", 5000, [&](int ntm, PAS tmk)//?server recover time 
+	SetTimerLambda("Pending Server Check", 5000, [&](int ntm, PAS tmk)//?server recover time 
 		{
 			TimerCheckServers();//CMainFrame::OnCreate::<lambda_4b040ea4cfd81847d7d539b3ca5fbc01>::operator ()
 			//KTrace(L"%d. %s (%s)\n", ntm, __FUNCTIONW__, L"Lambda timer test");
@@ -323,7 +323,7 @@ void CMainFrame::ConnectMainDB()
 	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
 	AUTOLOCK(appd._csAppDoc);
 	//auto& jobj = *appd._json;
-	auto& jOdbc = *appd._json->OMake("ODBC");
+	auto& jOdbc = *appd._json->O("ODBC", true);
 
 	int LoadCount = appd._json->I("LoadCount") + 1;
 	(*appd._json)("LoadCount") = LoadCount;
@@ -1215,7 +1215,7 @@ int CMainFrame::InitOdbc(int step)
 // 	dlg.DoModal();
 	auto& appd = ((CMFCExHttpsSrvApp*)GetMainApp())->_docApp;
 	AUTOLOCK(appd._csAppDoc);
-	auto& jOdbc = *appd._json->OMake("ODBC");
+	auto& jOdbc = *appd._json->O("ODBC", true);
 
 	try
 	{

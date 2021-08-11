@@ -407,5 +407,79 @@ LONGLONG KwGetTickCount100Nano();
 
 
 hres KwGetMacInfo(CString& localIP, CString& macAddr);
-CStringW KwRsc(int idc);
-CStringA KwRscA(int idc);
+
+/// <summary>
+/// resource 에서 읽은 문자열 static 문자열 포인터가 안전하게 리턴 하도록 static map에 보유 한다.
+/// </summary>
+/// <param name="idc"></param>
+/// <returns></returns>
+PWS KwRsc(int idc);
+PAS KwRscA(int idc);
+
+
+/// <summary>
+/// PAS k의 PWS 를 보관 하고 있다가, 그대로 pointer를 static으로 보유한 체로 리턴 한다.
+/// 문자열 포인터가 날라가지 않은체 포인터를 쓸수 있게 한다.
+/// </summary>
+/// <param name="k"></param>
+/// <returns></returns>
+LPCWSTR Pws(LPCSTR k);
+inline LPCWSTR Pws(LPCWSTR kw)
+{
+	CStringA k(kw);
+	return Pws((LPCSTR)k);
+}
+inline LPCWSTR Pws(wstring& kw)
+{
+	CStringA k(kw.c_str());
+	return Pws((LPCSTR)k);
+}
+inline LPCWSTR Pws(CStringA& k)
+{
+	return Pws((LPCSTR)k);
+}
+inline LPCWSTR Pws(CStringW& kw)
+{
+	CStringA k(kw);
+	return Pws((LPCSTR)k);
+}
+inline LPCWSTR Pws(string& k)
+{
+	return Pws((LPCSTR)k.c_str());
+}
+
+/*
+* 1>C:\Dropbox\Proj\KHttp\Lib\KwLib64\Kw_tool.h(435,16): message : could be 'LPCWSTR Pws(std::string &)'
+1>C:\Dropbox\Proj\KHttp\Lib\KwLib64\Kw_tool.h(430,16): message : or       'LPCWSTR Pws(std::wstring &)'
+1>C:\Dropbox\Proj\KHttp\Lib\KwLib64\Kw_tool.h(425,16): message : or       'LPCWSTR Pws(CStringW &)'
+1>C:\Dropbox\Proj\KHttp\Lib\KwLib64\Kw_tool.h(421,16): message : or       'LPCWSTR Pws(CStringA &)'
+1>C:\Dropbox\Proj\KHttp\Lib\KwLib64\Kw_tool.h(420,9): message : or       'LPCWSTR Pws(LPCSTR)'
+1>C:\Dropbox\Proj\KHttp\Lib\KwLib64\KJson.h(325,1): message : while trying to match the argument list '(TKEY)'
+*/
+
+LPCSTR Pas(LPCWSTR k);
+inline LPCSTR Pas(LPCSTR ka)
+{
+	CStringW kw(ka);
+	return Pas((LPCWSTR)kw);
+}
+/*
+inline LPCSTR Pas(CStringA& ka)
+{
+	CStringW kw(ka);
+	return Pas((LPCWSTR)kw);
+}
+inline LPCSTR Pas(CStringW& kw)
+{
+	return Pas((LPCWSTR)kw);
+}
+inline LPCSTR Pas(wstring& kw)
+{
+	return Pas(kw.c_str());
+}
+inline LPCSTR Pas(string& k)
+{
+	CStringW kw(k.c_str());
+	return Pas((LPCWSTR)kw);
+}
+*/

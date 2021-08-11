@@ -409,9 +409,14 @@ int CResponse1::ResponseForPost(KSessionInfo& sinfo, SHP<KBinData> body, strings
 		status = sinfo._status;// e->_error;// 400; status
 		e->Delete();//DeleteMeSafe(e);
 	}
+/// 	+ m_strError	L"Duplicate entry 'dwkang' for key 'fNickname'\n"	
+/// 	+m_strStateNativeOrigin	L"State:23000,Native:1062,Origin:[ma-3.1.12][10.5.10-MariaDB]\n"	
 	catch(CDBException* e)
 	{//API중에 오류는 모두 여기로 온다.
-		JError(jres, L"Data Base Error.", e->m_nRetCode, eHttp_Expectation_Failed);
+		CString serr = L"Data Base Error.\n" + e->m_strError;
+		if(serr.Right(1) != L"\n") serr += L"\n";
+		serr += e->m_strStateNativeOrigin;
+		JError(jres, serr, e->m_nRetCode, eHttp_Expectation_Failed);
 		_api->LogException(e, uuidW);//오류는 파라미터 챙길게 많아서 동기로 처리 한다.
 
 		status = sinfo._status;// e->_error;// 400; status

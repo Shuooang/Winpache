@@ -46,7 +46,6 @@ void CMDIFrameWndInvokable::OnTimer(UINT_PTR nIDEvent)//?LbTimer 5
 
 
 
-
 IMPLEMENT_DYNAMIC(CMDIFrameWndExInvokable, CMDIFrameWndEx)
 
 BEGIN_MESSAGE_MAP(CMDIFrameWndExInvokable, CMDIFrameWndEx)
@@ -293,11 +292,25 @@ BOOL CFormInvokable::OnSizeDefault(UINT nType, int cx, int cy, int nCtrl, int ar
 /// ////////////////////////////////////////////////////////////////////////////////////////
 /// ////////////////////////////////////////////////////////////////////////////////////////
 /// ////////////////////////////////////////////////////////////////////////////////////////
+CDlgInvokable::CDlgInvokable()
+	: CDialogEx() 
+	, KLambdaTimer(this)
+{
+}
+CDlgInvokable::CDlgInvokable(UINT nIDTemplate, CWnd* pParent)
+	: CDialogEx(nIDTemplate, pParent), KLambdaTimer(this)
+{
+}
+CDlgInvokable::CDlgInvokable(LPCTSTR lpszTemplateName, CWnd* pParentWnd)
+	: CDialogEx(lpszTemplateName, pParentWnd), KLambdaTimer(this)
+{
+}
 
 IMPLEMENT_DYNAMIC(CDlgInvokable, CDialogEx)
 
 BEGIN_MESSAGE_MAP(CDlgInvokable, CDialogEx)
 	ON_MESSAGE(WM_USER_INVOKE, &CDlgInvokable::OnBeginInvoke)//?beginInvoke 2
+	ON_WM_TIMER() //?LbTimer 4
 END_MESSAGE_MAP()
 
 #ifdef _DEBUG
@@ -315,6 +328,14 @@ LRESULT CDlgInvokable::OnBeginInvoke(WPARAM wParam, LPARAM lParam)
 OnBeginInvoke_Define(CDlgInvokable)//?beginInvoke 3
 #endif // _DEBUG
 
+
+
+void CDlgInvokable::OnTimer(UINT_PTR nIDEvent)//?LbTimer 5
+{
+	DoTimerTask(nIDEvent);
+
+	CDialogEx::OnTimer(nIDEvent);
+}
 
 /// ////////////////////////////////////////////////////////////////////////////////////////
 /// ////////////////////////////////////////////////////////////////////////////////////////
@@ -361,13 +382,30 @@ PWS KwOpenFileOpenDlg(HWND hwnd, CStringW& fname, PWS filter)
 }
 
 
-
-int KwMessageBox(LPCWSTR lpFormat, ...)
+int KwMessageBox(CWnd* pwnd, LPCWSTR lpFormat, ...)
 {
 	CStringW buf;
 	CSTRING_SPRINTF(lpFormat, buf);
+	int rv = ::MessageBox(pwnd->GetSafeHwnd(), buf, L"Information", MB_OK | MB_ICONINFORMATION);
+	return  rv;
+}
+
+int KwMessageBox(HWND hwnd, LPCWSTR lpFormat, ...)
+{
+	CStringW buf;
+	CSTRING_SPRINTF(lpFormat, buf);
+	int rv = ::MessageBox(hwnd, buf, L"Information", MB_OK | MB_ICONINFORMATION);
+	return  rv;
+}
+
+int KwMessageBox(LPCWSTR lpFormat, ...)
+{
 	auto wnd = AfxGetApp()->GetMainWnd();// ::GetDesktopWindow();
-	int rv = ::MessageBox(wnd->GetSafeHwnd(), buf, L"Information", MB_OK | MB_ICONINFORMATION);
+	HWND hwnd = wnd ? wnd->GetSafeHwnd() : ::GetDesktopWindow();
+
+	CStringW buf;
+	CSTRING_SPRINTF(lpFormat, buf);
+	int rv = ::MessageBox(hwnd, buf, L"Information", MB_OK | MB_ICONINFORMATION);
 	//int rv = AfxMessageBox(buf, MB_OK|MB_ICONEXCLAMATION);
 	return  rv;
 }
@@ -377,7 +415,8 @@ int KwMessageBoxA(LPCSTR lpFormat, ...)
 	CSTRINGA_SPRINTF(lpFormat, buf);
 	CStringW bufw(buf);
 	auto wnd = AfxGetApp()->GetMainWnd();// ::GetDesktopWindow(); //MB_ICONEXCLAMATION
-	int rv = ::MessageBox(wnd->GetSafeHwnd(), (PWS)bufw, L"Information", MB_OK | MB_ICONINFORMATION);
+	HWND hwnd = wnd ? wnd->GetSafeHwnd() : ::GetDesktopWindow();
+	int rv = ::MessageBox(hwnd, (PWS)bufw, L"Information", MB_OK | MB_ICONINFORMATION);
 	return  rv;
 }
 int KwMessageBoxError(LPCTSTR lpFormat, ...)
@@ -387,6 +426,13 @@ int KwMessageBoxError(LPCTSTR lpFormat, ...)
 	auto wnd = AfxGetApp()->GetMainWnd();// ::GetDesktopWindow();
 	int rv = ::MessageBox(wnd->GetSafeHwnd(), buf, L"Error", MB_OK | MB_ICONERROR);
 	//int rv = AfxMessageBox(buf, MB_OK|MB_ICONERROR);
+	return  rv;
+}
+int KwMessageBoxError(CWnd* pwnd, LPCWSTR lpFormat, ...)
+{
+	CString buf;
+	CSTRING_SPRINTF(lpFormat, buf);
+	int rv = ::MessageBox(pwnd->GetSafeHwnd(), buf, L"Error", MB_OK | MB_ICONERROR);
 	return  rv;
 }
 
@@ -504,8 +550,29 @@ void KwSetListColumn(CListCtrl* pList, _STitleWidthField* parLst, int count)
 	CHeaderCtrl* phd1 = pList->GetHeaderCtrl();
 	for_each0(count)
 	{
-		pList->InsertColumn(_i, parLst[_i].title, LVCFMT_LEFT);
-		pList->SetColumnWidth(_i, parLst[_i].width);
+		LPWSTR title = nullptr;
+		if(parLst[_i].idsTitle > 0)
+			title = (LPWSTR)KwRsc(parLst[_i].idsTitle);
+		else
+			title = (LPWSTR)parLst[_i].title;
+		int a = parLst[_i].align;
+ 		int nFormat = 
+			a == 0 ? LVCFMT_LEFT : 
+			a == 1 ? LVCFMT_RIGHT : 
+			a == 2 ? LVCFMT_CENTER : 
+			LVCFMT_JUSTIFYMASK;
+		//int InsertColumn(int nCol, LPCTSTR lpszColumnHeading, int nFormat = LVCFMT_LEFT, int nWidth = -1, _In_ int nSubItem = -1);
+// 		pList->InsertColumn(_i, title, nFormat, parLst[_i].width);
+//		pList->SetColumnWidth(_i, parLst[_i].width); 위에서 했잖아.
+		LVCOLUMNW lvc = {0,};
+		lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT;// | LVCF_SUBITEM;
+		lvc.iSubItem = _i;
+		lvc.pszText = title;
+		lvc.cx = parLst[_i].width;
+		//should provide ample default
+		lvc.fmt = nFormat;
+		pList->InsertColumn(_i, &lvc);
+
 
 		HDITEM oHeaderItem;
 		KwZeroMemory(oHeaderItem);
@@ -636,37 +703,149 @@ int KwGetSelectedCount(CListCtrl* pl)
 	return nItem;
 }
 
+/// <summary>
+/// 타이머를 시작 한다. 이미 같은 아이디(문자열)타이머가 등록 되어 있으면 Kill 하고 다시 시작 한다.
+/// 따라서 변수들 elapsed 람다함수 등이 바뀐후 적용된다.
+/// </summary>
+/// <param name="sid"></param>
+/// <param name="elapsed"></param>
+/// <param name="lmda"></param>
+/// <param name="maxCount"></param>
 void KLambdaTimer::SetLambdaTimerImple(PAS sid, UINT elapsed, shared_ptr<function<void(int, PAS)>> lmda, int maxCount /*= 0*/)
+{
+	UINT_PTR idTm = 0;
+	KTimerObj* tobj = nullptr;
+	if(_mapTmObj.Has(sid))
+	{
+		idTm = _mapTmID[sid];
+		tobj = _mapTmObj[sid];
+
+		if(tobj->_stat == "started")
+			_wnd->KillTimer(tobj->_idTimer);
+		//TRACE("Lambda Timer: %s %d msec restarted~\n", sid, (int)(t2 - tobj->_tickStart));
+	}
+	else
+	{
+		_idTm++;/// timer ID는 내부적으로 하나씩 증가 _mapTmID 에서 sid 와 매핑된다.
+		idTm = _idTm;
+
+		_mapTmID[sid] = idTm;
+		_mapRTmID[idTm] = sid;
+		tobj = new KTimerObj;
+		_mapTmObj[sid] = tobj;
+		//TRACE("Lambda Timer: %s SetTimer <<\n", sid);
+	}
+
+	tobj->_maxCount = maxCount;/// 0이면 무한
+	tobj->_idTimer = idTm;
+	tobj->_elapsed = elapsed;
+	tobj->_stat = "started";
+	tobj->_tickStart = GetTickCount64();
+	_mapTimer[idTm] = lmda; // make_shared < function<void(int, PAS)>>(lmda);
+
+	_wnd->SetTimer(idTm, elapsed, NULL);
+}
+
+void KLambdaTimer::ChangeLambdaTaskImple(PAS sid, shared_ptr<function<void(int, PAS)>> lmda)
+{
+	if(!_mapTmID.Has(sid))
+	{
+		TRACE("ChangeLambdaTaskImple: %s ID invalid. >>\n", sid);
+		return;
+	}
+	UINT_PTR idTm = _mapTmID[sid];
+	//auto tobj = _mapTmObj[sid];
+	_mapTimer[idTm] = lmda; // make_shared < function<void(int, PAS)>>(lmda);
+}
+
+void KLambdaTimer::ChangeInterval(PAS sid, UINT elapsed)
+{
+	if(!_mapTmID.Has(sid))
+	{
+		TRACE("ChangeInterval: %s ID invalid. >>\n", sid);
+		return;
+	}
+	UINT_PTR idTm = _mapTmID[sid];
+	auto tobj = _mapTmObj[sid];
+	ASSERT(tobj);
+	if(tobj->_elapsed != elapsed)
+	{
+		_wnd->KillTimer(idTm);
+		tobj->_elapsed = elapsed;
+		_wnd->SetTimer(_idTm, elapsed, NULL);
+	}
+}
+int KLambdaTimer::GetInterval(PAS sid)
 {
 	if(_mapTmObj.Has(sid))
 	{
-		auto t2 = GetTickCount();
 		auto tobj = _mapTmObj[sid];
-		_wnd->KillTimer(tobj->_idTimer);
-		tobj->_tickStart = GetTickCount();
-		_wnd->SetTimer(tobj->_idTimer, tobj->_elapsed, NULL);
-		//TRACE("Lambda Timer: %s %d msec restarted~\n", sid, (int)(t2 - tobj->_tickStart));
-		tobj->_tickStart = t2;
+		if(tobj)
+			return tobj->_elapsed;
+	}
+	TRACE("GetInterval: %s ID invalid. >>\n", sid);
+	return 0;
+}
+KTimerObj* KLambdaTimer::GetTimerInfo(PAS sid)
+{
+	if(_mapTmObj.Has(sid))
+	{
+		auto tobj = _mapTmObj[sid];
+		return tobj;
+	}
+	TRACE("GetTimerInfo: %s ID invalid. >>\n", sid);
+	return NULL;
+}
+void KLambdaTimer::PauseTimer(PAS sid)
+{
+	if(!_mapTmID.Has(sid))
+	{
+		TRACE("PauseTimer: %s ID invalid. >>\n", sid);
 		return;
 	}
-	_idTm++;
-
-	_mapTmID[sid] = _idTm;
-	_mapRTmID[_idTm] = sid;
-	auto tobj = new KTimerObj;
-	_mapTmObj[sid] = tobj;
-	tobj->_maxCount = maxCount;
-	tobj->_idTimer = _idTm;
-	tobj->_elapsed = elapsed;
-	_mapTimer[_idTm] = lmda; // make_shared < function<void(int, PAS)>>(lmda);
-
-	tobj->_tickStart = GetTickCount();
-	_wnd->SetTimer(_idTm, elapsed, NULL);
-	//TRACE("Lambda Timer: %s SetTimer <<\n", sid);
+	UINT_PTR idTm = _mapTmID[sid];
+	if(_mapTmObj.Has(sid))
+	{
+		auto tobj = _mapTmObj[sid];
+		if(tobj)
+		{
+			if(tobj->_stat != "stopped")
+			{
+				_wnd->KillTimer(idTm);
+				tobj->_stat = "stopped";
+			}
+		}
+	}
 }
 
+void KLambdaTimer::RestartTimer(PAS sid)
+{
+	if(!_mapTmID.Has(sid))
+	{
+		TRACE("RestartTimer: %s ID invalid. >>\n", sid);
+		return;
+	}
+	UINT_PTR idTm = _mapTmID[sid];
+	auto tobj = _mapTmObj[sid];
+	_wnd->KillTimer(idTm);
+	ASSERT(tobj);
+	_wnd->SetTimer(idTm, tobj->_elapsed, NULL);
+	tobj->_stat = "started";
+}
+
+/// <summary>
+/// 다시는 이 타이머를 안쓸때 관련 정보를 보무 삭제 한다.
+/// 또 같은걸 사용할때는 PauseTimer를 쓴다. RestartTimer를 쓴다.
+/// </summary>
+/// <param name="sid"></param>
+/// <param name="bKill"></param>
 void KLambdaTimer::KillLambdaTimer(PAS sid, bool bKill /*= true*/)
 {
+	if(!_mapTmID.Has(sid))
+	{
+		TRACE("KillLambdaTimer: %s ID invalid. >>\n", sid);
+		return;
+	}
 	UINT_PTR idTm = _mapTmID[sid];
 	if(bKill)
 		_wnd->KillTimer(idTm);
@@ -680,9 +859,10 @@ void KLambdaTimer::KillLambdaTimer(PAS sid, bool bKill /*= true*/)
 
 void KLambdaTimer::DoTimerTask(UINT_PTR nIDEvent)
 {
+	ASSERT(_mapTimer.Has(nIDEvent));
 	if(!_mapTimer.Has(nIDEvent))
 		return;
-
+	ASSERT(_mapRTmID.Has(nIDEvent));
 	auto sid = _mapRTmID[nIDEvent];
 	auto tobj = _mapTmObj[sid];
 	ASSERT(tobj);
@@ -692,7 +872,7 @@ void KLambdaTimer::DoTimerTask(UINT_PTR nIDEvent)
 		if(bLast)
 			_wnd->KillTimer(nIDEvent);
 
-		auto t2 = GetTickCount();
+		auto t2 = GetTickCount64();
 		//TRACE("Lambda Timer: %s(%d) %d msec Task Done!\n", sid.c_str(), tobj->_i, (int)(t2 - tobj->_tickStart));
 		tobj->_tickStart = t2;
 		auto shFnc = _mapTimer[nIDEvent];

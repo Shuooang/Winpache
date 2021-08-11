@@ -1744,18 +1744,65 @@ hres KwGetMacInfo(CString& localIP, CString& macAddr)
 }
 
 
-CStringW KwRsc(int idc)
+
+#include <map>
+/// <summary>
+/// char* 를 static wchar_t* 로 리턴한다.
+/// 스택변수 포인터가 아니고 static으로 보유하고 재사용 한다.
+/// </summary>
+/// <param name="k"></param>
+/// <returns></returns>
+LPCWSTR Pws(LPCSTR k)
 {
-	CStringW s;
-	s.LoadString(idc);
-	return s;
+	static std::map<std::string, std::wstring> smap;
+	auto it = smap.find(k);
+	if(it == smap.end())
+	{
+		CStringW sw(k);
+		smap[k] = (LPCWSTR)sw;
+		it = smap.find(k);
+	}
+	return (LPCWSTR)it->second.c_str();
+}
+/// 반대방향으로 static pointer를 리턴. 별로 쓸일이 없지만
+LPCSTR Pas(LPCWSTR k)
+{
+	static std::map<std::wstring, std::string> smap;
+	auto it = smap.find(k);
+	if(it == smap.end())
+	{
+		CStringA sa(k);
+		smap[k] = (LPCSTR)sa;
+		it = smap.find(k);
+	}
+	return (LPCSTR)it->second.c_str();
 }
 
-CStringA KwRscA(int idc)
+/// <summary>
+/// resource 에서 읽은 문자열 static 문자열 포인터가 안전하게 리턴 하도록 static map에 보유 한다.
+/// </summary>
+/// <param name="idc"></param>
+/// <returns></returns>
+PWS KwRsc(int idc)
 {
-	CStringA s;
-	s.LoadString(idc);
-	return s;
+	static KStdMap<int, wstring> mapRsc;
+	auto it = mapRsc.Find(idc);
+	if(it == mapRsc.end())
+	{
+		CStringW s;
+		BOOL b = s.LoadString(idc);
+		ASSERT(b);
+		mapRsc[idc] = (PWS)s;
+		it = mapRsc.Find(idc);
+	}
+	return it->second.c_str();
 }
 
-
+PAS KwRscA(int idc)
+{
+	PWS ps = KwRsc(idc);
+	return Pas(ps);
+	// 	CStringA s;
+	// 	s.LoadString(idc);
+	// 	return s;
+}
