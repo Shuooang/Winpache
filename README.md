@@ -223,4 +223,6 @@ int DEXPORT ExRemoveBizClass(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 # Using `Winpache` source code
 * Only those who study the inside of 'Winpache' need the above source, and the developer who will build the server only needs to download the following Winpache setup files. 
 * It also contains the template DLL project to add the API to, and there is a tutorial in the menu.
-
+* [Related package source directory `pkg`: Only the files needed by 'Winpache' from open source are here.](https://www.dropbox.com/sh/jejqkpo3p4kfeg7/AAAYp2Org3z8n6Yj8V85hrV1a?dl=0)
+** boost
+** OpenSSL
