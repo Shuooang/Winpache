@@ -16,7 +16,8 @@
 * VS Project(.sln) for JSON API will be installed with template source.
 * A HTTP client APP `Wincatcher` for test will be installed.
 * Sample client Download : `TokCube.msi`
-* [![Sample client Download : `TokCube.msi`](<img align="center" src="rsc/TokCube.gif" width="694">)](https://www.dropbox.com/s/bg17pvtrqnph7a9/TokCube.msi?dl=1)
+* [Sample client Download : `TokCube.msi`](https://www.dropbox.com/s/bg17pvtrqnph7a9/TokCube.msi?dl=1)
+* <img align="center" src="rsc/TokCube.gif" width="100">
 
 # Start `Winpache Project` manager
 <img align="center" src="rsc/20210706_100443.png" width="640">
