@@ -2,7 +2,7 @@
 <img align="center" src="rsc/Logo-Winpache HTTP2.png" width="783">
 
 ## `Winpache` features
-* [Setup in 10 minutes for homepage. (rsc/WAS20minutes.png)](https://youtu.be/gVHs6kF46bI)
+* [[Setup in 10 minutes for homepage.](rsc/WAS20minutes.png)](https://youtu.be/gVHs6kF46bI)
 * [Setup in 20 minutes for `JSON API`. (rsc/WAS20minutes.png)](https://youtu.be/fTFP-VLUSBY)
 * Simplest HTTP server. (Window visible)
 * Minimum setting. (10 items. : port, local dir, etc...)
