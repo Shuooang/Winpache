@@ -1,8 +1,17 @@
 # A simplest and high-performance Web Application Server.
 <img align="center" src="rsc/Logo-Winpache HTTP2.png" width="783">
 
+## Download and Install
+* [MSI Download : `ReleaseWinpache.zip`](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
+* Extract the zip file and Run `WinpacheSetup.msi`
+* VS Project(.sln) for JSON API will be installed with template source.
+* A HTTP client APP `Wincatcher` for test will be installed.
+* [Sample API client game Download : `TokCube.msi`](https://www.dropbox.com/s/bg17pvtrqnph7a9/TokCube.msi?dl=1) <img align="center" src="rsc/TokCube.gif" width="140"> [Details are given below.](#sample-client-app-tokcube-Game)
+
+
 ## `Winpache` features
-* [[Setup in 10 minutes for homepage.](rsc/WAS20minutes.png)](https://youtu.be/gVHs6kF46bI)
+* Setup in 10 minutes for homepage.
+* [![Setup in 10 minutes for homepage.](rsc/WAS20minutes.png)](https://youtu.be/gVHs6kF46bI)
 * Setup in 20 minutes for `JSON API`.
 - [![Setup in 20 minutes for `JSON API`.](rsc/WS10minutes.png)](https://youtu.be/fTFP-VLUSBY)
 * Simplest HTTP server. (Window visible)
@@ -10,13 +19,6 @@
 * Fastest HTTP Server. (Server cache, clustering coming soon.)
 * Parallel processing.(new)
 
-
-## Download and Install
-* [MSI Download : `ReleaseWinpache.zip`](https://www.dropbox.com/sh/ch86hzxfhbgl7fs/AABdYPPYMteR5SpTsgMEbUeJa?dl=1)
-* Extract the zip file and Run `WinpacheSetup.msi`
-* VS Project(.sln) for JSON API will be installed with template source.
-* A HTTP client APP `Wincatcher` for test will be installed.
-* [Sample API client game Download : `TokCube.msi`](https://www.dropbox.com/s/bg17pvtrqnph7a9/TokCube.msi?dl=1) <img align="center" src="rsc/TokCube.gif" width="140"> [Details are given below.](#sample-client-app-tokcube-Game)
 
 # Start `Winpache Project` manager
 <img align="center" src="rsc/20210706_100443.png" width="572">
