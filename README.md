@@ -18,7 +18,7 @@
 * [Sample API client game Download : `TokCube.msi`](https://www.dropbox.com/s/bg17pvtrqnph7a9/TokCube.msi?dl=1) <img align="center" src="rsc/TokCube.gif" width="140">
 
 # Start `Winpache Project` manager
-<img align="center" src="rsc/20210706_100443.png" width="520">
+<img align="center" src="rsc/20210706_100443.png" width="600">
 
 
 ## Start `Winpache` Server
