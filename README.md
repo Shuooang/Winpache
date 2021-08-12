@@ -27,7 +27,7 @@
 * Monitorable Windows Server.
 * HTTPS SSL capable. (Need .pem key file and .crt file)
 * Using `MariaDB`.
-<img align="center" src="rsc/server_client_get_post_api.gif" width="1024">
+<img align="center" src="rsc/server_client_get_post_api.gif" width="964">
 
 
 ### Start for simple a `Web Server`(WS)
