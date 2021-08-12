@@ -1,5 +1,5 @@
 # A simplest and high-performance Web Application Server.
-<img align="center" src="rsc/Logo-Winpache HTTP2.png" width="640">
+<img align="center" src="rsc/Logo-Winpache HTTP2.png" width="783">
 
 ## `Winpache` features
 * [Setup in 10 minutes for homepage. (Youtube)](https://youtu.be/gVHs6kF46bI)
@@ -54,7 +54,7 @@
 5. Stop and start the server, then a `Web Application Server` will run.
 
 ## Start `Wincatcher` Client for Test
-<img align="center" src="rsc/Wincatcher.png" width="550">
+<img align="center" src="rsc/Wincatcher.png" width="588">
 
 ## Sample client app 'TokCube' Game
 * [MSI Download : `TokCube.msi`](https://www.dropbox.com/s/bg17pvtrqnph7a9/TokCube.msi?dl=1)
