@@ -18,7 +18,7 @@
 * [Sample API client game Download : `TokCube.msi`](https://www.dropbox.com/s/bg17pvtrqnph7a9/TokCube.msi?dl=1) <img align="center" src="rsc/TokCube.gif" width="140">
 
 # Start `Winpache Project` manager
-<img align="center" src="rsc/20210706_100443.png" width="640">
+<img align="center" src="rsc/20210706_100443.png" width="520">
 
 
 ## Start `Winpache` Server
@@ -27,7 +27,7 @@
 * Monitorable Windows Server.
 * HTTPS SSL capable. (Need .pem key file and .crt file)
 * Using `MariaDB`.
-<img align="center" src="rsc/server_client_get_post_api.gif" width="800">
+<img align="center" src="rsc/server_client_get_post_api.gif" width="1024">
 
 
 ### Start for simple a `Web Server`(WS)
