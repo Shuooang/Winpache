@@ -13,8 +13,7 @@
 * Simplest HTTP server. (Window visible)
 * Minimum setting. (10 items. : port, local dir, etc...)
 * Fastest HTTP Server. (Server cache, clustering coming soon.)
-* Parallel processing.(In App server clustering) 
-<img align="center" src="rsc/parallel.png" width="783">
+* Parallel processing avaiable.(In App server clustering) 
 * Setup in 10 minutes for homepage.
 * [![Setup in 10 minutes for homepage.](rsc/WS10minutes.png)](https://youtu.be/gVHs6kF46bI)
 * Setup in 20 minutes for `JSON API`.
@@ -37,6 +36,8 @@
 2. Click the `Start Winpache Server` button, then `Winpache` app will run.
 3. In `Winpache`, set the location of homepage files and etc configuration.
 4. Start the server, then a simple web server will run.
+* Parallel processing simple setup(In App clustering) 
+<img align="center" src="rsc/parallel.png" width="500">
 
 
 ## To setup the `Main DB` for `Winpache`
