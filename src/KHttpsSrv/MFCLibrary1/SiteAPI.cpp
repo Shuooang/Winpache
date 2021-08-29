@@ -378,7 +378,7 @@ int DEXPORT CubeGetRankingList(KDatabase& _db, JObj& jpa, JObj& jrs, int iOp)
 // 		jpa("unit") = 3;/// 현재는 3칸 이동만 경기 랭킹 가능. 차후에는 1칸, 2칸 리그도 가능
 // 	if(!jpa.Has("class"))
 // 		jpa("class") = "personal";/// 현재는 3칸 이동만 경기 랭킹 가능. 차후에는 1칸, 2칸 리그도 가능
-	jpa.HasElse("unit", 3);
+	jpa.HasElse("unit", 3);/// default 값 3
 	jpa.HasElse("class", "personal");
 	qs.Field(jpa, "unit", "fUnit");//필수
 	qs.Field(jpa, "class", "fClass");
