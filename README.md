@@ -10,16 +10,15 @@
 
 
 ## `Winpache` features
+* Simplest HTTP server. (Window visible)
+* Minimum setting. (10 items. : port, local dir, etc...)
+* Fastest HTTP Server. (Server cache, clustering coming soon.)
+* Parallel processing.(In App server clustering) 
+<img align="center" src="rsc/parallel.png" width="783">
 * Setup in 10 minutes for homepage.
 * [![Setup in 10 minutes for homepage.](rsc/WS10minutes.png)](https://youtu.be/gVHs6kF46bI)
 * Setup in 20 minutes for `JSON API`.
 - [![Setup in 20 minutes for `JSON API`.](rsc/WAS20miutes.png)](https://youtu.be/fTFP-VLUSBY)
-* Simplest HTTP server. (Window visible)
-* Minimum setting. (10 items. : port, local dir, etc...)
-* Fastest HTTP Server. (Server cache, clustering coming soon.)
-* Parallel processing.(new)
-
-
 # Start `Winpache Project` manager
 <img align="center" src="rsc/20210706_100443.png" width="572">
 
