@@ -6,7 +6,7 @@
 * Extract the zip file and Run `WinpacheSetup.msi`
 * VS Project(.sln) for JSON API will be installed with template source.
 * A HTTP client APP `Wincatcher` for test will be installed.
-* [Sample API client game Download : `TokCube.msi`](https://www.dropbox.com/s/n066pjomvo7jr6t/TokCube.msi?dl=1) <img align="center" src="rsc/TokCube.gif" width="100"> [Details are given below.](#sample-client-app-tokcube-Game)
+* [Sample API client game Download : `TokCube.msi`](https://www.dropbox.com/s/n066pjomvo7jr6t/TokCube.msi?dl=1) <img align="center" src="rsc/TokCubeDark.gif" width="100"> [Details are given below.](#sample-client-app-tokcube-Game)
 
 
 ## `Winpache` features
@@ -62,7 +62,7 @@
 ## Sample client app 'TokCube' Game
 * [MSI Download : `TokCube.msi`](https://www.dropbox.com/s/n066pjomvo7jr6t/TokCube.msi?dl=1)
 * APIs supported by the game site server : Report score, Register ID, List the ranking.
-<img align="center" src="rsc/TokCube.gif" width="694">
+<img align="center" src="rsc/TokCubeDark.gif" width="694">
 
 
 
